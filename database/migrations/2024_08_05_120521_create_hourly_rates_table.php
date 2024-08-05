@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('employeeId')->constrained('employees');
             $table->foreignId('zoneId')->constrained('zones');
             $table->decimal('rate', 10, 2);
-            $table->date('start');
-            $table->date('end');
+            $table->date('start')->nullable();
+            $table->date('end')->nullable();
             $table->timestamps();
         });
     }

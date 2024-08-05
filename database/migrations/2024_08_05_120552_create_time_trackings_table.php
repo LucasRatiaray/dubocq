@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('projectId')->constrained('projects');
             $table->foreignId('employeeId')->constrained('employees');
-            $table->decimal('hours', 10, 2);
-            $table->enum('absenceType', ['Absent', 'Public Holiday', 'RTT']);
+            $table->decimal('hours', 10, 2)->nullable();
+            $table->decimal('night_hours', 10, 2)->nullable();
+            $table->enum('absenceType', ['Abs', 'Ferie', 'RTT'])->nullable();
             $table->date('date');
             $table->timestamps();
         });

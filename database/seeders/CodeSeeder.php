@@ -33,7 +33,7 @@ class CodeSeeder extends Seeder
 
         foreach ($codes as $code) {
             DB::table('codes')->insert([
-                'name' => $code,
+                'code' => $code,
                 'description' => null,
                 'created_at' => now(),
                 'updated_at' => now()

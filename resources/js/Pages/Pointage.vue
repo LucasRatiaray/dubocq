@@ -28,9 +28,11 @@ const monthNames = [
         </template>
 
         <div class="p-6">
-            <FormComponent :project="props.project" />
+            <FormComponent :projects="props.projects" />
+
             <TableComponent
-                :title="'project : ' + props.project.name + ' - Ville : ' + props.project.city + ' - Mois : ' + monthNames[props.month - 1] + ' - Année : ' + props.year"
+                v-if="props.project && props.project.name && props.project.city && props.month && props.year"
+                :title="'Chantier : ' + (props.project.name || '') + ' - Ville : ' + (props.project.city || '') + ' - Mois : ' + monthNames[props.month - 1] + ' - Année : ' + props.year"
                 :employes="props.allemployes"
                 :employeeData="props.employeeData"
                 :year="props.year"

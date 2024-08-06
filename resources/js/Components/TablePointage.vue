@@ -24,6 +24,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { Inertia } from '@inertiajs/inertia';
 
 const props = defineProps({
     title: String,
@@ -80,7 +81,6 @@ onMounted(() => {
             if (col >= 3) { // Assurer que nous sommes dans les colonnes des jours
                 cellProperties.renderer = function (instance, td, row, col, prop, value) {
                     Handsontable.renderers.TextRenderer.apply(this, arguments);
-
                     // Convertir la valeur en nombre
                     const numericValue = parseFloat(value);
 
@@ -114,12 +114,12 @@ function getDaysInMonth(year, month) {
     return new Date(year, month, 0).getDate();
 }
 
-function saveData() {
-    // Implémenter la logique de sauvegarde des données ici
-}
+const saveData = () => {
+    const data = hot.getData();
+    Inertia.post(route('pointage.save'), { data });
+};
 </script>
 
 <style scoped>
-
 </style>
 

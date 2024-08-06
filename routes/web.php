@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PointageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -18,9 +19,9 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/pointage', function () {
-    return Inertia::render('Pointage');
-})->middleware(['auth', 'verified'])->name('pointage');
+Route::get('/pointage', [PointageController::class, 'index'])->name('pointage.index');
+Route::post('/pointage/show/{id}', [PointageController::class, 'show'])->name('pointage.show');
+Route::post('/pointage/save', [PointageController::class, 'save'])->name('pointage.save');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

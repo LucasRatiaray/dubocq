@@ -1,0 +1,16 @@
+.weekend {
+    background-color: #e0e0e0 !important; /* Couleur grise pour les weekends */
+}
+
+.alert {
+    padding: 15px;
+    margin-top: 10px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    z-index: 9999;
+}
+
+#handsontable-container {
+    overflow: auto;
+    height: 400px;
+}

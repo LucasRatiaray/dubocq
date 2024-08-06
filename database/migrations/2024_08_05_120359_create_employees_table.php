@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('lastName', 100);
             $table->string('firstName', 100);
-            $table->text('description')->nullable();
+            $table->enum('status', ['OUVRIER', 'ETAM']);
             $table->timestamps();
         });
     }

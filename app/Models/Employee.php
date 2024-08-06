@@ -30,4 +30,9 @@ class Employee extends Model
     {
         return $this->belongsToMany(TimeTracking::class);
     }
+
+    public function employeeProjects(): BelongsToMany
+    {
+        return $this->belongsToMany(EmployeeProject::class);
+    }
 }

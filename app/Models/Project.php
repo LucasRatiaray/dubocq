@@ -6,21 +6,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
+        'codeId',
         'city',
         'address',
         'business',
-        'driver',
         'km',
-        'year',
-        'zoneId',
-        'codeId'
+        'driver',
     ];
 
     public function zone(): BelongsTo
@@ -38,8 +36,13 @@ class Project extends Model
         return $this->belongsToMany(Employee::class, 'employee_project');
     }
 
-    public function timeTrackings(): BelongsToMany
+    public function employeeProjects(): HasMany
     {
-        return $this->belongsToMany(TimeTracking::class, 'time_tracking_project');
+        return $this->hasMany(EmployeeProject::class);
+    }
+
+    public function timeTrackings(): HasMany
+    {
+        return $this->hasMany(TimeTracking::class, 'time_tracking_project');
     }
 }

@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('employee_projects', function (Blueprint $table) {
+        Schema::create('hourly70_rates', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employeeId')->constrained('employees');
-            $table->foreignId('projectId')->constrained('projects');
-            $table->text('description')->nullable();
+            $table->decimal('rate', 10, 2);
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('employee_projects');
+        Schema::dropIfExists('hourly70_rates');
     }
 };

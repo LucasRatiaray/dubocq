@@ -24,7 +24,10 @@ class DatabaseSeeder extends Seeder
             ZoneSeeder::class,
             CodeSeeder::class,
             EmployeeSeeder::class,
-            HourlyRateSeeder::class
+            HourlyRateSeeder::class,
+            BasketSeeder::class,
+            DriverSeeder::class,
+            ProjectSeeder::class,
         ]);
     }
 }

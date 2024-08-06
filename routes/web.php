@@ -11,12 +11,11 @@ Route::match(['get', 'post'], '/pointage', function () {
     return view('pointage');
 })->middleware(['auth', 'verified'])->name('pointage');
 
-Route::redirect('/dashboard', '/admin')->name('dashboard');
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::redirect('/dashboard', '/admin')->name('dashboard');
 });
 
 require __DIR__.'/auth.php';

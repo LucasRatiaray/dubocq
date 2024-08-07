@@ -5,29 +5,38 @@
         </h2>
     </x-slot>
 
-    <div class="container">
-        <h1>Calculate Monthly Cost</h1>
+    <div class="container mx-auto py-8">
+        <h1 class="text-2xl font-bold mb-6">Calculate Monthly Cost</h1>
+        @if ($errors->any())
+            <div class="bg-red-500 text-white p-4 rounded mb-6">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <form action="{{ route('calculate-cost.calculate') }}" method="POST">
             @csrf
-            <div class="form-group">
-                <label for="employee_id">Employee:</label>
-                <select name="employee_id" id="employee_id" class="form-control">
+            <div class="mb-4">
+                <label for="employee_id" class="block text-gray-700">Employee:</label>
+                <select name="employee_id" id="employee_id" class="w-full border-gray-300 rounded mt-1">
                     @foreach($employees as $employee)
                         <option value="{{ $employee->id }}">{{ $employee->firstName }} {{ $employee->lastName }}</option>
                     @endforeach
                 </select>
             </div>
-            <div class="form-group">
-                <label for="project_id">Project:</label>
-                <select name="project_id" id="project_id" class="form-control">
+            <div class="mb-4">
+                <label for="project_id" class="block text-gray-700">Project:</label>
+                <select name="project_id" id="project_id" class="w-full border-gray-300 rounded mt-1">
                     @foreach($projects as $project)
                         <option value="{{ $project->id }}">{{ $project->business }} ({{ $project->city }})</option>
                     @endforeach
                 </select>
             </div>
-            <div class="form-group">
-                <label for="month">Month:</label>
-                <select name="month" id="month" class="form-control" required>
+            <div class="mb-4">
+                <label for="month" class="block text-gray-700">Month:</label>
+                <select name="month" id="month" class="w-full border-gray-300 rounded mt-1" required>
                     <option value="1">January</option>
                     <option value="2">February</option>
                     <option value="3">March</option>
@@ -42,16 +51,15 @@
                     <option value="12">December</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label for="year">Year:</label>
-                <select name="year" id="year" class="form-control" required>
+            <div class="mb-4">
+                <label for="year" class="block text-gray-700">Year:</label>
+                <select name="year" id="year" class="w-full border-gray-300 rounded mt-1" required>
                     @for ($i = 2020; $i <= date('Y'); $i++)
                         <option value="{{ $i }}">{{ $i }}</option>
                     @endfor
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Calculate</button>
+            <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">Calculate</button>
         </form>
     </div>
-
 </x-app-layout>

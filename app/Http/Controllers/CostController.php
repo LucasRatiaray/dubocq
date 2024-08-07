@@ -28,6 +28,9 @@ class CostController extends Controller
         $month = $request->input('month');
         $year = $request->input('year');
 
+        // Debug: Display the input data
+        \Log::info('Input data:', compact('employeeId', 'projectId', 'month', 'year'));
+
         // Récupérer les heures travaillées par l'employé sur le chantier pour le mois spécifié
         $timeTrackings = TimeTracking::where('employee_id', $employeeId)
             ->where('project_id', $projectId)
@@ -42,22 +45,28 @@ class CostController extends Controller
         $hourlyRate = HourlyRate::where('employee_id', $employeeId)->first();
 
         if (!$hourly70Rate || !$hourlyRate) {
-            return back()->withErrors('Rates not found for the specified employee.');
+            $message = 'Rates not found for the specified employee. ';
+            $message .= !$hourly70Rate ? 'Hourly70Rate is missing. ' : '';
+            $message .= !$hourlyRate ? 'HourlyRate is missing. ' : '';
+            return redirect()->back()->withErrors($message);
         }
 
         // Récupérer le projet et la zone associée
         $project = Project::find($projectId);
-        $zone = $this->getZoneByKm($project->km);
+        if (!$project) {
+            \Log::error('Project not found with ID: ' . $projectId);
+            return redirect()->back()->withErrors('Project not found.');
+        }
 
+        $zone = $this->getZoneByKm($project->km);
         if (!$zone) {
-            return back()->withErrors('Zone not found for the specified project.');
+            return redirect()->back()->withErrors('Zone not found for the specified project.');
         }
 
         // Récupérer le panier pour la zone
         $basket = Basket::where('zone_id', $zone->id)->first();
-
         if (!$basket) {
-            return back()->withErrors('Basket not found for the specified zone.');
+            return redirect()->back()->withErrors('Basket not found for the specified zone.');
         }
 
         // Calculer le coût horaire total
@@ -66,7 +75,13 @@ class CostController extends Controller
         // Calculer le coût mensuel total
         $monthlyCost = $totalHours * $costPerHour;
 
-        return view('calculate-cost-result', compact('employeeId', 'projectId', 'month', 'year', 'totalHours', 'costPerHour', 'monthlyCost'));
+        // Récupérer les noms pour les afficher
+        $employee = Employee::find($employeeId);
+        $employeeName = $employee->firstName . ' ' . $employee->lastName;
+        $projectName = $project->business . ' (' . $project->city . ')';
+        $zoneName = $zone->name;
+
+        return view('calculate-cost-result', compact('employeeName', 'projectName', 'zoneName', 'month', 'year', 'totalHours', 'costPerHour', 'monthlyCost'));
     }
 
     private function getZoneByKm($km): ?Zone

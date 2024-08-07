@@ -6,73 +6,65 @@
     </x-slot>
 
     <body
-        data-year="{{ $year ?? 'null' }}"
-        data-month="{{ $month ?? 'null' }}"
-        data-employee-data="{{ json_encode($employeeData ?? []) }}"
         data-project-id="{{ $project->id ?? 'null' }}"
-        data-project-business="{{ $project->business ?? '' }}"
-        data-project-city="{{ $project->city ?? '' }}"
+        data-project-business="{{ $project->business ?? 'null' }}"
+        data-project-code="{{ $project->code->code ?? 'null' }}"
+        data-month="{{ $month ?? 'null' }}"
+        data-year="{{ $year ?? 'null'}}"
+        data-employee-data="{{ json_encode($employeeData ?? []) }}"
     >
 
     <x-pointage.form :projects="$projects"/>
 
-    @isset($employeeData)
-        <x-pointage.table :project="$project" :month="$month" :year="$year" :employeeData="$employeeData" :allEmployees="$allEmployees" />
-    @endisset
+    @if (isset($employeeData))
+        <x-pointage.table :project="$project" :month="$month" :year="$year" :employeeData="$employeeData" :allEmployees="$allEmployees"/>
+    @endif
+
+    <div id="message-container" role="alert"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log("DOM fully loaded and parsed");
-
-            var year = document.body.getAttribute('data-year') !== 'null' ? parseInt(document.body.getAttribute('data-year')) : null;
+        document.addEventListener('DOMContentLoaded', function() {
+            var project_id = document.body.getAttribute('data-project-id') !== 'null' ? parseInt(document.body.getAttribute('data-project-id')) : null;
+            var projectCode = document.body.getAttribute('data-project-code') !== 'null' ? document.body.getAttribute('data-project-code') : null;
+            var projectBusiness = document.body.getAttribute('data-project-business') !== 'null' ? document.body.getAttribute('data-project-business') : null;
             var month = document.body.getAttribute('data-month') !== 'null' ? parseInt(document.body.getAttribute('data-month')) : null;
-            var employeeData = JSON.parse(document.body.getAttribute('data-employee-data') || '[]');
-            var projectId = document.body.getAttribute('data-project-id') !== 'null' ? document.body.getAttribute('data-project-id') : null;
-
-            console.log({ year, month, employeeData, projectId });
-
-            // Liste des noms de mois en français
-            const monthNames = [
-                'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-                'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+            var year = document.body.getAttribute('data-year') !== 'null' ? parseInt(document.body.getAttribute('data-year')) : null;
+            var employeeData = JSON.parse(document.body.getAttribute('data-employee-data'));
+            const months = [
+                'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
             ];
 
+            // Condition pour afficher le titre
+            if (month && year && projectCode && projectBusiness) {
+                document.getElementById('title').innerHTML = `${projectCode} - ${projectBusiness} - ${months[month - 1]} ${year}`;
+            }
+
             // Fonction pour obtenir les jours du mois
-            function getDaysInMonth(year, month) {
+            function getDaysInMonth(month, year) {
                 return new Date(year, month, 0).getDate();
             }
 
-            // Fonction pour vérifier si une date est un weekend
+            // Fonction pour déterminer si un jour est un weekend
             function isWeekend(date) {
                 const day = date.getDay();
                 return day === 0 || day === 6;
             }
 
-            // Affichage du titre avec le mois en français
-            if (year && month) {
-                document.getElementById('title').innerHTML = `Projet : ${document.body.getAttribute('data-project-business')} - Ville : ${document.body.getAttribute('data-project-city')} - Mois : ${monthNames[month - 1]} - Année : ${year}`;
-            }
-
             var container = document.getElementById('handsontable');
-            if (!container) {
-                console.error("Element with id 'handsontable' not found.");
-                return;
-            }
-
-            var daysInMonth = year && month ? getDaysInMonth(year, month) : 0;
-            var weekends = year && month ? Array.from({ length: daysInMonth }, (_, i) => {
+            var daysInMonth = month && year ? getDaysInMonth(month, year) : 0;
+            var weekends = month && year ? Array.from({ length: daysInMonth }, (_, i) => {
                 let date = new Date(year, month - 1, i + 1);
-                return isWeekend(date) ? i + 3 : null; // Ajouter 3 pour correspondre à l'index de la colonne dans Handsontable
-            }).filter(index => index !== null) : [];
+                return isWeekend(date) ? i + 3 : null;
+            }).filter(index => index !== null) : []; // +3 pour compenser le décalage des colonnes
 
             var hot = new Handsontable(container, {
                 data: employeeData,
-                colHeaders: ['ID Employé Projet', 'ID Employé', 'Employé', ...Array.from({ length: daysInMonth }, (_, i) => i + 1)],
+                colHeaders: ['id employé chantier', 'id employé', 'Employé', ...Array.from({ length: daysInMonth }, (_, i) => i + 1)],
                 columns: [
-                    { data: 'employee_projectId', readOnly: true },
-                    { data: 'employeeId', readOnly: true },
-                    { data: 'fullName', readOnly: true, sortIndicator: false },
+                    { data: 'employee_project_id', readOnly: true },
+                    { data: 'employee_id', readOnly: true },
+                    { data: 'full_name', readOnly: true, sortIndicator: false},
                     ...Array.from({ length: daysInMonth }, (_, i) => ({
                         data: `days.${i}`,
                         type: 'numeric',
@@ -136,13 +128,25 @@
                 licenseKey: 'non-commercial-and-evaluation'
             });
 
-            document.getElementById('save').addEventListener('click', function () {
+            // Fonction pour afficher un message d'erreur ou de succès
+            function showMessage(message, type) {
+                const messageContainer = document.getElementById('message-container');
+                const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+                messageContainer.className = `custom-alert fixed-message ${alertClass}`;
+                messageContainer.innerHTML = `<span class="font-medium">${message}</span>`;
+                setTimeout(() => {
+                    messageContainer.innerHTML = '';
+                }, 3000);
+            }
+
+            // Fonction pour envoyer les données au serveur
+            document.getElementById('save').addEventListener('click', function() {
                 const data = hot.getData();
                 const formattedData = data.map(row => {
                     return {
-                        employee_projectId: parseInt(row[0]),
-                        employeeId: parseInt(row[1]),
-                        projectId: projectId,
+                        employee_project_id: parseInt(row[0]),
+                        employee_id: parseInt(row[1]),
+                        project_id: project_id,
                         month: month,
                         year: year,
                         days: row.slice(3).map(day => {
@@ -150,9 +154,36 @@
                         })
                     };
                 });
+                fetch('{{ route('pointage.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({data: formattedData})
+                })
+                .then(response => {
+                    console.log(response);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    if (data.success) {
+                        showMessage('Données sauvegardées avec succès!', 'success');
+                    } else {
+                        showMessage('Erreur lors de la sauvegarde des données : ' + data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    showMessage('Erreur de requête : ' + error.message, 'error');
+                });
                 console.log(formattedData);
             });
         });
     </script>
+
     </body>
 </x-app-layout>

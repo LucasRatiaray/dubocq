@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('time_trackings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('projectId')->constrained('projects');
-            $table->foreignId('employeeId')->constrained('employees');
+            $table->foreignId('project_id')->constrained('projects');
+            $table->foreignId('employee_id')->constrained('employees');
             $table->decimal('hours', 10, 2)->nullable();
             $table->decimal('night_hours', 10, 2)->nullable();
             $table->enum('absenceType', ['ABS', 'FERIE', 'RTT'])->nullable();

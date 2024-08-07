@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('baskets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('zoneId')->constrained('zones');
+            $table->foreignId('zone_id')->constrained('zones');
             $table->decimal('basket37h', 10, 2);
             $table->decimal('basket35h', 10, 2);
             $table->timestamps();

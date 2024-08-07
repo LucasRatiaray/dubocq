@@ -6,7 +6,10 @@ use App\Models\Employee;
 use App\Models\Project;
 use App\Models\TimeTracking;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class PointageController extends Controller
@@ -14,31 +17,38 @@ class PointageController extends Controller
     public function index(): View
     {
         $projects = Project::all();
-
         return view('pointage', compact('projects'));
+    }
+
+    private function getAvailableEmployes($project_id)
+    {
+        return Employee::whereDoesntHave('projects', function ($query) use ($project_id) {
+            $query->where('project_id', $project_id);
+        })->get();
     }
 
     public function show(Request $request): View
     {
+        $projects = Project::all();
+
         $request->validate([
-            'projectId' => 'required|exists:projects,id',
+            'project_id' => 'required|exists:projects,id',
             'month' => 'required|integer|min:1|max:12',
             'year' => 'required|integer|min:1900|max:2099'
         ]);
 
-        $project = Project::findOrFail($request->input('projectId'));
+        $project = Project::findOrFail($request->project_id);
         $month = $request->input('month');
         $year = $request->input('year');
         $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 
-        // Mise à jour de la requête pour utiliser les bons noms de colonnes
-        $employees = Employee::join('employee_projects', 'employees.id', '=', 'employee_projects.employeeId')
-            ->where('employee_projects.projectId', $project->id)
-            ->get(['employees.*', 'employee_projects.id as employee_projectId']);
+        $employees = Employee::join('employee_projects', 'employees.id', '=', 'employee_projects.employee_id')
+            ->where('employee_projects.project_id', $project->id)
+            ->get(['employees.*', 'employee_projects.id as employee_project_id']);
 
-        $allEmployees = $this->getAvailableEmployees($project->id);
+        $allEmployees = $this->getAvailableEmployes($project->id);
 
-        $timeTrackings = TimeTracking::where('projectId', $project->id)
+        $timeTrackings = TimeTracking::where('project_id', $project->id)
             ->whereMonth('date', $month)
             ->whereYear('date', $year)
             ->get();
@@ -48,29 +58,106 @@ class PointageController extends Controller
             $days = array_fill(0, $daysInMonth, '');
 
             foreach ($timeTrackings as $timeTracking) {
-                if ($timeTracking->employeeId == $employee->id) {  // Vérifiez également que la colonne dans TimeTracking est correcte
+                if ($timeTracking->employee_id == $employee->id) {
                     $day = (int) Carbon::parse($timeTracking->date)->format('d');
                     $days[$day - 1] = $timeTracking->hours;
                 }
             }
 
             $employeeData[] = [
-                'employee_projectId' => $employee->employee_projectId,
-                'employeeId' => $employee->id,
-                'fullName' => $employee->firstname . ' ' . $employee->lastname,
-                'days' => $days,
+                'employee_project_id' => $employee->employee_project_id,
+                'employee_id' => $employee->id,
+                'full_name' => $employee->lastName . ' ' . $employee->firstName,
+                'days' => $days
             ];
         }
 
-        $projects = Project::all();
-
-        return view('pointage', compact('project', 'month', 'year', 'employeeData', 'allEmployees', 'projects'));
+        return view('pointage', compact('projects', 'project', 'month', 'year', 'employeeData', 'allEmployees'));
     }
 
-    private function getAvailableEmployees($projectId)
+    public function store(Request $request): JsonResponse
     {
-        return Employee::whereDoesntHave('projects', function ($query) use ($projectId) {
-            $query->where('projectId', $projectId);
-        })->get();
+        Log::info('store method called', ['data' => $request->all()]);
+
+        try {
+            $request->validate([
+                'data' => 'required|array',
+            ]);
+
+            $data = $request->input('data');
+
+            if (!is_array($data)) {
+                Log::error('Invalid data format', ['data' => $data]);
+                return response()->json(['success' => false, 'message' => 'Invalid data format.'], 400);
+            }
+
+            foreach ($data as $employee) {
+                if (!is_array($employee) || !isset($employee['employee_id'], $employee['project_id'], $employee['month'], $employee['year'], $employee['days'])) {
+                    Log::error('Invalid employee entry', ['employee' => $employee]);
+                    continue; // Skip invalid entries
+                }
+
+                $employee_id = $employee['employee_id'];
+                $project_id = $employee['project_id'];
+                $month = $employee['month'];
+                $year = $employee['year'];
+
+                // Vérifiez si les valeurs ne sont pas nulles
+                if (is_null($employee_id) || is_null($project_id)) {
+                    Log::error('Null value detected', ['employee_id' => $employee_id, 'project_id' => $project_id]);
+                    continue;
+                }
+
+                foreach ($employee['days'] as $day => $hours) {
+                    if ($hours !== null) {
+                        $date = Carbon::createFromDate($year, $month, $day + 1)->format('Y-m-d');
+                        Log::info('Saving data', [
+                            'project_id' => $project_id,
+                            'employee_id' => $employee_id,
+                            'date' => $date,
+                            'hours' => $hours
+                        ]);
+                        TimeTracking::updateOrCreate(
+                            [
+                                'project_id' => $project_id,
+                                'employee_id' => $employee_id,
+                                'date' => $date
+                            ],
+                            [
+                                'project_id' => $project_id,
+                                'employee_id' => $employee_id,
+                                'hours' => $hours
+                            ]
+                        );
+                    }
+                }
+            }
+
+            Log::info('Data saved successfully');
+            return response()->json(['success' => true, 'message' => 'Données sauvegardées avec succès!']);
+        } catch (\Exception $e) {
+            Log::error('Error saving data', ['exception' => $e]);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function addEmployeeToProject(Request $request, $id): RedirectResponse
+    {
+        $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'month' => 'required|integer|min:1|max:12',
+            'year' => 'required|integer|min:1900|max:2099'
+        ]);
+
+        $project = Project::findOrFail($id);
+        $employee = Employee::findOrFail($request->employee_id);
+
+        $employee->projects()->attach($project->id);
+
+        return redirect()->route('pointage.show', [
+            'project_id' => $project->id,
+            'month' => $request->month,
+            'year' => $request->year
+        ])->with('success', 'Employé ajouté au projet avec succès!');
     }
 }

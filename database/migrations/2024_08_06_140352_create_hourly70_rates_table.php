@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('hourly70_rates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employeeId')->constrained('employees');
+            $table->foreignId('employee_id')->constrained('employees');
             $table->decimal('rate', 10, 2);
             $table->timestamps();
         });

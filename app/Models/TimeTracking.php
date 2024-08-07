@@ -11,8 +11,8 @@ class TimeTracking extends Model
     use HasFactory;
 
     protected $fillable = [
-        'projectId',
-        'employeeId',
+        'project_id',
+        'employee_id',
         'hours',
         'night_hours',
         'absenceType',
@@ -21,12 +21,12 @@ class TimeTracking extends Model
 
     public function project(): BelongsTo
     {
-        return $this->belongsTo(Project::class, 'projectId');
+        return $this->belongsTo(Project::class, 'project_id');
     }
 
     public function employee(): BelongsTo
     {
-        return $this->belongsTo(Employee::class, 'employeeId');
+        return $this->belongsTo(Employee::class, 'employee_id');
     }
 
 }

@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             BasketSeeder::class,
             DriverSeeder::class,
             ProjectSeeder::class,
+            EmployeeProjectSeeder::class,
         ]);
     }
 }

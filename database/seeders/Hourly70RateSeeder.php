@@ -14,9 +14,9 @@ class Hourly70RateSeeder extends Seeder
     public function run(): void
     {
         $hourly70_rate = [
-            ['employeeId' => 1, 'rate' => 29.82],
-            ['employeeId' => 2, 'rate' => 40.66],
-            ['employeeId' => 3, 'rate' => 26.33],
+            ['employee_id' => 1, 'rate' => 29.82],
+            ['employee_id' => 2, 'rate' => 40.66],
+            ['employee_id' => 3, 'rate' => 26.33],
         ];
 
         DB::table('hourly70_rates')->insert($hourly70_rate);

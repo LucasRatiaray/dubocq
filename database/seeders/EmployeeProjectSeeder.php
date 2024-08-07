@@ -14,9 +14,9 @@ class EmployeeProjectSeeder extends Seeder
     public function run(): void
     {
         DB::table('employee_projects')->insert([
-            ['employeeId' => 1, 'projectId' => 1, 'description' => null],
-            ['employeeId' => 2, 'projectId' => 1, 'description' => null],
-            ['employeeId' => 3, 'projectId' => 1, 'description' => null]
+            ['employee_id' => 1, 'project_id' => 1, 'description' => null],
+            ['employee_id' => 2, 'project_id' => 1, 'description' => null],
+            ['employee_id' => 3, 'project_id' => 1, 'description' => null]
         ]);
     }
 }

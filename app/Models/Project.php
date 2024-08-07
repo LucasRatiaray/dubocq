@@ -23,12 +23,12 @@ class Project extends Model
 
     public function zone(): BelongsTo
     {
-        return $this->belongsTo(Zone::class, 'zoneId');
+        return $this->belongsTo(Zone::class, 'zone_id');
     }
 
     public function code(): BelongsTo
     {
-        return $this->belongsTo(Code::class, 'codeId');
+        return $this->belongsTo(Code::class, 'code_id');
     }
 
     public function employees(): BelongsToMany

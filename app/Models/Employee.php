@@ -18,7 +18,7 @@ class Employee extends Model
 
     public function projects(): BelongsToMany
     {
-        return $this->belongsToMany(Project::class);
+        return $this->belongsToMany(Project::class, 'employee_projects');
     }
 
     public function hourlyRats(): BelongsToMany
@@ -31,8 +31,4 @@ class Employee extends Model
         return $this->belongsToMany(TimeTracking::class);
     }
 
-    public function employeeProjects(): BelongsToMany
-    {
-        return $this->belongsToMany(EmployeeProject::class);
-    }
 }

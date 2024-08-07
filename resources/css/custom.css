@@ -1,8 +1,8 @@
 .weekend {
-    background-color: #e0e0e0 !important; /* Couleur grise pour les weekends */
+    background-color: #e0e0e0 !important;
 }
 
-.alert {
+.custom-alert {
     padding: 15px;
     margin-top: 10px;
     border: 1px solid transparent;

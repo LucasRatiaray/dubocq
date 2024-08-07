@@ -8,16 +8,18 @@ Route::get('/', function () {
     return view('home');
 })->middleware(['auth', 'verified'])->name('home');
 
-Route::match(['get', 'post'], '/pointage', [PointageController::class, 'index'])
-    ->name('pointage.index')
-    ->middleware(['auth', 'verified']);
-
-Route::match(['get', 'post'],'/pointage/table', [PointageController::class, 'show'])->name('pointage.table');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/pointage', [PointageController::class, 'index'])->name('pointage');
+    Route::post('/pointage', [PointageController::class, 'show'])->name('pointage');
+    Route::post('/pointage/store', [PointageController::class, 'store'])->name('pointage.store');
+    Route::post('/pointage/add/{id}', [PointageController::class, 'addEmployeeToProject'])->name('pointage.add');
+    Route::get('/pointage/show', [PointageController::class, 'show'])->name('pointage.show');
+
     Route::redirect('/dashboard', '/admin')->name('dashboard');
 });
 

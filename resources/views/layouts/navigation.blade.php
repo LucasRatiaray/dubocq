@@ -17,18 +17,13 @@
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('pointage')" :active="request()->routeIs('pointage')">
+                    <x-nav-link :href="route('pointage.index')" :active="request()->routeIs('pointage.*')">
                         {{ __('Pointage') }}
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Tableau de bord') }}
-                    </x-nav-link>
-                </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('calculate-cost.form')" :active="request()->routeIs('calculate-cost.form')">
-                        {{ __('Calculer coût') }}
                     </x-nav-link>
                 </div>
             </div>

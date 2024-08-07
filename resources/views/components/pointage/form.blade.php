@@ -1,5 +1,5 @@
 <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 mt-6">
-    <form class="flex justify-center items-center gap-4" action="{{ route('pointage') }}" method="POST">
+    <form class="flex justify-center items-center gap-4" action="{{ route('pointage.show') }}" method="POST">
         @csrf
         <div class="flex">
             <label for="project_id" class="sr-only">Choisir un chantier</label>

@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hourly70_rates', function (Blueprint $table) {
+        Schema::create('baskets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained('employees');
-            $table->decimal('rate', 10, 2);
+            $table->decimal('basket', 10, 2);
+            $table->decimal('basket_charged', 10, 2)->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hourly70_rates');
+        Schema::dropIfExists('baskets');
     }
 };

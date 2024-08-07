@@ -13,15 +13,25 @@ class Employee extends Model
     protected $fillable = [
         'last_name',
         'first_name',
-        'description',
+        'hourly_rate',
+        'hourly_rate_charged',
+        'status',
+        'contract',
     ];
+
+    protected static $rateIncreasePercentage = 0.70; // 70%
+
+    public static function setRateIncreasePercentage($percentage)
+    {
+        self::$rateIncreasePercentage = $percentage;
+    }
 
     public function projects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class, 'employee_projects');
     }
 
-    public function hourlyRats(): BelongsToMany
+    public function hourlyRates(): BelongsToMany
     {
         return $this->belongsToMany(HourlyRate::class);
     }
@@ -30,5 +40,4 @@ class Employee extends Model
     {
         return $this->belongsToMany(TimeTracking::class);
     }
-
 }

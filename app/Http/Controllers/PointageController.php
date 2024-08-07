@@ -67,7 +67,7 @@ class PointageController extends Controller
             $employeeData[] = [
                 'employee_project_id' => $employee->employee_project_id,
                 'employee_id' => $employee->id,
-                'full_name' => $employee->lastName . ' ' . $employee->firstName,
+                'full_name' => $employee->last_name . ' ' . $employee->first_name,
                 'days' => $days
             ];
         }

@@ -24,9 +24,9 @@ class CodeSeeder extends Seeder
         foreach ($codes as $code) {
             $description = null;
             if (str_starts_with($code, '1')) {
-                $description = 'MH';
-            } elseif (str_starts_with($code, '2')) {
                 $description = 'Logement neuf';
+            } elseif (str_starts_with($code, '2')) {
+                $description = 'Monument Historique';
             }
             DB::table('codes')->insert([
                 'code' => $code,

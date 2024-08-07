@@ -13,12 +13,13 @@ class Project extends Model
     use HasFactory;
 
     protected $fillable = [
-        'codeId',
+        'code',
+        'zone_id',
         'city',
         'address',
         'business',
-        'km',
-        'driver',
+        'kilometers',
+        'driver_id',
     ];
 
     public function zone(): BelongsTo
@@ -44,5 +45,10 @@ class Project extends Model
     public function timeTrackings(): HasMany
     {
         return $this->hasMany(TimeTracking::class, 'time_tracking_project');
+    }
+
+    public function driver(): BelongsTo
+    {
+        return $this->belongsTo(Driver::class, 'driver_id');
     }
 }

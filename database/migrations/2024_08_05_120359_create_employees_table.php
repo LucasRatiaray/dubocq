@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
-            $table->string('lastName', 100);
-            $table->string('firstName', 100);
-            $table->float('hourlyRate');
-            $table->enum('status', ['OUVRIER', 'ETAM']);
+            $table->string('last_name', 100);
+            $table->string('first_name', 100);
+            $table->decimal('hourly_rate', 20, 10);
+            $table->decimal('hourly_rate_charged', 20, 10)->nullable();
+            $table->enum('status', ['OUVRIER', 'ETAM'])->default('OUVRIER');
+            $table->enum('contract', ['35H', '37H'])->default('37H');
             $table->timestamps();
         });
     }

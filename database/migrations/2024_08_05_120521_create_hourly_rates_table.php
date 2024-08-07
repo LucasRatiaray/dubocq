@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('hourly_rates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained('employees');
-            $table->foreignId('zone_id')->constrained('zones');
+            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
+            $table->foreignId('zone_id')->constrained('zones')->onDelete('cascade');
             $table->decimal('rate', 10, 2);
             $table->timestamps();
         });

@@ -11,8 +11,8 @@ class Driver extends Model
     use HasFactory;
 
     protected $fillable = [
-        'lastname',
-        'firstname',
+        'last_name',
+        'first_name',
     ];
 
     public function projects(): BelongsToMany

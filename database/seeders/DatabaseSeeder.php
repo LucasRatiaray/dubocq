@@ -25,7 +25,6 @@ class DatabaseSeeder extends Seeder
             CodeSeeder::class,
             EmployeeSeeder::class,
             HourlyRateSeeder::class,
-            BasketSeeder::class,
             DriverSeeder::class,
             ProjectSeeder::class,
             EmployeeProjectSeeder::class,

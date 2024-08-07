@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('time_trackings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained('projects');
-            $table->foreignId('employee_id')->constrained('employees');
-            $table->decimal('hours', 10, 2)->nullable();
-            $table->decimal('night_hours', 10, 2)->nullable();
-            $table->enum('absenceType', ['ABS', 'FERIE', 'RTT'])->nullable();
+            $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
+            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
+            $table->float('hours', 10)->nullable();
+            $table->float('night_hours', 10)->nullable();
+            $table->enum('absence_type', ['ABS', 'FERIE', 'RTT'])->nullable();
             $table->date('date');
             $table->timestamps();
         });

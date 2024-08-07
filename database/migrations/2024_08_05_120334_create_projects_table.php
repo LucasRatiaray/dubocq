@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('code_id')->constrained('codes');
+            $table->integer('code');
+            $table->foreignId('zone_id')->constrained('zones')->onDelete('cascade');
             $table->string('city', 100);
             $table->string('address', 255)->nullable();
             $table->string('business', 100);
-            $table->float('km');
-            $table->string('driver', 100)->nullable();
+            $table->float('kilometers');
+            $table->foreignId('driver_id')->nullable()->constrained('drivers')->onDelete('cascade');
             $table->timestamps();
         });
     }

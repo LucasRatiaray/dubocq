@@ -3,7 +3,8 @@
     <p>Code: {{ $project->code }}</p>
     <p>Ville: {{ $project->city }}</p>
     <p>Adresse: {{ $project->address }}</p>
-    <p>Kilomètres: {{ $project->kilometers }}</p>
+    <p>Kilomètres: {{ $project->kilometers }} km</p>
+    <p>{{ $project->zone->name }}</p>
     <p>Coût total: {{ number_format($totalCost, 2) }} €</p>
 
     <h2>Coûts Mensuels</h2>
@@ -18,9 +19,11 @@
         <h3>{{ $month }}</h3>
         <ul>
             @foreach ($employeeCosts as $employeeCost)
+                @if ($employeeCost['cost'] != 0)
                 <li>{{ $employeeCost['employee']->first_name }} {{ $employeeCost['employee']->last_name }}:
                     {{ number_format($employeeCost['cost'], 2) }} €
                 </li>
+                @endif
             @endforeach
         </ul>
     @endforeach

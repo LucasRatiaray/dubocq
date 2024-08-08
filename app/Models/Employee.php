@@ -17,13 +17,19 @@ class Employee extends Model
         'hourly_rate_charged',
         'status',
         'contract',
+        'basket',
     ];
 
-    protected static $rateIncreasePercentage = 0.70; // 70%
+    protected static float $rateIncreasePercentage = 0.70; // 70%
 
-    public static function setRateIncreasePercentage($percentage)
+    public static function setRateIncreasePercentage($percentage): void
     {
         self::$rateIncreasePercentage = $percentage;
+    }
+
+    public static function getRateIncreasePercentage(): float
+    {
+        return self::$rateIncreasePercentage;
     }
 
     public function projects(): BelongsToMany
@@ -39,5 +45,10 @@ class Employee extends Model
     public function timeTrackings(): BelongsToMany
     {
         return $this->belongsToMany(TimeTracking::class);
+    }
+
+    public function baskets(): BelongsToMany
+    {
+        return $this->belongsToMany(Basket::class);
     }
 }

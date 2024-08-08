@@ -8,13 +8,7 @@ use App\Models\Code;
 
 class ProjectObserver
 {
-    public function creating(Project $project): void
-    {
-        $this->assignZone($project);
-        $this->assignCodeDescription($project);
-    }
-
-    public function updating(Project $project): void
+    public function saving(Project $project): void
     {
         $this->assignZone($project);
         $this->assignCodeDescription($project);

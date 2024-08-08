@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Basket;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,6 +13,8 @@ class BasketSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Basket::create([
+            'basket' => 11,
+        ]);
     }
 }

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('zones', function (Blueprint $table) {
+        Schema::create('baskets', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100);
-            $table->decimal('kilometers_range_min');
-            $table->decimal('kilometers_range_max');
-            $table->decimal('tariff', 10, 2);
+            $table->decimal('basket', 10, 2);
+            $table->decimal('basket_charged', 10, 2)->nullable();
+            $table->decimal('basket_charged_daily_37H', 10, 2)->nullable();
+            $table->decimal('basket_charged_daily_35H', 10, 2)->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('zones');
+        Schema::dropIfExists('baskets');
     }
 };

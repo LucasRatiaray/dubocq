@@ -12,14 +12,17 @@ class HourlyRate extends Model
 
     protected $fillable = [
         'employee_id',
-        'project_id',
+        'zone_id',
         'rate',
-        'start',
-        'end',
     ];
 
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    public function zone(): BelongsTo
+    {
+        return $this->belongsTo(Zone::class);
     }
 }

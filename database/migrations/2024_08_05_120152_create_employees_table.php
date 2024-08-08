@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('hourly_rate_charged', 20, 10)->nullable();
             $table->enum('status', ['OUVRIER', 'ETAM'])->default('OUVRIER');
             $table->enum('contract', ['35H', '37H'])->default('37H');
+            $table->decimal('basket')->nullable();
             $table->timestamps();
         });
     }

@@ -12,12 +12,18 @@ class Zone extends Model
 
     protected $fillable = [
         'name',
-        'kilometers_range',
+        'kilometers_range_min',
+        'kilometers_range_max',
         'tariff'
     ];
 
     public function projects(): HasMany
     {
         return $this->hasMany(Project::class);
+    }
+
+    public function basketZones(): HasMany
+    {
+        return $this->hasMany(BasketZone::class);
     }
 }

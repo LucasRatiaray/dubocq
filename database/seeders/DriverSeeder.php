@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Driver;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class DriverSeeder extends Seeder
 {
@@ -14,17 +14,20 @@ class DriverSeeder extends Seeder
     public function run(): void
     {
         $drivers = [
-            ['lastname' => 'DEBRAY', 'firstname' => 'Eric'],
-            ['lastname' => 'DUBOCQ', 'firstname' => 'Mickael'],
-            ['lastname' => 'DUBOCQ', 'firstname' => 'Philippe'],
-            ['lastname' => 'FERREIRA DE ALMEIDA', 'firstname' => 'Gilles'],
-            ['lastname' => 'GRASSIN D\'ALPHONSE', 'firstname' => 'Geoffroy'],
-            ['lastname' => 'PELLETIER', 'firstname' => 'Bruno'],
-            ['lastname' => 'POCHON', 'firstname' => 'Cyril'],
-            ['lastname' => 'RIBEIRO FERNANDES', 'firstname' => 'Carlos'],
-            ['lastname' => 'THEVRET', 'firstname' => 'Antoine'],
-            ['lastname' => 'WILHELEM', 'firstname' => 'Stanislas'],
+            ['last_name' => 'DEBRAY', 'first_name' => 'Eric'],
+            ['last_name' => 'DUBOCQ', 'first_name' => 'Mickael'],
+            ['last_name' => 'DUBOCQ', 'first_name' => 'Philippe'],
+            ['last_name' => 'FERREIRA DE ALMEIDA', 'first_name' => 'Gilles'],
+            ['last_name' => "GRASSIN D'ALPHONSE", 'first_name' => 'Geoffroy'],
+            ['last_name' => 'PELLETIER', 'first_name' => 'Bruno'],
+            ['last_name' => 'POCHON', 'first_name' => 'Cyril'],
+            ['last_name' => 'RIBEIRO FERNANDES', 'first_name' => 'Carlos'],
+            ['last_name' => 'THEVRET', 'first_name' => 'Antoine'],
+            ['last_name' => 'WILHELEM', 'first_name' => 'Stanislas'],
         ];
-        DB::table('drivers')->insert($drivers);
+
+        foreach ($drivers as $driver) {
+            Driver::create($driver);
+        }
     }
 }

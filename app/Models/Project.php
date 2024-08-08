@@ -51,4 +51,60 @@ class Project extends Model
     {
         return $this->belongsTo(Driver::class, 'driver_id');
     }
+
+
+    public function calculateTotalCost(): float
+    {
+        $totalCost = 0;
+
+        foreach ($this->employeeProjects as $employeeProject) {
+            $employee = $employeeProject->employee;
+            $totalCost += $employee->calculateCostForProject($this);
+        }
+
+        return $totalCost;
+    }
+
+    public function calculateMonthlyCost()
+    {
+        $monthlyCosts = collect();
+
+        foreach ($this->employeeProjects as $employeeProject) {
+            $employee = $employeeProject->employee;
+            $employeeMonthlyCosts = $employee->calculateMonthlyCostForProject($this);
+
+            foreach ($employeeMonthlyCosts as $month => $cost) {
+                if (isset($monthlyCosts[$month])) {
+                    $monthlyCosts[$month] += $cost;
+                } else {
+                    $monthlyCosts[$month] = $cost;
+                }
+            }
+        }
+
+        return $monthlyCosts;
+    }
+
+    public function calculateMonthlyEmployeeCosts()
+    {
+        $monthlyEmployeeCosts = [];
+
+        foreach ($this->employeeProjects as $employeeProject) {
+            $employee = $employeeProject->employee;
+            $employeeMonthlyCosts = $employee->calculateMonthlyCostForProject($this);
+
+            foreach ($employeeMonthlyCosts as $month => $cost) {
+                if (!isset($monthlyEmployeeCosts[$month])) {
+                    $monthlyEmployeeCosts[$month] = [];
+                }
+
+                $monthlyEmployeeCosts[$month][] = [
+                    'employee' => $employee,
+                    'cost' => $cost,
+                ];
+            }
+        }
+
+        return $monthlyEmployeeCosts;
+    }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\PointageController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -18,6 +19,8 @@ Route::middleware('auth')->group(function () {
     Route::match(['post','get'],'/pointage/show', [PointageController::class, 'show'])->name('pointage.show');
     Route::post('/pointage/store', [PointageController::class, 'store'])->name('pointage.store');
     Route::post('/pointage/add/{id}', [PointageController::class, 'addEmployeeToProject'])->name('pointage.add');
+
+    Route::get('/projects/{project}', [ProjectController::class, 'show']);
 
     Route::redirect('/dashboard', '/admin')->name('dashboard');
 });

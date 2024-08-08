@@ -29,4 +29,11 @@ class TimeTracking extends Model
         return $this->belongsTo(Employee::class, 'employee_id');
     }
 
+    public static function getMonthlyHoursForProject($projectId)
+    {
+        return self::where('project_id', $projectId)
+            ->selectRaw('SUM(hours) as total_hours, TO_CHAR(date, \'YYYY-MM\') as month')
+            ->groupBy('month')
+            ->get();
+    }
 }

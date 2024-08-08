@@ -8,7 +8,7 @@
     <body
         data-project-id="{{ $project->id ?? 'null' }}"
         data-project-business="{{ $project->business ?? 'null' }}"
-        data-project-code="{{ $project->code->code ?? 'null' }}"
+        data-project-code="{{ $project->code ?? 'null' }}"
         data-month="{{ $month ?? 'null' }}"
         data-year="{{ $year ?? 'null'}}"
         data-employee-data="{{ json_encode($employeeData ?? []) }}"
@@ -162,24 +162,24 @@
                     },
                     body: JSON.stringify({data: formattedData})
                 })
-                .then(response => {
-                    console.log(response);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log(data);
-                    if (data.success) {
-                        showMessage('Données sauvegardées avec succès!', 'success');
-                    } else {
-                        showMessage('Erreur lors de la sauvegarde des données : ' + data.message, 'error');
-                    }
-                })
-                .catch(error => {
-                    showMessage('Erreur de requête : ' + error.message, 'error');
-                });
+                    .then(response => {
+                        console.log(response);
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log(data);
+                        if (data.success) {
+                            showMessage('Données sauvegardées avec succès!', 'success');
+                        } else {
+                            showMessage('Erreur lors de la sauvegarde des données : ' + data.message, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        showMessage('Erreur de requête : ' + error.message, 'error');
+                    });
                 console.log(formattedData);
             });
         });

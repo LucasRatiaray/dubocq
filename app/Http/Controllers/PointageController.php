@@ -6,6 +6,7 @@ use App\Models\Employee;
 use App\Models\Project;
 use App\Models\TimeTracking;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,11 +21,11 @@ class PointageController extends Controller
         return view('pointage', compact('projects'));
     }
 
-    private function getAvailableEmployes($project_id)
+    private function getAvailableEmployees($project_id): Collection
     {
         return Employee::whereDoesntHave('projects', function ($query) use ($project_id) {
             $query->where('project_id', $project_id);
-        })->get();
+        })->orderBy('last_name')->get();
     }
 
     public function show(Request $request): View
@@ -46,7 +47,7 @@ class PointageController extends Controller
             ->where('employee_projects.project_id', $project->id)
             ->get(['employees.*', 'employee_projects.id as employee_project_id']);
 
-        $allEmployees = $this->getAvailableEmployes($project->id);
+        $allEmployees = $this->getAvailableEmployees($project->id);
 
         $timeTrackings = TimeTracking::where('project_id', $project->id)
             ->whereMonth('date', $month)

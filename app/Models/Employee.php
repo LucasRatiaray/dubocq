@@ -36,6 +36,20 @@ class Employee extends Model
         return $this->hasMany(TimeTracking::class);
     }
 
+    public function calculateHourlyCost(BasketZone $basketZone): float
+    {
+        if ($this->status === 'ETAM') {
+            return $this->basket;
+        } else {
+            if ($this->contract === '37H') {
+                $basketZoneChargedDaily = $basketZone->basket_zone_charged_daily_37H;
+            } else {
+                $basketZoneChargedDaily = $basketZone->basket_zone_charged_daily_35H;
+            }
+            return $this->basket + $basketZoneChargedDaily;
+        }
+    }
+
     public function calculateCostForProject(Project $project): float
     {
         $totalDayHours = $this->timeTrackings()->where('project_id', $project->id)->sum('day_hours');  // Utilisation de 'day_hours'

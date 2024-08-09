@@ -13,9 +13,10 @@ class TimeTracking extends Model
     protected $fillable = [
         'project_id',
         'employee_id',
-        'hours',
+        'day_hours',  // Renommé de 'hours' à 'day_hours'
         'night_hours',
-        'absenceType',
+        'holiday_hours',
+        'rtt_hours',
         'date',
     ];
 
@@ -32,7 +33,7 @@ class TimeTracking extends Model
     public static function getMonthlyHoursForProject($projectId)
     {
         return self::where('project_id', $projectId)
-            ->selectRaw('SUM(hours) as total_hours, TO_CHAR(date, \'YYYY-MM\') as month')
+            ->selectRaw('SUM(day_hours) as total_hours, TO_CHAR(date, \'YYYY-MM\') as month')
             ->groupBy('month')
             ->get();
     }

@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
-            $table->float('hours', 10)->nullable();
+            $table->float('day_hours', 10)->nullable();
             $table->float('night_hours', 10)->nullable();
-            $table->enum('absence_type', ['ABS', 'FERIE', 'RTT'])->nullable();
+            $table->float('holiday_hours', 10)->nullable();
+            $table->float('rtt_hours', 10)->nullable();
             $table->date('date');
             $table->timestamps();
         });

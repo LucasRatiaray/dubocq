@@ -98,9 +98,11 @@ class PointageController extends Controller
     {
         $request->validate([
             'data' => 'required|array',
+            'hour_type' => 'required|string|in:day_hours,night_hours,holiday_hours,rtt_hours',
         ]);
 
         $data = $request->input('data');
+        $hourType = $request->input('hour_type');
 
         foreach ($data as $employee) {
             $employee_id = $employee['employee_id'];
@@ -110,6 +112,14 @@ class PointageController extends Controller
 
             foreach ($employee['days'] as $day => $hours) {
                 if ($hours !== null) {
+                    // Validation des heures : elles doivent être comprises entre 0 et 7.4
+                    if (!is_numeric($hours) || $hours < 0 || $hours > 7.4) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Les heures doivent être des nombres compris entre 0 et 7.4 !',
+                        ], 400);
+                    }
+
                     $date = Carbon::createFromDate($year, $month, $day + 1)->format('Y-m-d');
 
                     // Récupérer ou créer l'enregistrement de suivi de temps
@@ -120,7 +130,7 @@ class PointageController extends Controller
                     ]);
 
                     // Mettre à jour les heures spécifiques en fonction du type
-                    $timeTracking->{$request->input('hour_type', 'day_hours')} = $hours;
+                    $timeTracking->{$hourType} = $hours;
 
                     // Sauvegarder les modifications
                     $timeTracking->save();

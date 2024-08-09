@@ -168,25 +168,54 @@
             setTimeout(() => {
                 successContainer.style.display = 'none';
                 errorContainer.style.display = 'none';
-            }, 3000);
+            }, 4000);
         }
 
         // Exemple d'utilisation dans le gestionnaire de clic sur le bouton de sauvegarde
         document.getElementById('save').addEventListener('click', function() {
             const data = hot.getData();
+            let hasValidHours = false;
+            let validationError = false;
+
             const formattedData = data.map(row => {
+                const days = row.slice(3).map(day => {
+                    const value = day !== null && day !== undefined && day.toString().trim() !== '' ? parseFloat(day) : null;
+
+                    // Vérification si la valeur est un nombre valide entre 0 et 7.4
+                    if (value !== null) {
+                        if (isNaN(value) || value < 0 || value > 7.4) {
+                            validationError = true;
+                        } else {
+                            hasValidHours = true; // Marquer qu'une heure valide a été saisie
+                        }
+                    }
+
+                    return value;
+                });
+
                 return {
                     employee_project_id: parseInt(row[0]),
                     employee_id: parseInt(row[1]),
                     project_id: project_id,
                     month: month,
                     year: year,
-                    days: row.slice(3).map(day => {
-                        return day !== null && day !== undefined && day.toString().trim() !== '' ? parseFloat(day) : null;
-                    })
+                    days: days
                 };
             });
 
+            // Affichage du message d'erreur si les heures ne sont pas valides
+            if (validationError) {
+                showMessage('Les heures doivent être des nombres compris entre 0 et 7.4 !', 'error');
+                return;
+            }
+
+            // Affichage du message d'erreur si aucune heure n'a été saisie
+            if (!hasValidHours) {
+                showMessage('Erreur : Aucune heure n\'a été saisie.', 'error');
+                return;
+            }
+
+            // Envoyer les données si tout est valide
             fetch('{{ route('pointage.store') }}', {
                 method: 'POST',
                 headers: {

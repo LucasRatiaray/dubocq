@@ -61,7 +61,7 @@ class PointageController extends Controller
             foreach ($timeTrackings as $timeTracking) {
                 if ($timeTracking->employee_id == $employee->id) {
                     $day = (int) Carbon::parse($timeTracking->date)->format('d');
-                    $days[$day - 1] = $timeTracking->hours;
+                    $days[$day - 1] = $timeTracking->day_hours;  // Utilisation de 'day_hours' au lieu de 'hours'
                 }
             }
 
@@ -109,14 +109,14 @@ class PointageController extends Controller
                     continue;
                 }
 
-                foreach ($employee['days'] as $day => $hours) {
-                    if ($hours !== null) {
+                foreach ($employee['days'] as $day => $day_hours) {  // Renommé 'hours' en 'day_hours'
+                    if ($day_hours !== null) {
                         $date = Carbon::createFromDate($year, $month, $day + 1)->format('Y-m-d');
                         Log::info('Saving data', [
                             'project_id' => $project_id,
                             'employee_id' => $employee_id,
                             'date' => $date,
-                            'hours' => $hours
+                            'day_hours' => $day_hours  // Renommé 'hours' en 'day_hours'
                         ]);
                         TimeTracking::updateOrCreate(
                             [
@@ -127,7 +127,7 @@ class PointageController extends Controller
                             [
                                 'project_id' => $project_id,
                                 'employee_id' => $employee_id,
-                                'hours' => $hours
+                                'day_hours' => $day_hours  // Renommé 'hours' en 'day_hours'
                             ]
                         );
                     }

@@ -64,7 +64,7 @@
                 columns: [
                     { data: 'employee_project_id', readOnly: true },
                     { data: 'employee_id', readOnly: true },
-                    { data: 'full_name', readOnly: true, sortIndicator: false},
+                    { data: 'full_name', readOnly: true, sortIndicator: false },
                     ...Array.from({ length: daysInMonth }, (_, i) => ({
                         data: `days.${i}`,
                         type: 'numeric',

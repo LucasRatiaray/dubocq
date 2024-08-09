@@ -31,47 +31,17 @@ class Employee extends Model
         return $this->belongsToMany(Project::class, 'employee_projects');
     }
 
-    public function hourlyRates(): BelongsToMany
-    {
-        return $this->belongsToMany(HourlyRate::class);
-    }
-
-    public function baskets(): BelongsToMany
-    {
-        return $this->belongsToMany(Basket::class);
-    }
-
-    public function basketZones(): BelongsToMany
-    {
-        return $this->belongsToMany(BasketZone::class);
-    }
-
     public function timeTrackings(): HasMany
     {
         return $this->hasMany(TimeTracking::class);
     }
 
-
-    public function calculateHourlyCost(BasketZone $basketZone): float
-    {
-        if ($this->status === 'ETAM') {
-            return $this->basket;
-        } else {
-            if ($this->contract === '37H') {
-                $basketZoneChargedDaily = $basketZone->basket_zone_charged_daily_37H;
-            } else {
-                $basketZoneChargedDaily = $basketZone->basket_zone_charged_daily_35H;
-            }
-            return $this->basket + $basketZoneChargedDaily;
-        }
-    }
-
     public function calculateCostForProject(Project $project): float
     {
-        $totalHours = $this->timeTrackings()->where('project_id', $project->id)->sum('hours');
+        $totalDayHours = $this->timeTrackings()->where('project_id', $project->id)->sum('day_hours');  // Utilisation de 'day_hours'
         $basketZone = BasketZone::where('zone_id', $project->zone_id)->first();
         $hourlyCost = $this->calculateHourlyCost($basketZone);
-        return $hourlyCost * $totalHours;
+        return $hourlyCost * $totalDayHours;
     }
 
     public function calculateMonthlyCostForProject(Project $project): object
@@ -81,7 +51,7 @@ class Employee extends Model
 
         return $this->timeTrackings()
             ->where('project_id', $project->id)
-            ->selectRaw('SUM(hours) as total_hours, TO_CHAR(date, \'YYYY-MM\') as month')
+            ->selectRaw('SUM(day_hours) as total_hours, TO_CHAR(date, \'YYYY-MM\') as month')
             ->groupBy('month')
             ->get()
             ->mapWithKeys(function ($item) use ($hourlyCost) {

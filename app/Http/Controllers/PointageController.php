@@ -111,16 +111,19 @@ class PointageController extends Controller
             foreach ($employee['days'] as $day => $hours) {
                 if ($hours !== null) {
                     $date = Carbon::createFromDate($year, $month, $day + 1)->format('Y-m-d');
-                    TimeTracking::updateOrCreate(
-                        [
-                            'project_id' => $project_id,
-                            'employee_id' => $employee_id,
-                            'date' => $date
-                        ],
-                        [
-                            $request->input('hour_type', 'day_hours') => $hours
-                        ]
-                    );
+
+                    // Récupérer ou créer l'enregistrement de suivi de temps
+                    $timeTracking = TimeTracking::firstOrNew([
+                        'project_id' => $project_id,
+                        'employee_id' => $employee_id,
+                        'date' => $date
+                    ]);
+
+                    // Mettre à jour les heures spécifiques en fonction du type
+                    $timeTracking->{$request->input('hour_type', 'day_hours')} = $hours;
+
+                    // Sauvegarder les modifications
+                    $timeTracking->save();
                 }
             }
         }

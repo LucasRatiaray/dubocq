@@ -91,7 +91,8 @@
                 ...Array.from({ length: daysInMonth }, (_, i) => ({
                     data: `days.${i}`,
                     type: 'numeric',
-                    readOnly: false
+                    readOnly: false,
+                    validator: numericValidator // Utiliser un validateur personnalisé pour les colonnes numériques
                 }))
             ],
             rowHeaders: true,
@@ -114,13 +115,24 @@
                         // Convertir la valeur en nombre
                         const numericValue = parseFloat(value);
 
+                        // Récupérer le type d'heure actuel
+                        const hourType = document.querySelector('form button[name="hour_type"].bg-green-500, form button[name="hour_type"].bg-purple-500, form button[name="hour_type"].bg-yellow-500, form button[name="hour_type"].bg-cyan-500').value;
+
                         // Vérifiez la valeur et appliquez la couleur en conséquence
                         if (isNaN(numericValue)) {
                             td.style.backgroundColor = ''; // Couleur par défaut si la valeur n'est pas un nombre
                         } else if (numericValue === 0) {
                             td.style.backgroundColor = '#ffcccc'; // Rouge pour la valeur 0
                         } else if (numericValue >= 1 && numericValue <= 12) {
-                            td.style.backgroundColor = '#ccffcc'; // Vert clair pour les valeurs entre 1 et 12
+                            if (hourType === 'day_hours') {
+                                td.style.backgroundColor = '#ccffcc'; // Vert clair pour day_hours
+                            } else if (hourType === 'night_hours') {
+                                td.style.backgroundColor = '#e6ccff'; // Violet clair pour night_hours
+                            } else if (hourType === 'holiday_hours') {
+                                td.style.backgroundColor = '#ffffcc'; // Jaune clair pour holiday_hours
+                            } else if (hourType === 'rtt_hours') {
+                                td.style.backgroundColor = '#ccffff'; // Cyan clair pour rtt_hours
+                            }
                         } else {
                             td.style.backgroundColor = ''; // Couleur par défaut pour les autres valeurs
                         }
@@ -135,6 +147,15 @@
             },
             licenseKey: 'non-commercial-and-evaluation'
         });
+
+        // Fonction de validation personnalisée pour les valeurs numériques
+        function numericValidator(value, callback) {
+            if (value === null || value === '') {
+                callback(true); // Valide si la cellule est vide
+            } else {
+                callback(!isNaN(parseFloat(value)) && isFinite(value)); // Valide uniquement si la valeur est un nombre
+            }
+        }
 
         // Fonction pour afficher un message d'erreur ou de succès
         function showMessage(message, type) {
@@ -162,13 +183,17 @@
                     })
                 };
             });
+
             fetch('{{ route('pointage.store') }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
-                body: JSON.stringify({data: formattedData})
+                body: JSON.stringify({
+                    data: formattedData,
+                    hour_type: document.querySelector('form button[name="hour_type"].bg-green-500, form button[name="hour_type"].bg-purple-500, form button[name="hour_type"].bg-yellow-500, form button[name="hour_type"].bg-cyan-500').value // Récupère le type d'heures sélectionné
+                })
             })
                 .then(response => {
                     if (!response.ok) {

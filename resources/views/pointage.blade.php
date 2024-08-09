@@ -19,7 +19,13 @@
         <x-pointage.table :project="$project" :month="$month" :year="$year" :employeeData="$employeeData" :hourType="$hourType" :allEmployees="$allEmployees"/>
     @endif
 
-    <div id="message-container" role="alert"></div>
+    <!-- Conteneur pour les messages -->
+    <div id="message-container-success" class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: none;">
+        <span class="font-medium">Succès!</span> <span id="success-message-text">Success message here</span>
+    </div>
+    <div id="message-container-error" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: none;">
+        <span class="font-medium">Attention!</span> <span id="error-message-text">Error message here</span>
+    </div>
 
     </body>
 </x-app-layout>

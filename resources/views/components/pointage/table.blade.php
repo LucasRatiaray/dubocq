@@ -90,9 +90,9 @@
                 { data: 'full_name', readOnly: true, sortIndicator: false },
                 ...Array.from({ length: daysInMonth }, (_, i) => ({
                     data: `days.${i}`,
-                    type: 'numeric',
-                    readOnly: false,
-                    validator: numericValidator // Utiliser un validateur personnalisé pour les colonnes numériques
+                    type: 'numeric', // Type numérique pour s'assurer que seules des valeurs numériques sont acceptées
+                    validator: Handsontable.validators.NumericValidator, // Valideur intégré pour les valeurs numériques
+                    allowInvalid: false, // Empêche la saisie de valeurs non valides
                 }))
             ],
             rowHeaders: true,
@@ -148,27 +148,30 @@
             licenseKey: 'non-commercial-and-evaluation'
         });
 
-        // Fonction de validation personnalisée pour les valeurs numériques
-        function numericValidator(value, callback) {
-            if (value === null || value === '') {
-                callback(true); // Valide si la cellule est vide
-            } else {
-                callback(!isNaN(parseFloat(value)) && isFinite(value)); // Valide uniquement si la valeur est un nombre
-            }
-        }
-
         // Fonction pour afficher un message d'erreur ou de succès
+// Fonction pour afficher les messages
         function showMessage(message, type) {
-            const messageContainer = document.getElementById('message-container');
-            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
-            messageContainer.className = `custom-alert fixed-message ${alertClass}`;
-            messageContainer.innerHTML = `<span class="font-medium">${message}</span>`;
+            const successContainer = document.getElementById('message-container-success');
+            const errorContainer = document.getElementById('message-container-error');
+
+            if (type === 'success') {
+                successContainer.style.display = 'block';
+                successContainer.querySelector('#success-message-text').textContent = message;
+                errorContainer.style.display = 'none';
+            } else if (type === 'error') {
+                errorContainer.style.display = 'block';
+                errorContainer.querySelector('#error-message-text').textContent = message;
+                successContainer.style.display = 'none';
+            }
+
+            // Cacher le message après 3 secondes
             setTimeout(() => {
-                messageContainer.innerHTML = '';
+                successContainer.style.display = 'none';
+                errorContainer.style.display = 'none';
             }, 3000);
         }
 
-        // Fonction pour envoyer les données au serveur
+        // Exemple d'utilisation dans le gestionnaire de clic sur le bouton de sauvegarde
         document.getElementById('save').addEventListener('click', function() {
             const data = hot.getData();
             const formattedData = data.map(row => {
@@ -192,15 +195,10 @@
                 },
                 body: JSON.stringify({
                     data: formattedData,
-                    hour_type: document.querySelector('form button[name="hour_type"].bg-green-500, form button[name="hour_type"].bg-purple-500, form button[name="hour_type"].bg-yellow-500, form button[name="hour_type"].bg-cyan-500').value // Récupère le type d'heures sélectionné
+                    hour_type: document.querySelector('form button[name="hour_type"].bg-green-500, form button[name="hour_type"].bg-purple-500, form button[name="hour_type"].bg-yellow-500, form button[name="hour_type"].bg-cyan-500').value
                 })
             })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         showMessage('Données sauvegardées avec succès!', 'success');
@@ -213,4 +211,5 @@
                 });
         });
     });
+
 </script>

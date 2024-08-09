@@ -6,12 +6,11 @@ use App\Models\Employee;
 use App\Models\Project;
 use App\Models\TimeTracking;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+use Illuminate\Database\Eloquent\Collection;
 
 class PointageController extends Controller
 {
@@ -41,14 +40,20 @@ class PointageController extends Controller
         $project = Project::findOrFail($request->project_id);
         $month = $request->input('month');
         $year = $request->input('year');
+        $hourType = $request->input('hour_type', 'day_hours'); // Par défaut, jour
         $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 
+        // Récupérer les employés associés au projet
         $employees = Employee::join('employee_projects', 'employees.id', '=', 'employee_projects.employee_id')
             ->where('employee_projects.project_id', $project->id)
             ->get(['employees.*', 'employee_projects.id as employee_project_id']);
 
-        $allEmployees = $this->getAvailableEmployees($project->id);
+        // Récupérer les employés disponibles pour ce projet
+        $allEmployees = Employee::whereDoesntHave('projects', function ($query) use ($project) {
+            $query->where('project_id', $project->id);
+        })->orderBy('last_name')->get();
 
+        // Récupérer les heures de travail
         $timeTrackings = TimeTracking::where('project_id', $project->id)
             ->whereMonth('date', $month)
             ->whereYear('date', $year)
@@ -57,11 +62,23 @@ class PointageController extends Controller
         $employeeData = [];
         foreach ($employees as $employee) {
             $days = array_fill(0, $daysInMonth, '');
+            $otherHours = ['night_hours' => [], 'holiday_hours' => [], 'rtt_hours' => []];
 
             foreach ($timeTrackings as $timeTracking) {
                 if ($timeTracking->employee_id == $employee->id) {
                     $day = (int) Carbon::parse($timeTracking->date)->format('d');
-                    $days[$day - 1] = $timeTracking->day_hours;  // Utilisation de 'day_hours' au lieu de 'hours'
+                    $days[$day - 1] = $timeTracking->$hourType;  // Utilisation du type d'heures dynamique
+
+                    // Stocker les autres types d'heures
+                    if ($hourType !== 'night_hours' && $timeTracking->night_hours) {
+                        $otherHours['night_hours'][$day - 1] = $timeTracking->night_hours;
+                    }
+                    if ($hourType !== 'holiday_hours' && $timeTracking->holiday_hours) {
+                        $otherHours['holiday_hours'][$day - 1] = $timeTracking->holiday_hours;
+                    }
+                    if ($hourType !== 'rtt_hours' && $timeTracking->rtt_hours) {
+                        $otherHours['rtt_hours'][$day - 1] = $timeTracking->rtt_hours;
+                    }
                 }
             }
 
@@ -69,77 +86,46 @@ class PointageController extends Controller
                 'employee_project_id' => $employee->employee_project_id,
                 'employee_id' => $employee->id,
                 'full_name' => $employee->last_name . ' ' . $employee->first_name,
-                'days' => $days
+                'days' => $days,
+                'other_hours' => $otherHours
             ];
         }
 
-        return view('pointage', compact('projects', 'project', 'month', 'year', 'employeeData', 'allEmployees'));
+        return view('pointage', compact('projects', 'project', 'month', 'year', 'employeeData', 'hourType', 'allEmployees'));
     }
 
     public function store(Request $request): JsonResponse
     {
-        Log::info('store method called', ['data' => $request->all()]);
+        $request->validate([
+            'data' => 'required|array',
+        ]);
 
-        try {
-            $request->validate([
-                'data' => 'required|array',
-            ]);
+        $data = $request->input('data');
 
-            $data = $request->input('data');
+        foreach ($data as $employee) {
+            $employee_id = $employee['employee_id'];
+            $project_id = $employee['project_id'];
+            $month = $employee['month'];
+            $year = $employee['year'];
 
-            if (!is_array($data)) {
-                Log::error('Invalid data format', ['data' => $data]);
-                return response()->json(['success' => false, 'message' => 'Invalid data format.'], 400);
-            }
-
-            foreach ($data as $employee) {
-                if (!is_array($employee) || !isset($employee['employee_id'], $employee['project_id'], $employee['month'], $employee['year'], $employee['days'])) {
-                    Log::error('Invalid employee entry', ['employee' => $employee]);
-                    continue; // Skip invalid entries
-                }
-
-                $employee_id = $employee['employee_id'];
-                $project_id = $employee['project_id'];
-                $month = $employee['month'];
-                $year = $employee['year'];
-
-                // Vérifiez si les valeurs ne sont pas nulles
-                if (is_null($employee_id) || is_null($project_id)) {
-                    Log::error('Null value detected', ['employee_id' => $employee_id, 'project_id' => $project_id]);
-                    continue;
-                }
-
-                foreach ($employee['days'] as $day => $day_hours) {  // Renommé 'hours' en 'day_hours'
-                    if ($day_hours !== null) {
-                        $date = Carbon::createFromDate($year, $month, $day + 1)->format('Y-m-d');
-                        Log::info('Saving data', [
+            foreach ($employee['days'] as $day => $hours) {
+                if ($hours !== null) {
+                    $date = Carbon::createFromDate($year, $month, $day + 1)->format('Y-m-d');
+                    TimeTracking::updateOrCreate(
+                        [
                             'project_id' => $project_id,
                             'employee_id' => $employee_id,
-                            'date' => $date,
-                            'day_hours' => $day_hours  // Renommé 'hours' en 'day_hours'
-                        ]);
-                        TimeTracking::updateOrCreate(
-                            [
-                                'project_id' => $project_id,
-                                'employee_id' => $employee_id,
-                                'date' => $date
-                            ],
-                            [
-                                'project_id' => $project_id,
-                                'employee_id' => $employee_id,
-                                'day_hours' => $day_hours  // Renommé 'hours' en 'day_hours'
-                            ]
-                        );
-                    }
+                            'date' => $date
+                        ],
+                        [
+                            $request->input('hour_type', 'day_hours') => $hours
+                        ]
+                    );
                 }
             }
-
-            Log::info('Data saved successfully');
-            return response()->json(['success' => true, 'message' => 'Données sauvegardées avec succès!']);
-        } catch (\Exception $e) {
-            Log::error('Error saving data', ['exception' => $e]);
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
+
+        return response()->json(['success' => true, 'message' => 'Données sauvegardées avec succès!']);
     }
 
     public function addEmployeeToProject(Request $request, $id): RedirectResponse
@@ -158,7 +144,8 @@ class PointageController extends Controller
         return redirect()->route('pointage.show', [
             'project_id' => $project->id,
             'month' => $request->month,
-            'year' => $request->year
+            'year' => $request->year,
+            'hour_type' => 'day_hours' // Par défaut sur Jour
         ])->with('success', 'Employé ajouté au projet avec succès!');
     }
 }

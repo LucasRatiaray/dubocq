@@ -1,7 +1,7 @@
 <div class="mx-auto w-screen flex justify-center">
     <div class="bg-white shadow-md rounded-lg p-6 dark:bg-gray-400" style="width: 92vw;">
         <div>
-            <h1 id="title" class="text-2xl font-bold flex justify-center border rounded py-6 bg-gray-100 border-gray-300"></h1>
+            <h1 id="title" class="text-2xl font-bold flex justify-center border rounded py-6 bg-gray-100"></h1>
         </div>
 
         <div class="mt-4 flex justify-center bg-white">
@@ -11,10 +11,10 @@
                 <input type="hidden" name="year" value="{{ $year }}">
 
                 <div class="flex justify-center gap-4 p-2 bg-gray-100 border rounded">
-                    <button type="submit" name="hour_type" value="day_hours" class="bg-white hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-green-500 hover:text-white {{ $hourType === 'day_hours' ? 'bg-green-500 text-white' : '' }}">Jour</button>
-                    <button type="submit" name="hour_type" value="night_hours" class="bg-white hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-purple-500 hover:text-white {{ $hourType === 'night_hours' ? 'bg-purple-500 text-white' : '' }}">Nuit</button>
-                    <button type="submit" name="hour_type" value="holiday_hours" class="bg-white hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-yellow-500 hover:text-white {{ $hourType === 'holiday_hours' ? 'bg-yellow-500 text-white' : '' }}">Férié</button>
-                    <button type="submit" name="hour_type" value="rtt_hours" class="bg-white hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-cyan-500 hover:text-white {{ $hourType === 'rtt_hours' ? 'bg-cyan-500 text-white' : '' }}">RTT</button>
+                    <button type="submit" name="hour_type" value="day_hours" class="border bg-white hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-green-500 hover:text-white {{ $hourType === 'day_hours' ? 'bg-green-500 text-white' : '' }}">Jour</button>
+                    <button type="submit" name="hour_type" value="night_hours" class="border bg-white hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-purple-500 hover:text-white {{ $hourType === 'night_hours' ? 'bg-purple-500 text-white' : '' }}">Nuit</button>
+                    <button type="submit" name="hour_type" value="holiday_hours" class="border bg-white hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-yellow-500 hover:text-white {{ $hourType === 'holiday_hours' ? 'bg-yellow-500 text-white' : '' }}">Férié</button>
+                    <button type="submit" name="hour_type" value="rtt_hours" class="border bg-white hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-cyan-500 hover:text-white {{ $hourType === 'rtt_hours' ? 'bg-cyan-500 text-white' : '' }}">RTT</button>
                 </div>
             </form>
         </div>

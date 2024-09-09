@@ -129,8 +129,36 @@ class PointageController extends Controller
                         'date' => $date
                     ]);
 
-                    // Mettre à jour les heures spécifiques en fonction du type
+                    // Mettre à jour le type d'heure actuel avec les heures saisies
                     $timeTracking->{$hourType} = $hours;
+
+                    // Si le type d'heure est 'day_hours', on s'assure que les autres types (night_hours, holiday_hours, rtt_hours) soient à 0
+                    if ($hourType === 'day_hours') {
+                        $timeTracking->night_hours = $timeTracking->night_hours ?? 0;
+                        $timeTracking->holiday_hours = $timeTracking->holiday_hours ?? 0;
+                        $timeTracking->rtt_hours = $timeTracking->rtt_hours ?? 0;
+                    }
+
+                    // Si le type d'heure est 'night_hours', on s'assure que les autres types soient à 0
+                    if ($hourType === 'night_hours') {
+                        $timeTracking->day_hours = $timeTracking->day_hours ?? 0;
+                        $timeTracking->holiday_hours = $timeTracking->holiday_hours ?? 0;
+                        $timeTracking->rtt_hours = $timeTracking->rtt_hours ?? 0;
+                    }
+
+                    // Si le type d'heure est 'holiday_hours', on s'assure que les autres types soient à 0
+                    if ($hourType === 'holiday_hours') {
+                        $timeTracking->day_hours = $timeTracking->day_hours ?? 0;
+                        $timeTracking->night_hours = $timeTracking->night_hours ?? 0;
+                        $timeTracking->rtt_hours = $timeTracking->rtt_hours ?? 0;
+                    }
+
+                    // Si le type d'heure est 'rtt_hours', on s'assure que les autres types soient à 0
+                    if ($hourType === 'rtt_hours') {
+                        $timeTracking->day_hours = $timeTracking->day_hours ?? 0;
+                        $timeTracking->night_hours = $timeTracking->night_hours ?? 0;
+                        $timeTracking->holiday_hours = $timeTracking->holiday_hours ?? 0;
+                    }
 
                     // Sauvegarder les modifications
                     $timeTracking->save();

@@ -36,6 +36,7 @@
             <select name="year" id="year" class="w-auto bg-gray-50 border border-gray-300 text-gray-900 font-bold text-sm rounded-r-lg focus:ring-customColor focus:border-customColor block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-customColor dark:focus:border-customColor" required>
                 <option disabled selected value="">Choisir une année</option>
                 <option value="2024">2024</option>
+                <option value="2025">2025</option>
             </select>
         </div>
         <div>

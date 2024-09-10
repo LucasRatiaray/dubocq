@@ -99,11 +99,22 @@ class PointageController extends Controller
         $request->validate([
             'data' => 'required|array',
             'hour_type' => 'required|string|in:day_hours,night_hours,holiday_hours,rtt_hours',
+            'deletedTimeTrackings' => 'nullable|array',
         ]);
 
         $data = $request->input('data');
         $hourType = $request->input('hour_type');
+        $deletedTimeTrackings = $request->input('deletedTimeTrackings', []);
 
+        // Gestion des suppressions de TimeTracking
+        foreach ($deletedTimeTrackings as $deleted) {
+            TimeTracking::where('project_id', $deleted['project_id'])
+                ->where('employee_id', $deleted['employee_id'])
+                ->where('date', $deleted['date'])
+                ->delete();
+        }
+
+        // Gestion des ajouts/mises à jour des TimeTracking
         foreach ($data as $employee) {
             $employee_id = $employee['employee_id'];
             $project_id = $employee['project_id'];

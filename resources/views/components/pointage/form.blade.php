@@ -3,14 +3,14 @@
         @csrf
         <div class="flex">
             <label for="project_id" class="sr-only">Choisir un chantier</label>
-            <select name="project_id" id="project_id" class="w-auto bg-gray-50 border border-gray-300 text-gray-900 font-bold text-sm rounded-l-lg focus:ring-cyan-500 focus:border-cyan-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-cyan-500 dark:focus:border-cyan-500" required>
+            <select name="project_id" id="project_id" class="w-auto bg-gray-50 border border-gray-300 text-gray-900 font-bold text-sm rounded-l-lg focus:ring-customColor focus:border-customColor block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-customColor dark:focus:border-customColor" required>
                 <option disabled selected value="">Choisir un chantier</option>
                 @foreach($projects as $project)
                     <option value="{{ $project->id }}">{{ $project->business }} - {{ $project->city }}</option>
                 @endforeach
             </select>
             <label for="month" class="sr-only">Choisir un mois</label>
-            <select name="month" id="month" class="w-auto bg-gray-50 border border-gray-300 text-gray-900 font-bold text-sm focus:ring-cyan-500 focus:border-cyan-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-cyan-500 dark:focus:border-cyan-500" required>
+            <select name="month" id="month" class="w-auto bg-gray-50 border border-gray-300 text-gray-900 font-bold text-sm focus:ring-customColor focus:border-customColor block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-customColor dark:focus:border-customColor" required>
                 <option disabled selected value="">Choisir un mois</option>
                 @php
                     $months = [
@@ -33,13 +33,13 @@
                 @endforeach
             </select>
             <label for="year" class="sr-only">Choisir une année</label>
-            <select name="year" id="year" class="w-auto bg-gray-50 border border-gray-300 text-gray-900 font-bold text-sm rounded-r-lg focus:ring-cyan-500 focus:border-cyan-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-cyan-500 dark:focus:border-cyan-500" required>
+            <select name="year" id="year" class="w-auto bg-gray-50 border border-gray-300 text-gray-900 font-bold text-sm rounded-r-lg focus:ring-customColor focus:border-customColor block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-customColor dark:focus:border-customColor" required>
                 <option disabled selected value="">Choisir une année</option>
                 <option value="2024">2024</option>
             </select>
         </div>
         <div>
-            <button type="submit" class="bg-gray-100 hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-cyan-500 hover:text-white border border-gray-300">Afficher le chantier</button>
+            <button type="submit" class="bg-gray-100 hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">Afficher le chantier</button>
         </div>
     </form>
 </div>

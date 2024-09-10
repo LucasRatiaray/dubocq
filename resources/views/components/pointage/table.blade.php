@@ -46,7 +46,7 @@
                 @csrf
                 <div class="flex">
                     <label for="employee" class="sr-only">Choisir un employé</label>
-                    <select name="employee_id" id="employee" class="w-auto bg-gray-100 border border-gray-300 text-gray-900 font-bold text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-cyan-500 dark:focus:border-cyan-500">
+                    <select name="employee_id" id="employee" class="w-auto bg-gray-100 border border-gray-300 text-gray-900 font-bold text-sm rounded-lg focus:ring-customColor focus:border-customColor block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-customColor dark:focus:border-customColor">
                         <option selected disabled>Choisir un employé</option>
                         @foreach ($allEmployees as $employee)
                             <option value="{{ $employee->id }}">{{ $employee->last_name }} {{ $employee->first_name }}</option>
@@ -57,10 +57,10 @@
                 <input type="hidden" name="year" value="{{ $year }}">
                 <input type="hidden" name="hour_type" value="{{ $hourType }}">
                 <div>
-                    <button type="submit" class="bg-gray-100 hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-cyan-500 hover:text-white border border-gray-300">Ajouter un employé</button>
+                    <button type="submit" class="bg-gray-100 hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">Ajouter un employé</button>
                 </div>
             </form>
-            <button id="save" class="bg-gray-100 hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-cyan-500 hover:text-white border border-gray-300">Sauvegarder</button>
+            <button id="save" class="bg-gray-100 hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">Sauvegarder</button>
         </div>
     </div>
 </div>

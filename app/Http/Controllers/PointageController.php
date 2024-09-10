@@ -10,7 +10,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Database\Eloquent\Collection;
 
 class PointageController extends Controller
 {
@@ -18,13 +17,6 @@ class PointageController extends Controller
     {
         $projects = Project::all();
         return view('pointage', compact('projects'));
-    }
-
-    private function getAvailableEmployees($project_id): Collection
-    {
-        return Employee::whereDoesntHave('projects', function ($query) use ($project_id) {
-            $query->where('project_id', $project_id);
-        })->orderBy('last_name')->get();
     }
 
     public function show(Request $request): View

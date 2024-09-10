@@ -41,7 +41,7 @@
         <div id="handsontable" class="w-full h-full mt-5"></div>
 
         <!-- Sauvegarde et ajout d'employé -->
-        <div class="mt-4 flex justify-between">
+        <div class="mt-4 mb-5 flex justify-between">
             <form class="flex items-center gap-4" action="{{ route('pointage.add', ['id' => $project->id]) }}" method="POST">
                 @csrf
                 <div class="flex">
@@ -57,10 +57,96 @@
                 <input type="hidden" name="year" value="{{ $year }}">
                 <input type="hidden" name="hour_type" value="{{ $hourType }}">
                 <div>
-                    <button type="submit" class="bg-gray-100 hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">Ajouter un employé</button>
+                    <button type="submit" class="bg-gray-100 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">Ajouter un employé</button>
                 </div>
             </form>
-            <button id="save" class="bg-gray-100 hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">Sauvegarder</button>
+            <button id="save" class="bg-gray-100 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">Sauvegarder</button>
+        </div>
+
+        <!-- Tableau total des heures -->
+        <div class="relative overflow-x-auto">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+                    Totaux d'heures par employé
+                    <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">Ce tableau affiche le total des heures travaillées par employé pour chaque type d'heure (jour, nuit, férié, RTT) durant le mois sélectionné.</p>
+                </caption>
+                <thead class="text-sm text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-1">
+                        Employé
+                    </th>
+                    <th scope="col" class="px-6 py-1">
+                        Total heures Jour
+                    </th>
+                    <th scope="col" class="px-6 py-1">
+                        Total heures Nuit
+                    </th>
+                    <th scope="col" class="px-6 py-1">
+                        Total heures Férié
+                    </th>
+                    <th scope="col" class="px-6 py-1">
+                        Total heures RTT
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                @php
+                    $totalDayHours = 0;
+                    $totalNightHours = 0;
+                    $totalHolidayHours = 0;
+                    $totalRTTHours = 0;
+                @endphp
+                @foreach ($employeeData as $employee)
+                    @php
+                        $dayHours = array_sum(array_map('floatval', $employee['days']));
+                        $nightHours = array_sum(array_map('floatval', $employee['other_hours']['night_hours']));
+                        $holidayHours = array_sum(array_map('floatval', $employee['other_hours']['holiday_hours']));
+                        $rttHours = array_sum(array_map('floatval', $employee['other_hours']['rtt_hours']));
+
+                        // Ajouter aux totaux globaux
+                        $totalDayHours += $dayHours;
+                        $totalNightHours += $nightHours;
+                        $totalHolidayHours += $holidayHours;
+                        $totalRTTHours += $rttHours;
+                    @endphp
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                        <th scope="row" class="px-6 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ $employee['full_name'] }}
+                        </th>
+                        <td class="px-6 py-1">
+                            {{ array_sum(array_map('floatval', $employee['days'])) }}
+                        </td>
+                        <td class="px-6 py-1">
+                            {{ array_sum(array_map('floatval', $employee['other_hours']['night_hours'])) }}
+                        </td>
+                        <td class="px-6 py-1">
+                            {{ array_sum(array_map('floatval', $employee['other_hours']['holiday_hours'])) }}
+                        </td>
+                        <td class="px-6 py-1">
+                            {{ array_sum(array_map('floatval', $employee['other_hours']['rtt_hours'])) }}
+                        </td>
+                    </tr>
+                @endforeach
+                <!-- Ligne de cumul des heures pour tous les employés -->
+                <tr class="text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
+                    <th scope="row" class="px-6 py-1 font-bold text-gray-900 dark:text-white text-sm">
+                        Cumul du mois
+                    </th>
+                    <td class="px-6 py-1 text-md">
+                        {{ $totalDayHours }}
+                    </td>
+                    <td class="px-6 py-1 text-md">
+                        {{ $totalNightHours }}
+                    </td>
+                    <td class="px-6 py-1 text-md">
+                        {{ $totalHolidayHours }}
+                    </td>
+                    <td class="px-6 py-1 text-md">
+                        {{ $totalRTTHours }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

@@ -79,7 +79,10 @@ class PointageController extends Controller
                 'employee_id' => $employee->id,
                 'full_name' => $employee->last_name . ' ' . $employee->first_name,
                 'days' => $days,
-                'other_hours' => $otherHours
+                'other_hours' => $otherHours,
+                'total_hours' => array_sum(array_filter($days, function($value) {
+                    return is_numeric($value);
+                }))
             ];
         }
 

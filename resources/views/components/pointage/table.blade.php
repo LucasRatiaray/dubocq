@@ -134,16 +134,16 @@
                     <th scope="row" class="px-6 py-1 font-bold text-gray-900 dark:text-white text-sm">
                         Cumul du mois
                     </th>
-                    <td class="px-6 py-1 text-md">
+                    <td class="px-6 py-1 font-extrabold text-md text-green-500">
                         {{ $totalDayHours }}
                     </td>
-                    <td class="px-6 py-1 text-md">
+                    <td class="px-6 py-1 font-extrabold text-md text-purple-500">
                         {{ $totalNightHours }}
                     </td>
-                    <td class="px-6 py-1 text-md">
+                    <td class="px-6 py-1 font-extrabold text-md text-yellow-500">
                         {{ $totalHolidayHours }}
                     </td>
-                    <td class="px-6 py-1 text-md">
+                    <td class="px-6 py-1 font-extrabold text-md text-cyan-500">
                         {{ $totalRTTHours }}
                     </td>
                 </tr>

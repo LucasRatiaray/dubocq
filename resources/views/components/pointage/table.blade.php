@@ -63,10 +63,12 @@
             <button id="save" class="bg-gray-100 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">Sauvegarder</button>
         </div>
 
+        <hr class="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700">
+
         <!-- Tableau total des heures -->
         <div class="relative overflow-x-auto">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+                <caption class="pb-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
                     Totaux d'heures par employé
                     <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">Ce tableau affiche le total des heures travaillées par employé pour chaque type d'heure (jour, nuit, férié, RTT) durant le mois sélectionné.</p>
                 </caption>
@@ -288,7 +290,7 @@
             let validationError = false;
 
             const formattedData = data.map(row => {
-                const days = row.slice(3).map((day, index) => {
+                const days = row.slice(3, daysInMonth + 3).map((day, index) => {
                     const value = day !== null && day !== undefined && day.toString().trim() !== '' ? parseFloat(day) : null;
 
                     if (value !== null) {
@@ -347,6 +349,11 @@
                     if (data.success) {
                         showMessage('Données sauvegardées avec succès!', 'success');
                         deletedTimeTrackings = []; // Réinitialiser les suppressions après succès
+
+                        // Ajoutez ce bloc pour rafraîchir la page après une courte pause
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1);  // Temps d'attente avant de recharger la page (1 ms = 0.001 seconde)
                     } else {
                         showMessage('Erreur lors de la sauvegarde des données : ' + data.message, 'error');
                     }

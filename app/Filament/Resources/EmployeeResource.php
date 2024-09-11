@@ -20,7 +20,7 @@ class EmployeeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-user-group';
 
-    protected static ?string $navigationLabel = 'Tous les salariés';
+    protected static ?string $navigationLabel = 'Salariés';
 
     protected static ?string $modelLabel = 'Salarié';
 
@@ -57,6 +57,10 @@ class EmployeeResource extends Resource
                                 '37H' => '37H',
                                 '35H' => '35H',
                             ]),
+                        TextInput::make('hourly_rate')
+                            ->label('Taux Horaire')
+                            ->required()
+                            ->placeholder('Taux Horaire'),
                     ])->columnSpan(1),
             ]);
     }

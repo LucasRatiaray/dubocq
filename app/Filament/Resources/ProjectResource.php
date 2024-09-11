@@ -23,7 +23,7 @@ class ProjectResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-m-rocket-launch';
 
-    protected static ?string $navigationLabel = 'Tous les chantiers';
+    protected static ?string $navigationLabel = 'Chantiers';
 
     protected static ?string $modelLabel = 'Chantier';
 

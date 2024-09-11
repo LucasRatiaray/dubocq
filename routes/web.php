@@ -22,10 +22,15 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/projects/{project}', [ProjectController::class, 'show']);
 
-    //Route::redirect('/setting', '/admin')->name('setting');
+    /*Route::redirect('/setting', '/admin')->name('setting');*/
+
     Route::get('/setting', function () {
         return view('setting');
     })->name('setting');
+
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
 });
 
 require __DIR__.'/auth.php';

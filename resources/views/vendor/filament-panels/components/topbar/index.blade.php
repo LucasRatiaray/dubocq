@@ -1,4 +1,3 @@
-{{--
 @props([
     'navigation',
 ])
@@ -176,4 +175,3 @@
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_END) }}
     </nav>
 </div>
---}}

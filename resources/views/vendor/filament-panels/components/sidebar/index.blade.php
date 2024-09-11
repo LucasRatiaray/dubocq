@@ -41,7 +41,7 @@
         ])
     }}
 >
-{{--    <div class="overflow-x-clip">
+    <div class="overflow-x-clip">
         <header
             class="fi-sidebar-header flex h-16 items-center bg-white px-6 ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 lg:shadow-sm"
         >
@@ -66,7 +66,7 @@
                 <x-filament::icon-button
                     color="gray"
                     :icon="$isRtl ? 'heroicon-o-chevron-left' : 'heroicon-o-chevron-right'"
-                    --}}{{-- @deprecated Use `panels::sidebar.expand-button.rtl` instead of `panels::sidebar.expand-button` for RTL. --}}{{--
+                     @deprecated Use `panels::sidebar.expand-button.rtl` instead of `panels::sidebar.expand-button` for RTL.
                     :icon-alias="$isRtl ? ['panels::sidebar.expand-button.rtl', 'panels::sidebar.expand-button'] : 'panels::sidebar.expand-button'"
                     icon-size="lg"
                     :label="__('filament-panels::layout.actions.sidebar.expand.label')"
@@ -82,7 +82,7 @@
                 <x-filament::icon-button
                     color="gray"
                     :icon="$isRtl ? 'heroicon-o-chevron-right' : 'heroicon-o-chevron-left'"
-                    --}}{{-- @deprecated Use `panels::sidebar.collapse-button.rtl` instead of `panels::sidebar.collapse-button` for RTL. --}}{{--
+                     @deprecated Use `panels::sidebar.collapse-button.rtl` instead of `panels::sidebar.collapse-button` for RTL.
                     :icon-alias="$isRtl ? ['panels::sidebar.collapse-button.rtl', 'panels::sidebar.collapse-button'] : 'panels::sidebar.collapse-button'"
                     icon-size="lg"
                     :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
@@ -94,7 +94,7 @@
                 />
             @endif
         </header>
-    </div>--}}
+    </div>
 
     <nav
         class="fi-sidebar-nav flex-grow flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden px-6 py-8"

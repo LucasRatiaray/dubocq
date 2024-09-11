@@ -103,6 +103,7 @@
                 @endphp
                 @foreach ($employeeData as $employee)
                     @php
+                        // Calcul des heures pour chaque type
                         $dayHours = array_sum(array_map('floatval', $employee['days']));
                         $nightHours = array_sum(array_map('floatval', $employee['other_hours']['night_hours']));
                         $holidayHours = array_sum(array_map('floatval', $employee['other_hours']['holiday_hours']));
@@ -288,6 +289,7 @@
         }
 
         // Gestion de la sauvegarde
+// Gestion de la sauvegarde
         document.getElementById('save').addEventListener('click', function() {
             const data = hot.getData();
             let hasValidHours = false;
@@ -296,7 +298,6 @@
 
             const formattedData = data.map(row => {
                 const days = row.slice(3, daysInMonth + 3).map((day, index) => {
-                    // Si la cellule est vide, envoyer null pour indiquer une suppression
                     const value = day !== null && day !== undefined && day.toString().trim() !== '' ? parseFloat(day) : null;
 
                     if (value !== null) {
@@ -327,7 +328,6 @@
                 return;
             }
 
-            // Autoriser la sauvegarde même si toutes les heures sont supprimées (cas des suppressions complètes)
             if (!hasValidHours && !hasDeletions) {
                 showMessage('Erreur : Aucune heure n\'a été saisie.', 'error');
                 return;
@@ -348,6 +348,9 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        // Stocker le message de succès dans sessionStorage
+                        sessionStorage.setItem('successMessage', 'Données sauvegardées avec succès !');
+                        // Recharger la page
                         location.reload();
                     } else {
                         showMessage('Erreur lors de la sauvegarde des données : ' + data.message, 'error');
@@ -356,6 +359,15 @@
                 .catch(error => {
                     showMessage('Erreur de requête : ' + error.message, 'error');
                 });
+        });
+
+        // Vérifier s'il y a un message de succès après le rechargement de la page
+        window.addEventListener('load', () => {
+            const successMessage = sessionStorage.getItem('successMessage');
+            if (successMessage) {
+                showMessage(successMessage, 'success');
+                sessionStorage.removeItem('successMessage'); // Supprimer le message après affichage
+            }
         });
 
         // Vérifier s'il y a un message de succès après le rechargement de la page

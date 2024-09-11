@@ -41,7 +41,7 @@
         ])
     }}
 >
-    <div class="overflow-x-clip">
+    {{--<div class="overflow-x-clip">
         <header
             class="fi-sidebar-header flex h-16 items-center bg-white px-6 ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 lg:shadow-sm"
         >
@@ -94,7 +94,7 @@
                 />
             @endif
         </header>
-    </div>
+    </div>--}}
 
     <nav
         class="fi-sidebar-nav flex-grow flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden px-6 py-8"

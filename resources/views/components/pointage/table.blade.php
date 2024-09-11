@@ -1,23 +1,34 @@
-<div class="mx-auto w-screen flex justify-center">
-    <div class="bg-white shadow-md rounded-lg p-6 dark:bg-gray-400" style="width: 92vw;">
+<div class="mx-10 flex justify-center">
+    <div class="bg-white shadow-md rounded-lg p-6 dark:bg-gray-400 min-w-full">
         <!-- Titre avec navigation entre mois -->
-        <div class="text-2xl font-bold flex justify-center items-center border rounded py-6 bg-gray-100 gap-4">
-            <!-- Bouton mois précédent -->
-            <button type="button" id="prev-month-btn" class="border bg-white text-black rounded">
-                <svg class="w-5 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
-                </svg>
-            </button>
+        <div class="text-2xl font-bold flex items-center justify-between border rounded py-6 bg-gray-100">
 
-            <!-- Titre -->
-            <h1 id="title"></h1>
+            <!-- Code Title à gauche (milieu à gauche) -->
+            <h1 id="code-title" class="flex-1 flex justify-center"></h1>
 
-            <!-- Bouton mois suivant -->
-            <button type="button" id="next-month-btn" class="border bg-white text-black rounded">
-                <svg class="w-5 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
-                </svg>
-            </button>
+            <!-- Mois et année au centre -->
+            <div class="flex items-center justify-center gap-4">
+                <!-- Bouton mois précédent -->
+                <button type="button" id="prev-month-btn" class="border bg-white text-black rounded">
+                    <svg class="w-5 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+                    </svg>
+                </button>
+
+                <!-- Mois et année au centre -->
+                <h1 id="month-year" class="text-center"></h1>
+
+                <!-- Bouton mois suivant -->
+                <button type="button" id="next-month-btn" class="border bg-white text-black rounded">
+                    <svg class="w-5 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Zone à droite (centré dans la partie droite) -->
+            <h1 id="zone" class="flex-1 flex justify-center"></h1>
+
         </div>
 
         <!-- Formulaire de sélection d'heures -->
@@ -70,25 +81,17 @@
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <caption class="pb-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
                     Totaux d'heures par employé
-                    <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">Ce tableau affiche le total des heures travaillées par employé pour chaque type d'heure (jour, nuit, férié, RTT) durant le mois sélectionné.</p>
+                    <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+                        Ce tableau affiche le total des heures travaillées par employé pour chaque type d'heure (jour, nuit, férié, RTT) durant le mois sélectionné.
+                    </p>
                 </caption>
                 <thead class="text-sm text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                    <th scope="col" class="px-6 py-1">
-                        Employé
-                    </th>
-                    <th scope="col" class="px-6 py-1">
-                        Total heures Jour
-                    </th>
-                    <th scope="col" class="px-6 py-1">
-                        Total heures Nuit
-                    </th>
-                    <th scope="col" class="px-6 py-1">
-                        Total heures Férié
-                    </th>
-                    <th scope="col" class="px-6 py-1">
-                        Total heures RTT
-                    </th>
+                    <th scope="col" class="px-6 py-1">Employé</th>
+                    <th scope="col" class="px-6 py-1">Total heures Jour</th>
+                    <th scope="col" class="px-6 py-1">Total heures Nuit</th>
+                    <th scope="col" class="px-6 py-1">Total heures Férié</th>
+                    <th scope="col" class="px-6 py-1">Total heures RTT</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -116,35 +119,33 @@
                             {{ $employee['full_name'] }}
                         </th>
                         <td class="px-6 py-1">
-                            {{ array_sum(array_map('floatval', $employee['days'])) }}
+                            {{ $dayHours > 0 ? $dayHours : '-' }}
                         </td>
                         <td class="px-6 py-1">
-                            {{ array_sum(array_map('floatval', $employee['other_hours']['night_hours'])) }}
+                            {{ $nightHours > 0 ? $nightHours : '-' }}
                         </td>
                         <td class="px-6 py-1">
-                            {{ array_sum(array_map('floatval', $employee['other_hours']['holiday_hours'])) }}
+                            {{ $holidayHours > 0 ? $holidayHours : '-' }}
                         </td>
                         <td class="px-6 py-1">
-                            {{ array_sum(array_map('floatval', $employee['other_hours']['rtt_hours'])) }}
+                            {{ $rttHours > 0 ? $rttHours : '-' }}
                         </td>
                     </tr>
                 @endforeach
                 <!-- Ligne de cumul des heures pour tous les employés -->
                 <tr class="text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
-                    <th scope="row" class="px-6 py-1 font-bold text-gray-700 dark:text-white text-sm">
-                        Cumul du mois
-                    </th>
-                    <td class="px-6 py-1 font-extrabold text-md text-green-500">
-                        {{ $totalDayHours }}
+                    <th scope="row" class="px-6 py-1 font-bold text-gray-700 dark:text-white text-sm">Cumul du mois</th>
+                    <td class="px-6 py-1 font-extrabold text-green-500">
+                        {{ $totalDayHours > 0 ? $totalDayHours : '-' }}
                     </td>
-                    <td class="px-6 py-1 font-extrabold text-md text-purple-500">
-                        {{ $totalNightHours }}
+                    <td class="px-6 py-1 font-extrabold text-purple-500">
+                        {{ $totalNightHours > 0 ? $totalNightHours : '-' }}
                     </td>
-                    <td class="px-6 py-1 font-extrabold text-md text-yellow-500">
-                        {{ $totalHolidayHours }}
+                    <td class="px-6 py-1 font-extrabold text-yellow-500">
+                        {{ $totalHolidayHours > 0 ? $totalHolidayHours : '-' }}
                     </td>
-                    <td class="px-6 py-1 font-extrabold text-md text-cyan-500">
-                        {{ $totalRTTHours }}
+                    <td class="px-6 py-1 font-extrabold text-cyan-500">
+                        {{ $totalRTTHours > 0 ? $totalRTTHours : '-' }}
                     </td>
                 </tr>
                 </tbody>
@@ -160,6 +161,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         var project_id = document.body.getAttribute('data-project-id') !== 'null' ? parseInt(document.body.getAttribute('data-project-id')) : null;
         var projectCode = document.body.getAttribute('data-project-code') !== 'null' ? document.body.getAttribute('data-project-code') : null;
+        var projectZone = document.body.getAttribute('data-project-zone') !== 'null' ? document.body.getAttribute('data-project-zone') : null;
         var projectBusiness = document.body.getAttribute('data-project-business') !== 'null' ? document.body.getAttribute('data-project-business') : null;
         var month = document.body.getAttribute('data-month') !== 'null' ? parseInt(document.body.getAttribute('data-month')) : null;
         var year = document.body.getAttribute('data-year') !== 'null' ? parseInt(document.body.getAttribute('data-year')) : null;
@@ -170,7 +172,9 @@
 
         // Mise à jour du titre
         if (month && year && projectCode && projectBusiness) {
-            document.getElementById('title').innerHTML = `${projectCode} - ${projectBusiness} - ${months[month - 1]} ${year}`;
+            document.getElementById('code-title').innerHTML = `<span class="text-black px-2 py-1">${projectCode} - ${projectBusiness}</span>`;
+            document.getElementById('month-year').innerHTML = `<span class="text-black px-2 py-1">${months[month - 1]} ${year}</span>`;
+            document.getElementById('zone').innerHTML = `<span class="text-black px-2 py-1">${projectZone}</span>`;
         }
 
         // Obtenir le nombre de jours dans un mois
@@ -300,7 +304,6 @@
                             hasValidHours = true;
                         }
                     } else {
-                        // Si la cellule est vide, préparer une suppression
                         deletedTimeTrackings.push({
                             employee_id: row[1], // ID employé
                             project_id: project_id,
@@ -331,7 +334,6 @@
                 return;
             }
 
-            // Envoyer les données si tout est valide, y compris les suppressions
             fetch('{{ route('pointage.store') }}', {
                 method: 'POST',
                 headers: {
@@ -347,13 +349,11 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        showMessage('Données sauvegardées avec succès!', 'success');
-                        deletedTimeTrackings = []; // Réinitialiser les suppressions après succès
+                        // Stocker le message dans sessionStorage avant le rechargement
+                        sessionStorage.setItem('successMessage', 'Données sauvegardées avec succès!');
 
-                        // Ajoutez ce bloc pour rafraîchir la page après une courte pause
-                        setTimeout(function() {
-                            location.reload();
-                        }, 1);  // Temps d'attente avant de recharger la page (1 ms = 0.001 seconde)
+                        // Recharger la page
+                        location.reload();
                     } else {
                         showMessage('Erreur lors de la sauvegarde des données : ' + data.message, 'error');
                     }
@@ -361,6 +361,15 @@
                 .catch(error => {
                     showMessage('Erreur de requête : ' + error.message, 'error');
                 });
+        });
+
+        // Vérifier s'il y a un message de succès après le rechargement de la page
+        window.addEventListener('load', () => {
+            const successMessage = sessionStorage.getItem('successMessage');
+            if (successMessage) {
+                showMessage(successMessage, 'success');
+                sessionStorage.removeItem('successMessage'); // Nettoyer le message après affichage
+            }
         });
 
         // Navigation mois précédent/suivant

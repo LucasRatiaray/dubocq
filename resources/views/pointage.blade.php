@@ -9,6 +9,7 @@
         data-project-id="{{ $project->id ?? 'null' }}"
         data-project-business="{{ $project->business ?? 'null' }}"
         data-project-code="{{ $project->code ?? 'null' }}"
+        data-project-zone="{{ $project->zone->name ?? 'null' }}"
         data-month="{{ $month ?? 'null' }}"
         data-year="{{ $year ?? 'null'}}"
     >

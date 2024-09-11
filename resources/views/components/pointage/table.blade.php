@@ -119,33 +119,33 @@
                             {{ $employee['full_name'] }}
                         </th>
                         <td class="px-6 py-1">
-                            {{ $dayHours > 0 ? $dayHours : '-' }}
+                            {{ $dayHours > 0 ? $dayHours.' H' : '-' }}
                         </td>
                         <td class="px-6 py-1">
-                            {{ $nightHours > 0 ? $nightHours : '-' }}
+                            {{ $nightHours > 0 ? $nightHours.' H' : '-' }}
                         </td>
                         <td class="px-6 py-1">
-                            {{ $holidayHours > 0 ? $holidayHours : '-' }}
+                            {{ $holidayHours > 0 ? $holidayHours.' H' : '-' }}
                         </td>
                         <td class="px-6 py-1">
-                            {{ $rttHours > 0 ? $rttHours : '-' }}
+                            {{ $rttHours > 0 ? $rttHours.' H' : '-' }}
                         </td>
                     </tr>
                 @endforeach
                 <!-- Ligne de cumul des heures pour tous les employés -->
                 <tr class="text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
                     <th scope="row" class="px-6 py-1 font-bold text-gray-700 dark:text-white text-sm">Cumul du mois</th>
-                    <td class="px-6 py-1 font-extrabold text-green-500">
-                        {{ $totalDayHours > 0 ? $totalDayHours : '-' }}
+                    <td class="px-6 py-1 font-extrabold">
+                        {{ $totalDayHours > 0 ? $totalDayHours.' H' : '-' }}
                     </td>
-                    <td class="px-6 py-1 font-extrabold text-purple-500">
-                        {{ $totalNightHours > 0 ? $totalNightHours : '-' }}
+                    <td class="px-6 py-1 font-extrabold">
+                        {{ $totalNightHours > 0 ? $totalNightHours.' H' : '-' }}
                     </td>
-                    <td class="px-6 py-1 font-extrabold text-yellow-500">
-                        {{ $totalHolidayHours > 0 ? $totalHolidayHours : '-' }}
+                    <td class="px-6 py-1 font-extrabold">
+                        {{ $totalHolidayHours > 0 ? $totalHolidayHours.' H' : '-' }}
                     </td>
-                    <td class="px-6 py-1 font-extrabold text-cyan-500">
-                        {{ $totalRTTHours > 0 ? $totalRTTHours : '-' }}
+                    <td class="px-6 py-1 font-extrabold">
+                        {{ $totalRTTHours > 0 ? $totalRTTHours.' H' : '-' }}
                     </td>
                 </tr>
                 </tbody>

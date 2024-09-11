@@ -22,7 +22,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/projects/{project}', [ProjectController::class, 'show']);
 
-    Route::redirect('/dashboard', '/admin')->name('dashboard');
+    Route::redirect('/setting', '/admin')->name('setting');
 });
 
 require __DIR__.'/auth.php';

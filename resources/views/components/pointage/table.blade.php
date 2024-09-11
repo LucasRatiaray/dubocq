@@ -131,7 +131,7 @@
                 @endforeach
                 <!-- Ligne de cumul des heures pour tous les employés -->
                 <tr class="text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
-                    <th scope="row" class="px-6 py-1 font-bold text-gray-900 dark:text-white text-sm">
+                    <th scope="row" class="px-6 py-1 font-bold text-gray-700 dark:text-white text-sm">
                         Cumul du mois
                     </th>
                     <td class="px-6 py-1 font-extrabold text-md text-green-500">

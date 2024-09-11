@@ -117,58 +117,54 @@ class PointageController extends Controller
             $year = $employee['year'];
 
             foreach ($employee['days'] as $day => $hours) {
-                if ($hours !== null) {
-                    // Validation des heures : elles doivent être comprises entre 0 et 7.4
-                    if (!is_numeric($hours) || $hours < 0 || $hours > 7.4) {
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'Les heures doivent être des nombres compris entre 0 et 7.4 !',
-                        ], 400);
-                    }
+                $date = Carbon::createFromDate($year, $month, $day + 1)->format('Y-m-d');
 
-                    $date = Carbon::createFromDate($year, $month, $day + 1)->format('Y-m-d');
-
-                    // Récupérer ou créer l'enregistrement de suivi de temps
-                    $timeTracking = TimeTracking::firstOrNew([
-                        'project_id' => $project_id,
-                        'employee_id' => $employee_id,
-                        'date' => $date
-                    ]);
-
-                    // Mettre à jour le type d'heure actuel avec les heures saisies
-                    $timeTracking->{$hourType} = $hours;
-
-                    // Si le type d'heure est 'day_hours', on s'assure que les autres types (night_hours, holiday_hours, rtt_hours) soient à 0
-                    if ($hourType === 'day_hours') {
-                        $timeTracking->night_hours = $timeTracking->night_hours ?? 0;
-                        $timeTracking->holiday_hours = $timeTracking->holiday_hours ?? 0;
-                        $timeTracking->rtt_hours = $timeTracking->rtt_hours ?? 0;
-                    }
-
-                    // Si le type d'heure est 'night_hours', on s'assure que les autres types soient à 0
-                    if ($hourType === 'night_hours') {
-                        $timeTracking->day_hours = $timeTracking->day_hours ?? 0;
-                        $timeTracking->holiday_hours = $timeTracking->holiday_hours ?? 0;
-                        $timeTracking->rtt_hours = $timeTracking->rtt_hours ?? 0;
-                    }
-
-                    // Si le type d'heure est 'holiday_hours', on s'assure que les autres types soient à 0
-                    if ($hourType === 'holiday_hours') {
-                        $timeTracking->day_hours = $timeTracking->day_hours ?? 0;
-                        $timeTracking->night_hours = $timeTracking->night_hours ?? 0;
-                        $timeTracking->rtt_hours = $timeTracking->rtt_hours ?? 0;
-                    }
-
-                    // Si le type d'heure est 'rtt_hours', on s'assure que les autres types soient à 0
-                    if ($hourType === 'rtt_hours') {
-                        $timeTracking->day_hours = $timeTracking->day_hours ?? 0;
-                        $timeTracking->night_hours = $timeTracking->night_hours ?? 0;
-                        $timeTracking->holiday_hours = $timeTracking->holiday_hours ?? 0;
-                    }
-
-                    // Sauvegarder les modifications
-                    $timeTracking->save();
+                // Si l'heure est null, on supprime l'enregistrement correspondant
+                if ($hours === null) {
+                    TimeTracking::where('project_id', $project_id)
+                        ->where('employee_id', $employee_id)
+                        ->where('date', $date)
+                        ->delete();
+                    continue;
                 }
+
+                // Récupérer ou créer l'enregistrement de suivi de temps
+                $timeTracking = TimeTracking::firstOrNew([
+                    'project_id' => $project_id,
+                    'employee_id' => $employee_id,
+                    'date' => $date
+                ]);
+
+                // Charger les autres types d'heures existants et les conserver
+                if ($hourType === 'day_hours') {
+                    $timeTracking->night_hours = $timeTracking->night_hours ?? 0;
+                    $timeTracking->holiday_hours = $timeTracking->holiday_hours ?? 0;
+                    $timeTracking->rtt_hours = $timeTracking->rtt_hours ?? 0;
+                }
+
+                if ($hourType === 'night_hours') {
+                    $timeTracking->day_hours = $timeTracking->day_hours ?? 0;
+                    $timeTracking->holiday_hours = $timeTracking->holiday_hours ?? 0;
+                    $timeTracking->rtt_hours = $timeTracking->rtt_hours ?? 0;
+                }
+
+                if ($hourType === 'holiday_hours') {
+                    $timeTracking->day_hours = $timeTracking->day_hours ?? 0;
+                    $timeTracking->night_hours = $timeTracking->night_hours ?? 0;
+                    $timeTracking->rtt_hours = $timeTracking->rtt_hours ?? 0;
+                }
+
+                if ($hourType === 'rtt_hours') {
+                    $timeTracking->day_hours = $timeTracking->day_hours ?? 0;
+                    $timeTracking->night_hours = $timeTracking->night_hours ?? 0;
+                    $timeTracking->holiday_hours = $timeTracking->holiday_hours ?? 0;
+                }
+
+                // Mettre à jour le type d'heure actuel avec les heures saisies
+                $timeTracking->{$hourType} = $hours;
+
+                // Sauvegarder les modifications
+                $timeTracking->save();
             }
         }
 

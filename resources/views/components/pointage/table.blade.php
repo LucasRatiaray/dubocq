@@ -292,23 +292,21 @@
             const data = hot.getData();
             let hasValidHours = false;
             let validationError = false;
+            let hasDeletions = false; // Indicateur pour vérifier les suppressions
 
             const formattedData = data.map(row => {
                 const days = row.slice(3, daysInMonth + 3).map((day, index) => {
+                    // Si la cellule est vide, envoyer null pour indiquer une suppression
                     const value = day !== null && day !== undefined && day.toString().trim() !== '' ? parseFloat(day) : null;
 
                     if (value !== null) {
                         if (isNaN(value) || value < 0 || value > 7.4) {
                             validationError = true;
                         } else {
-                            hasValidHours = true;
+                            hasValidHours = true; // On a trouvé des heures valides
                         }
                     } else {
-                        deletedTimeTrackings.push({
-                            employee_id: row[1], // ID employé
-                            project_id: project_id,
-                            date: new Date(year, month - 1, index + 1).toISOString().split('T')[0], // Date du jour concerné
-                        });
+                        hasDeletions = true; // On a trouvé des suppressions
                     }
 
                     return value;
@@ -329,11 +327,13 @@
                 return;
             }
 
-            if (!hasValidHours && deletedTimeTrackings.length === 0) {
+            // Autoriser la sauvegarde même si toutes les heures sont supprimées (cas des suppressions complètes)
+            if (!hasValidHours && !hasDeletions) {
                 showMessage('Erreur : Aucune heure n\'a été saisie.', 'error');
                 return;
             }
 
+            // Envoyer les données au serveur
             fetch('{{ route('pointage.store') }}', {
                 method: 'POST',
                 headers: {
@@ -342,17 +342,12 @@
                 },
                 body: JSON.stringify({
                     data: formattedData,
-                    deletedTimeTrackings: deletedTimeTrackings,
                     hour_type: document.querySelector('form button[name="hour_type"].bg-green-500, form button[name="hour_type"].bg-purple-500, form button[name="hour_type"].bg-yellow-500, form button[name="hour_type"].bg-cyan-500').value
                 })
             })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Stocker le message dans sessionStorage avant le rechargement
-                        sessionStorage.setItem('successMessage', 'Données sauvegardées avec succès!');
-
-                        // Recharger la page
                         location.reload();
                     } else {
                         showMessage('Erreur lors de la sauvegarde des données : ' + data.message, 'error');

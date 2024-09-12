@@ -18,6 +18,7 @@ class Employee extends Model
         'hourly_rate_charged',
         'status',
         'contract',
+        'monthly_salary',
         'basket',
     ];
 

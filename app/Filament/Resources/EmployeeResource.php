@@ -32,35 +32,54 @@ class EmployeeResource extends Resource
                     ->columns(1)
                     ->schema([
                         TextInput::make('last_name')
-                            ->label('Nom')
+                            ->label('Nom:')
                             ->required()
-                            ->placeholder('Nom'),
+                            ->placeholder('Doe'),
                         TextInput::make('first_name')
-                            ->label('Prénom')
+                            ->label('Prénom:')
                             ->required()
-                            ->placeholder('Prénom'),
+                            ->placeholder('John'),
                     ])->columnSpan(1),
                 Section::make('Informations contractuelles')
-                    ->columns(1)
+                    ->columns(2)  // Divise la section en deux colonnes
                     ->schema([
                         Select::make('status')
-                            ->label('Statut')
+                            ->label('Statut:')
                             ->required()
                             ->options([
                                 'OUVRIER' => 'OUVRIER',
                                 'ETAM' => 'ETAM',
-                            ]),
-                        Select::make('contract')
-                            ->label('Contrat')
+                            ])
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if ($state === 'ETAM') {
+                                    $set('contract', '37');
+                                } elseif ($state === 'OUVRIER') {
+                                    $set('contract', '35');
+                                } else {
+                                    $set('contract', null); // Remet à null si aucun statut n'est sélectionné
+                                }
+                            })
+                            ->columnSpan(1),  // Occupe une colonne
+                        TextInput::make('contract')
+                            ->label('Type de contrat:')
                             ->required()
-                            ->options([
-                                '37H' => '37H',
-                                '35H' => '35H',
-                            ]),
-                        TextInput::make('hourly_rate')
-                            ->label('Taux Horaire')
+                            ->placeholder('(en heures)')
+                            ->reactive()
+                            ->suffix('heures') // Ajouter le suffixe "heures" après la saisie
+                            ->disabled(fn ($get) => $get('status') === 'ETAM')  // Désactiver la saisie si ETAM est sélectionné
+                            ->afterStateUpdated(function ($set, $get) {
+                                if ($get('status') === 'ETAM') {
+                                    $set('contract', '37');
+                                }
+                            })
+                            ->columnSpan(1),  // Occupe une colonne
+                        TextInput::make('monthly_salary')
+                            ->label('Salaire mensuel:')
                             ->required()
-                            ->placeholder('Taux Horaire'),
+                            ->placeholder('(en €)')
+                            ->suffix('€')
+                            ->columnSpan(2),  // Occupe une colonne
                     ])->columnSpan(1),
             ]);
     }
@@ -88,9 +107,16 @@ class EmployeeResource extends Resource
                     ->label('Contrat')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
-                TextColumn::make('hourly_rate')
-                    ->label('Taux Horaire')
+                    ->toggleable()
+                    ->formatStateUsing(fn (string $state): string => $state . ' H'),
+                TextColumn::make('monthly_salary')
+                    ->label('Salaire Mensuel')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->formatStateUsing(fn (string $state): string => $state . ' €'),
+                TextColumn::make('hourly_rate_charged')
+                    ->label('Taux Horaire Chargé')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),

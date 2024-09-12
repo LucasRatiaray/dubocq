@@ -13,7 +13,7 @@ class TimeTracking extends Model
     protected $fillable = [
         'project_id',
         'employee_id',
-        'day_hours',  // Renommé de 'hours' à 'day_hours'
+        'day_hours',
         'night_hours',
         'holiday_hours',
         'rtt_hours',
@@ -30,7 +30,7 @@ class TimeTracking extends Model
         return $this->belongsTo(Employee::class, 'employee_id');
     }
 
-    public static function getMonthlyHoursForProject($projectId)
+    public static function getMonthlyHoursForProject($projectId): object
     {
         return self::where('project_id', $projectId)
             ->selectRaw('SUM(day_hours) as total_hours, TO_CHAR(date, \'YYYY-MM\') as month')

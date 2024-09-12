@@ -9,7 +9,7 @@ class HourlyRateObserver
 {
     public function saving(HourlyRate $hourlyRate): void
     {
-        $employee = $hourlyRate->employee;
+/*        $employee = $hourlyRate->employee;
         $basketZone = BasketZone::where('zone_id', $hourlyRate->zone_id)->first();
 
         if ($employee && $basketZone) {
@@ -20,6 +20,6 @@ class HourlyRateObserver
             }
 
             $hourlyRate->rate = $employee->basket + $basketZoneChargedDaily;
-        }
+        }*/
     }
 }

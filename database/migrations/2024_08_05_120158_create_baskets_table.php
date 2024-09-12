@@ -13,10 +13,8 @@ return new class extends Migration
     {
         Schema::create('baskets', function (Blueprint $table) {
             $table->id();
-            $table->decimal('basket', 10, 2);
-            $table->decimal('basket_charged', 10, 2)->nullable();
-            $table->decimal('basket_charged_daily_37H', 10, 2)->nullable();
-            $table->decimal('basket_charged_daily_35H', 10, 2)->nullable();
+            $table->decimal('basket');
+            $table->decimal('basket_charged')->nullable();
             $table->timestamps();
         });
     }

@@ -41,7 +41,7 @@ class EmployeeResource extends Resource
                             ->placeholder('John'),
                     ])->columnSpan(1),
                 Section::make('Informations contractuelles')
-                    ->columns(4)  // Divise la section en 3 colonnes
+                    ->columns(7)  // Divise la section en 7 colonnes
                     ->schema([
                         Select::make('status')
                             ->label('Statut:')
@@ -60,10 +60,11 @@ class EmployeeResource extends Resource
                                     $set('contract', null); // Remet à null si aucun statut n'est sélectionné
                                 }
                             })
-                            ->columnSpan(2),  // Occupe une colonne
+                            ->columnSpan(3),  // Occupe 3 colonnes
                         TextInput::make('contract')
                             ->label('Type de contrat:')
                             ->required()
+                            ->numeric()
                             ->placeholder('37')
                             ->reactive()
                             ->suffix('heures') // Ajouter le suffixe "heures" après la saisie
@@ -73,13 +74,15 @@ class EmployeeResource extends Resource
                                     $set('contract', '37');
                                 }
                             })
-                            ->columnSpan(1),  // Occupe une colonne
+                            ->columnSpan(2),  // Occupe 2 colonnes
                         TextInput::make('monthly_salary')
                             ->label('Salaire mensuel:')
                             ->required()
+                            ->numeric()
+                            ->step('0.01')
                             ->placeholder('1 398,69')
                             ->suffix('€')
-                            ->columnSpan(1),  // Occupe une colonne
+                            ->columnSpan(2),  // Occupe 2 colonnes
                     ])->columnSpan(1),
             ]);
     }

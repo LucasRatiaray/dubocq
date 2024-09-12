@@ -56,9 +56,9 @@
             <form class="flex items-center gap-4" action="{{ route('pointage.add', ['id' => $project->id]) }}" method="POST">
                 @csrf
                 <div class="flex">
-                    <label for="employee" class="sr-only">Choisir un employé</label>
+                    <label for="employee" class="sr-only">Choisir un salarié</label>
                     <select name="employee_id" id="employee" class="w-auto bg-gray-100 border border-gray-300 text-gray-900 font-bold text-sm rounded-lg focus:ring-customColor focus:border-customColor block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-customColor dark:focus:border-customColor">
-                        <option selected disabled>Choisir un employé</option>
+                        <option selected disabled>Choisir un salarié</option>
                         @foreach ($allEmployees as $employee)
                             <option value="{{ $employee->id }}">{{ $employee->last_name }} {{ $employee->first_name }}</option>
                         @endforeach
@@ -68,7 +68,7 @@
                 <input type="hidden" name="year" value="{{ $year }}">
                 <input type="hidden" name="hour_type" value="{{ $hourType }}">
                 <div>
-                    <button type="submit" class="bg-gray-100 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">Ajouter un employé</button>
+                    <button type="submit" class="bg-gray-100 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">Ajouter un salarié</button>
                 </div>
             </form>
             <button id="save" class="bg-gray-100 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">Sauvegarder</button>
@@ -80,14 +80,14 @@
         <div class="relative overflow-x-auto">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <caption class="pb-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
-                    Totaux d'heures par employé
+                    Totaux d'heures par salarié
                     <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-                        Ce tableau affiche le total des heures travaillées par employé pour chaque type d'heure (jour, nuit, férié, RTT) durant le mois sélectionné.
+                        Ce tableau affiche le total des heures travaillées par salarié pour chaque type d'heure (jour, nuit, férié, RTT) durant le mois sélectionné.
                     </p>
                 </caption>
                 <thead class="text-sm text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                    <th scope="col" class="px-6 py-1">Employé</th>
+                    <th scope="col" class="px-6 py-1">salarié</th>
                     <th scope="col" class="px-6 py-1">Total heures Jour</th>
                     <th scope="col" class="px-6 py-1">Total heures Nuit</th>
                     <th scope="col" class="px-6 py-1">Total heures Férié</th>
@@ -133,7 +133,7 @@
                         </td>
                     </tr>
                 @endforeach
-                <!-- Ligne de cumul des heures pour tous les employés -->
+                <!-- Ligne de cumul des heures pour tous les salariés -->
                 <tr class="text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
                     <th scope="row" class="px-6 py-1 font-bold text-gray-700 dark:text-white text-sm">Cumul du mois</th>
                     <td class="px-6 py-1 font-extrabold">
@@ -173,9 +173,9 @@
 
         // Mise à jour du titre
         if (month && year && projectCode && projectBusiness) {
-            document.getElementById('code-title').innerHTML = `<span class="text-black px-2 py-1">${projectCode} - ${projectBusiness}</span>`;
-            document.getElementById('month-year').innerHTML = `<span class="text-black px-2 py-1">${months[month - 1]} ${year}</span>`;
-            document.getElementById('zone').innerHTML = `<span class="text-black px-2 py-1">${projectZone}</span>`;
+            document.getElementById('code-title').innerHTML = `<span class="text-black px-2 py-1 uppercase">${projectCode} - ${projectBusiness}</span>`;
+            document.getElementById('month-year').innerHTML = `<span class="text-black px-2 py-1 lowercase">${months[month - 1]} ${year}</span>`;
+            document.getElementById('zone').innerHTML = `<span class="text-black px-2 py-1 uppercase">${projectZone}</span>`;
         }
 
         // Obtenir le nombre de jours dans un mois
@@ -201,7 +201,7 @@
 
         var hot = new Handsontable(container, {
             data: employeeData,
-            colHeaders: ['id employé chantier', 'id employé', 'Employé', ...Array.from({ length: daysInMonth }, (_, i) => i + 1)],
+            colHeaders: ['id salarié chantier', 'id salarié', 'Salarié', ...Array.from({ length: daysInMonth }, (_, i) => i + 1)],
             columns: [
                 { data: 'employee_project_id', readOnly: true },
                 { data: 'employee_id', readOnly: true },

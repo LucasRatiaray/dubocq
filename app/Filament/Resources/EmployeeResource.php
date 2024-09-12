@@ -29,7 +29,7 @@ class EmployeeResource extends Resource
         return $form
             ->schema([
                 Section::make('Informations personnelles')
-                    ->columns(1)
+                    ->columns(2)
                     ->schema([
                         TextInput::make('last_name')
                             ->label('Nom:')
@@ -41,7 +41,7 @@ class EmployeeResource extends Resource
                             ->placeholder('John'),
                     ])->columnSpan(1),
                 Section::make('Informations contractuelles')
-                    ->columns(2)  // Divise la section en deux colonnes
+                    ->columns(4)  // Divise la section en 3 colonnes
                     ->schema([
                         Select::make('status')
                             ->label('Statut:')
@@ -55,16 +55,16 @@ class EmployeeResource extends Resource
                                 if ($state === 'ETAM') {
                                     $set('contract', '37');
                                 } elseif ($state === 'OUVRIER') {
-                                    $set('contract', '35');
+                                    $set('contract', '37');
                                 } else {
                                     $set('contract', null); // Remet à null si aucun statut n'est sélectionné
                                 }
                             })
-                            ->columnSpan(1),  // Occupe une colonne
+                            ->columnSpan(2),  // Occupe une colonne
                         TextInput::make('contract')
                             ->label('Type de contrat:')
                             ->required()
-                            ->placeholder('(en heures)')
+                            ->placeholder('37')
                             ->reactive()
                             ->suffix('heures') // Ajouter le suffixe "heures" après la saisie
                             ->disabled(fn ($get) => $get('status') === 'ETAM')  // Désactiver la saisie si ETAM est sélectionné
@@ -77,9 +77,9 @@ class EmployeeResource extends Resource
                         TextInput::make('monthly_salary')
                             ->label('Salaire mensuel:')
                             ->required()
-                            ->placeholder('(en €)')
+                            ->placeholder('1 398,69')
                             ->suffix('€')
-                            ->columnSpan(2),  // Occupe une colonne
+                            ->columnSpan(1),  // Occupe une colonne
                     ])->columnSpan(1),
             ]);
     }

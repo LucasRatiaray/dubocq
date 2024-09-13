@@ -32,10 +32,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Project::observe(ProjectObserver::class);
-        Employee::observe(EmployeeObserver::class);
         Basket::observe(BasketObserver::class);
         BasketZone::observe(BasketZoneObserver::class);
         RateCharged::observe(RateChargedObserver::class);
+        Employee::observe(EmployeeObserver::class);
         EmployeeBasket::observe(EmployeeBasketObserver::class);
     }
 }

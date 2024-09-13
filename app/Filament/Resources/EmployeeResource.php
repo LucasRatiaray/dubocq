@@ -111,33 +111,37 @@ class EmployeeResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable()
-                    ->formatStateUsing(fn (string $state): string => $state . ' H'),
+                    ->suffix('h'),
                 TextColumn::make('monthly_salary')
                     ->label('Salaire Mensuel')
                     ->searchable()
                     ->sortable()
                     ->toggleable()
-                    ->formatStateUsing(fn (string $state): string => $state . ' €'),
+                    ->suffix(' €'),
                 TextColumn::make('hourly_rate')
                     ->label('Taux Horaire')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->suffix(' €'),
                 TextColumn::make('hourly_rate_charged')
                     ->label('Taux/H Chargé')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->suffix(' €'),
                 TextColumn::make('basket')
                     ->label('Panier')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->suffix(' €'),
                 TextColumn::make('hourly_basket_charged')
                     ->label('Panier/H Chargé')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->suffix(' €'),
             ])
             ->filters([
                 //

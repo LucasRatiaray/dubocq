@@ -19,13 +19,9 @@ class Employee extends Model
         'status',
         'contract',
         'monthly_salary',
+        'hourly_basket_charged',
         'basket',
     ];
-
-    public static function getRateIncreasePercentage(): float
-    {
-        return 0.70; // 70%
-    }
 
     public function projects(): BelongsToMany
     {

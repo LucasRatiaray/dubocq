@@ -118,13 +118,23 @@ class EmployeeResource extends Resource
                     ->sortable()
                     ->toggleable()
                     ->formatStateUsing(fn (string $state): string => $state . ' €'),
+                TextColumn::make('hourly_rate')
+                    ->label('Taux Horaire')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('hourly_rate_charged')
-                    ->label('Taux Horaire Chargé')
+                    ->label('Taux/H Chargé')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
                 TextColumn::make('basket')
                     ->label('Panier')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                TextColumn::make('hourly_basket_charged')
+                    ->label('Panier/H Chargé')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
@@ -134,7 +144,7 @@ class EmployeeResource extends Resource
             ])
             ->actions([
                 //Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                //Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

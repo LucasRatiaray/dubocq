@@ -23,21 +23,6 @@ class EmployeeBasketSeeder extends Seeder
             [
                 'employee_id' => 3,
             ],
-            [
-                'employee_id' => 4,
-            ],
-            [
-                'employee_id' => 5,
-            ],
-            [
-                'employee_id' => 6,
-            ],
-            [
-                'employee_id' => 7,
-            ],
-            [
-                'employee_id' => 8,
-            ],
         ];
 
         foreach ($employeeBaskets as $employeeBasket) {

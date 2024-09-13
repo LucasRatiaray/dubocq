@@ -3,7 +3,9 @@
 namespace App\Observers;
 
 use App\Models\Basket;
+use App\Models\BasketZone;
 use App\Models\Employee;
+use App\Models\EmployeeBasketZone;
 use App\Models\RateCharged;
 
 class EmployeeObserver
@@ -35,7 +37,26 @@ class EmployeeObserver
 
     public function created(Employee $employee): void
     {
-        //
+        // Récupérer toutes les zones existantes
+        $basketZones = BasketZone::all();
+
+        // Créer des enregistrements pour chaque zone
+        foreach ($basketZones as $basketZone) {
+            if ($employee->status === 'OUVRIER') {
+                $employeeBasketZoneCharged = $basketZone->basket_zone_charged / ($employee->contract / 5);
+            } elseif ($employee->status === 'ETAM') {
+                $employeeBasketZoneCharged = $employee->basket;
+            } else {
+                continue;
+            }
+
+            // Créer un nouvel enregistrement pour chaque zone
+            EmployeeBasketZone::create([
+                'employee_id' => $employee->id,
+                'zone_id' => $basketZone->id,
+                'employee_basket_zone_charged' => $employeeBasketZoneCharged,
+            ]);
+        }
     }
 
     public function deleting(Employee $employee): void

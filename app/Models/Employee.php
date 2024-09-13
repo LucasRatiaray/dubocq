@@ -28,6 +28,12 @@ class Employee extends Model
         return $this->belongsToMany(Project::class, 'employee_projects');
     }
 
+    public function employeeBasketZones(): HasMany
+    {
+        return $this->hasMany(EmployeeBasketZone::class);
+    }
+
+
     public function timeTrackings(): HasMany
     {
         return $this->hasMany(TimeTracking::class);

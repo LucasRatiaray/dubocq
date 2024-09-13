@@ -37,5 +37,6 @@ class AppServiceProvider extends ServiceProvider
         RateCharged::observe(RateChargedObserver::class);
         Employee::observe(EmployeeObserver::class);
         EmployeeBasket::observe(EmployeeBasketObserver::class);
+        EmployeeBasket::observe(EmployeeBasketObserver::class);
     }
 }

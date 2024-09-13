@@ -37,6 +37,9 @@ class ZoneResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->label('Nom')
                             ->prefix('Zone')
+                            ->placeholder('ex: 52')
+                            ->numeric()
+                            ->step('1')
                             ->required(),
                     ])->columnSpan(1), // Cette section occupe 1/4 de la largeur
 
@@ -46,10 +49,12 @@ class ZoneResource extends Resource
                         Forms\Components\TextInput::make('kilometers_range_min')
                             ->label('Kilomètres min')
                             ->suffix('km')
+                            ->placeholder('ex: 59.33')
                             ->required(),
                         Forms\Components\TextInput::make('kilometers_range_max')
                             ->label('Kilomètres max')
                             ->suffix('km')
+                            ->placeholder('ex: 96.32')
                             ->required(),
                     ])->columnSpan(2), // Cette section occupe 2/4 de la largeur
 
@@ -58,6 +63,7 @@ class ZoneResource extends Resource
                         Forms\Components\TextInput::make('tariff')
                             ->label('Tarif')
                             ->suffix('€')
+                            ->placeholder('ex: 23')
                             ->required(),
                     ])->columnSpan(1), // Cette section occupe 1/4 de la largeur
                 ]),
@@ -70,6 +76,10 @@ class ZoneResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->label('Nom')
+                    ->colors([
+                        'warning' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
+                    ->badge()
                     ->searchable()
                     ->sortable()
                     ->prefix('Zone ')
@@ -90,6 +100,10 @@ class ZoneResource extends Resource
                     ->formatStateUsing(fn($state) => number_format($state, 0)), // Affiche sans décimales
                 TextColumn::make('tariff')
                     ->label('Tarif')
+                    ->badge()
+                    ->colors([
+                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->searchable()
                     ->sortable()
                     ->toggleable()
@@ -124,5 +138,10 @@ class ZoneResource extends Resource
             'view' => Pages\ViewZone::route('/{record}'),
             'edit' => Pages\EditZone::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 3;
     }
 }

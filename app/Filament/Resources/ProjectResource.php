@@ -65,6 +65,8 @@ class ProjectResource extends Resource
                                 ->label('Distance en km')
                                 ->required()
                                 ->suffix('km')
+                                ->numeric()
+                                ->step('0.01')
                                 ->placeholder('Distance'),
                         ])->columnSpan(1), // 1/5 de la largeur
                 ]),
@@ -77,6 +79,10 @@ class ProjectResource extends Resource
             ->columns([
                 TextColumn::make('code')
                     ->label('Code chantier')
+                    ->badge()
+                    ->colors([
+                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
@@ -97,12 +103,21 @@ class ProjectResource extends Resource
                     ->toggleable(),
                 TextColumn::make('kilometers')
                     ->label('Distance')
+                    ->badge()
+                    ->colors([
+                        'warning' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
+                    ->extraAttributes(['class' => 'large-badge'])
                     ->searchable()
                     ->sortable()
                     ->suffix(' km')
                     ->toggleable(),
                 TextColumn::make('zone.name')
                     ->label('Zone')
+                    ->badge()
+                    ->colors([
+                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->searchable()
                     ->sortable()
                     ->prefix('Zone ')
@@ -137,5 +152,10 @@ class ProjectResource extends Resource
             'view' => Pages\ViewProject::route('/{record}'),
             'edit' => Pages\EditProject::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 2;
     }
 }

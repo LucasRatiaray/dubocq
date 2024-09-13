@@ -33,7 +33,7 @@ class BasketResource extends Resource
                     ->columns(3)
                     ->schema([
                         Forms\Components\TextInput::make('basket')
-                            ->label('Valeur:')
+                            ->label('Valeur :')
                             ->suffix('€')
                             ->numeric()
                             ->step('0.01')
@@ -48,15 +48,19 @@ class BasketResource extends Resource
             ->columns([
                 TextColumn::make('basket')
                     ->label('Panier')
-                    ->searchable()
+                    ->badge()
+                    ->colors([
+                        'success' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->sortable()
-                    ->toggleable()
                     ->suffix(' €'),
                 TextColumn::make('basket_charged')
                     ->label('Panier Chargé')
-                    ->searchable()
+                    ->badge()
+                    ->colors([
+                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->sortable()
-                    ->toggleable()
                     ->suffix(' €'),
             ])
             ->filters([
@@ -67,9 +71,9 @@ class BasketResource extends Resource
                 //Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+/*                Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                ]),*/
             ]);
     }
 
@@ -88,5 +92,10 @@ class BasketResource extends Resource
             'view' => Pages\ViewBasket::route('/{record}'),
             'edit' => Pages\EditBasket::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 5;
     }
 }

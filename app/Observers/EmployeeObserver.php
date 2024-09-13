@@ -21,6 +21,18 @@ class EmployeeObserver
         }
     }
 
+    public function updateEmployeeHourlyBasketCharged(): void
+    {
+        $basket = Basket::first();
+        $employees = Employee::all();
+
+        foreach ($employees as $employee) {
+            $employee->hourly_basket_charged = $basket->basket_charged / ($employee->contract / 5);
+            $employee->basket = $employee->hourly_rate_charged + $employee->hourly_basket_charged;
+            $employee->save();
+        }
+    }
+
     public function created(Employee $employee): void
     {
         //

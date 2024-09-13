@@ -11,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -32,11 +33,11 @@ class EmployeeResource extends Resource
                     ->columns(2)
                     ->schema([
                         TextInput::make('last_name')
-                            ->label('Nom:')
+                            ->label('Nom :')
                             ->required()
                             ->placeholder('Doe'),
                         TextInput::make('first_name')
-                            ->label('Prénom:')
+                            ->label('Prénom :')
                             ->required()
                             ->placeholder('John'),
                     ])->columnSpan(1),
@@ -44,7 +45,7 @@ class EmployeeResource extends Resource
                     ->columns(7)  // Divise la section en 7 colonnes
                     ->schema([
                         Select::make('status')
-                            ->label('Statut:')
+                            ->label('Statut :')
                             ->required()
                             ->options([
                                 'OUVRIER' => 'OUVRIER',
@@ -62,7 +63,7 @@ class EmployeeResource extends Resource
                             })
                             ->columnSpan(3),  // Occupe 3 colonnes
                         TextInput::make('contract')
-                            ->label('Type de contrat:')
+                            ->label('Type de contrat :')
                             ->required()
                             ->numeric()
                             ->placeholder('37')
@@ -76,7 +77,7 @@ class EmployeeResource extends Resource
                             })
                             ->columnSpan(2),  // Occupe 2 colonnes
                         TextInput::make('monthly_salary')
-                            ->label('Salaire mensuel:')
+                            ->label('Salaire mensuel :')
                             ->required()
                             ->numeric()
                             ->step('0.01')
@@ -103,11 +104,20 @@ class EmployeeResource extends Resource
                     ->toggleable(),
                 TextColumn::make('status')
                     ->label('Statut')
+                    ->badge()
+                    ->colors([
+                        'success' => 'OUVRIER',
+                        'danger' => 'ETAM',
+                    ])
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
                 TextColumn::make('contract')
                     ->label('Contrat')
+                    ->badge()
+                    ->colors([
+                        'warning' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->searchable()
                     ->sortable()
                     ->toggleable()
@@ -120,28 +130,31 @@ class EmployeeResource extends Resource
                     ->suffix(' €'),
                 TextColumn::make('hourly_rate')
                     ->label('Taux Horaire')
+                    ->badge()
+                    ->colors([
+                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->searchable()
                     ->sortable()
-                    ->toggleable()
-                    ->suffix(' €'),
+                    ->toggleable(),
                 TextColumn::make('hourly_rate_charged')
                     ->label('Taux/H Chargé')
+                    ->badge()
                     ->searchable()
                     ->sortable()
-                    ->toggleable()
-                    ->suffix(' €'),
-                TextColumn::make('basket')
-                    ->label('Panier')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable()
-                    ->suffix(' €'),
+                    ->toggleable(),
                 TextColumn::make('hourly_basket_charged')
                     ->label('Panier/H Chargé')
+                    ->badge()
                     ->searchable()
                     ->sortable()
-                    ->toggleable()
-                    ->suffix(' €'),
+                    ->toggleable(),
+                TextColumn::make('basket')
+                    ->label('Panier')
+                    ->badge()
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 //
@@ -172,5 +185,10 @@ class EmployeeResource extends Resource
             'view' => Pages\ViewEmployee::route('/{record}'),
             'edit' => Pages\EditEmployee::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 1;
     }
 }

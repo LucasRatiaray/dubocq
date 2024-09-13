@@ -48,9 +48,11 @@ class RateChargedResource extends Resource
             ->columns([
                 TextColumn::make('value')
                     ->label('Valeur')
-                    ->searchable()
+                    ->badge()
+                    ->colors([
+                        'success' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->sortable()
-                    ->toggleable()
                     ->suffix(' %'),
             ])
             ->filters([
@@ -61,9 +63,9 @@ class RateChargedResource extends Resource
                 //Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                /*Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                ]),*/
             ]);
     }
 
@@ -82,5 +84,10 @@ class RateChargedResource extends Resource
             'view' => Pages\ViewRateCharged::route('/{record}'),
             'edit' => Pages\EditRateCharged::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 4;
     }
 }

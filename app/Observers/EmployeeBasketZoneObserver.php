@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Models\Basket;
 use App\Models\BasketZone;
 use App\Models\Employee;
 use App\Models\EmployeeBasketZone;
@@ -16,6 +17,7 @@ class EmployeeBasketZoneObserver
         // Récupérer l'employé et la zone associée
         $employee = Employee::find($employeeBasketZone->employee_id);
         $basketZone = BasketZone::find($employeeBasketZone->zone_id);
+        $basket = Basket::first();
 
         if ($employee && $basketZone) {
             // Calcul pour les employés OUVRIER
@@ -25,7 +27,8 @@ class EmployeeBasketZoneObserver
             }
             // Calcul pour les employés ETAM
             elseif ($employee->status === 'ETAM') {
-                $employeeBasketZone->employee_basket_zone_charged = $employee->basket;
+                $employeeBasketZone->employee_basket_zone_charged = $basket->basket_charged / ($employee->contract / 5);
+                $employeeBasketZone->employee_basket_zone = $employee->basket;
             }
         }
     }

@@ -21,6 +21,7 @@ class EmployeeBasketZoneObserver
             // Calcul pour les employés OUVRIER
             if ($employee->status === 'OUVRIER') {
                 $employeeBasketZone->employee_basket_zone_charged = $basketZone->basket_zone_charged / ($employee->contract / 5);
+                $employeeBasketZone->employee_basket_zone = $employeeBasketZone->employee_basket_zone_charged + $employee->basket;
             }
             // Calcul pour les employés ETAM
             elseif ($employee->status === 'ETAM') {

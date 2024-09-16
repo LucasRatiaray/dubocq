@@ -6,11 +6,13 @@ use App\Models\Basket;
 use App\Models\BasketZone;
 use App\Models\Employee;
 use App\Models\EmployeeBasket;
+use App\Models\EmployeeBasketZone;
 use App\Models\Project;
 use App\Models\RateCharged;
 use App\Observers\BasketObserver;
 use App\Observers\BasketZoneObserver;
 use App\Observers\EmployeeBasketObserver;
+use App\Observers\EmployeeBasketZoneObserver;
 use App\Observers\EmployeeObserver;
 use App\Observers\ProjectObserver;
 use App\Observers\RateChargedObserver;
@@ -37,6 +39,6 @@ class AppServiceProvider extends ServiceProvider
         RateCharged::observe(RateChargedObserver::class);
         Employee::observe(EmployeeObserver::class);
         EmployeeBasket::observe(EmployeeBasketObserver::class);
-        EmployeeBasket::observe(EmployeeBasketObserver::class);
+        EmployeeBasketZone::observe(EmployeeBasketZoneObserver::class);
     }
 }

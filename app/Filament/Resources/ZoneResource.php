@@ -76,16 +76,20 @@ class ZoneResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->label('Nom')
+                    ->badge()
                     ->colors([
                         'warning' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
                     ])
-                    ->badge()
                     ->searchable()
                     ->sortable()
                     ->prefix('Zone ')
                     ->toggleable(),
                 TextColumn::make('kilometers_range_min')
                     ->label('Kilomètres min')
+                    ->badge()
+                    ->colors([
+                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->searchable()
                     ->sortable()
                     ->toggleable()
@@ -93,6 +97,10 @@ class ZoneResource extends Resource
                     ->formatStateUsing(fn($state) => number_format($state, 0)), // Affiche sans décimales
                 TextColumn::make('kilometers_range_max')
                     ->label('Kilomètres max')
+                    ->badge()
+                    ->colors([
+                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->searchable()
                     ->sortable()
                     ->toggleable()
@@ -100,10 +108,6 @@ class ZoneResource extends Resource
                     ->formatStateUsing(fn($state) => number_format($state, 0)), // Affiche sans décimales
                 TextColumn::make('tariff')
                     ->label('Tarif')
-                    ->badge()
-                    ->colors([
-                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
-                    ])
                     ->searchable()
                     ->sortable()
                     ->toggleable()

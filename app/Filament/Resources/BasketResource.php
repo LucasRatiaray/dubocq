@@ -56,10 +56,6 @@ class BasketResource extends Resource
                     ->suffix(' €'),
                 TextColumn::make('basket_charged')
                     ->label('Panier Chargé')
-                    ->badge()
-                    ->colors([
-                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
-                    ])
                     ->sortable()
                     ->suffix(' €'),
             ])

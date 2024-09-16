@@ -29,12 +29,17 @@ class EmployeeBasketZonesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('employee_id')
             ->columns([
-                Tables\Columns\TextColumn::make('zone.basket_zone')
+                Tables\Columns\TextColumn::make('zone.name')
                     ->label('Zone')
+                    ->prefix('Zone ')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('employee_basket_zone_charged')
-                    ->label('Charged Rate')
+                    ->label('Panier/H Chargé')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('employee_basket_zone')
+                    ->label('Panier/H')
                     ->sortable()
                     ->searchable(),
             ])

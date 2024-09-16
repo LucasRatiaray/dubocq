@@ -23,6 +23,6 @@ class EmployeeBasketZone extends Model
 
     public function zone(): BelongsTo
     {
-        return $this->belongsTo(BasketZone::class, 'zone_id');
+        return $this->belongsTo(Zone::class);
     }
 }

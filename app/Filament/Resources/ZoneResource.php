@@ -78,7 +78,7 @@ class ZoneResource extends Resource
                     ->label('Nom')
                     ->badge()
                     ->colors([
-                        'warning' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
                     ])
                     ->searchable()
                     ->sortable()
@@ -88,7 +88,7 @@ class ZoneResource extends Resource
                     ->label('Kilomètres min')
                     ->badge()
                     ->colors([
-                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                        'warning' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
                     ])
                     ->searchable()
                     ->sortable()
@@ -99,7 +99,7 @@ class ZoneResource extends Resource
                     ->label('Kilomètres max')
                     ->badge()
                     ->colors([
-                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                        'warning' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
                     ])
                     ->searchable()
                     ->sortable()
@@ -108,6 +108,9 @@ class ZoneResource extends Resource
                     ->formatStateUsing(fn($state) => number_format($state, 0)), // Affiche sans décimales
                 TextColumn::make('tariff')
                     ->label('Tarif')
+                    ->colors([
+                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->searchable()
                     ->sortable()
                     ->toggleable()

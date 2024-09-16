@@ -2,9 +2,9 @@
 
 namespace App\Observers;
 
+use App\Models\Employee;
 use App\Models\Basket;
 use App\Models\BasketZone;
-use App\Models\Employee;
 use App\Models\EmployeeBasketZone;
 use App\Models\RateCharged;
 
@@ -23,15 +23,28 @@ class EmployeeObserver
         }
     }
 
-    public function updateEmployeeHourlyBasketCharged(): void
+    // Méthode pour mettre à jour les enregistrements d'EmployeeBasketZone
+    public function saved(Employee $employee): void
     {
-        $basket = Basket::first();
-        $employees = Employee::all();
+        // Mettre à jour tous les EmployeeBasketZones associés à cet employé
+        $employeeBasketZones = EmployeeBasketZone::where('employee_id', $employee->id)->get();
+        $this->updateEmployeeBasketZones($employee, $employeeBasketZones);
+    }
 
-        foreach ($employees as $employee) {
-            $employee->hourly_basket_charged = $basket->basket_charged / ($employee->contract / 5);
-            $employee->basket = $employee->hourly_rate_charged + $employee->hourly_basket_charged;
-            $employee->save();
+    protected function updateEmployeeBasketZones(Employee $employee, $employeeBasketZones): void
+    {
+        foreach ($employeeBasketZones as $employeeBasketZone) {
+            $basketZone = BasketZone::find($employeeBasketZone->zone_id);
+
+            if ($employee->status === 'OUVRIER') {
+                $employeeBasketZone->employee_basket_zone_charged = $basketZone->basket_zone_charged / ($employee->contract / 5);
+                $employeeBasketZone->employee_basket_zone = $employeeBasketZone->employee_basket_zone_charged + $employee->basket;
+            } elseif ($employee->status === 'ETAM') {
+                $employeeBasketZone->employee_basket_zone_charged = $employee->basket;
+            }
+
+            // Sauvegarder les changements
+            $employeeBasketZone->save();
         }
     }
 

@@ -175,7 +175,7 @@
         if (month && year && projectCode && projectBusiness) {
             document.getElementById('code-title').innerHTML = `<span class="text-black px-2 py-1 uppercase">${projectCode} - ${projectBusiness}</span>`;
             document.getElementById('month-year').innerHTML = `<span class="text-black px-2 py-1 lowercase">${months[month - 1]} ${year}</span>`;
-            document.getElementById('zone').innerHTML = `<span class="text-black px-2 py-1 uppercase">${projectZone}</span>`;
+            document.getElementById('zone').innerHTML = `<span class="text-black px-2 py-1 uppercase">Zone ${projectZone}</span>`;
         }
 
         // Obtenir le nombre de jours dans un mois

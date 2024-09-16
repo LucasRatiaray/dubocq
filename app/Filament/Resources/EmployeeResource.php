@@ -124,13 +124,15 @@ class EmployeeResource extends Resource
                     ->suffix('h'),
                 TextColumn::make('monthly_salary')
                     ->label('Salaire Mensuel')
+                    ->colors([
+                        'gray' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->searchable()
                     ->sortable()
                     ->toggleable()
                     ->suffix(' €'),
                 TextColumn::make('hourly_rate')
                     ->label('Taux Horaire')
-                    ->badge()
                     ->colors([
                         'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
                     ])
@@ -140,18 +142,27 @@ class EmployeeResource extends Resource
                 TextColumn::make('hourly_rate_charged')
                     ->label('Taux/H Chargé')
                     ->badge()
+                    ->colors([
+                        'primary' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
                 TextColumn::make('hourly_basket_charged')
                     ->label('Panier/H Chargé')
                     ->badge()
+                    ->colors([
+                        'primary' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
                 TextColumn::make('basket')
                     ->label('Panier')
                     ->badge()
+                    ->colors([
+                        'primary' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->searchable()
                     ->sortable()
                     ->toggleable(),

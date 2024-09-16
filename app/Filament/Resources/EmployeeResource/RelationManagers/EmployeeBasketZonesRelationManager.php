@@ -14,6 +14,8 @@ class EmployeeBasketZonesRelationManager extends RelationManager
 {
     protected static string $relationship = 'employeeBasketZones';
 
+    protected static ?string $title = 'Panier par zone';
+
     public function form(Form $form): Form
     {
         return $form
@@ -31,31 +33,38 @@ class EmployeeBasketZonesRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('zone.name')
                     ->label('Zone')
+                    ->badge()
+                    ->colors([
+                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->prefix('Zone ')
-                    ->sortable()
-                    ->searchable(),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('employee_basket_zone_charged')
                     ->label('Panier/H Chargé')
-                    ->sortable()
-                    ->searchable(),
+                    ->colors([
+                        'warning' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('employee_basket_zone')
                     ->label('Panier/H')
-                    ->sortable()
-                    ->searchable(),
+                    ->colors([
+                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
+                    ->sortable(),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                //Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                //Tables\Actions\EditAction::make(),
+                //Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

@@ -17,7 +17,6 @@ return new class extends Migration
             $table->decimal('kilometers_range_min', 10, 2);
             $table->decimal('kilometers_range_max', 10, 2);
             $table->decimal('tariff', 10, 2);
-            $table->decimal('tariff_charged', 10, 2)->nullable();
             $table->timestamps();
         });
     }

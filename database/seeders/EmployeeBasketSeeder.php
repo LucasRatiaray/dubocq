@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Employee;
 use App\Models\EmployeeBasket;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -13,20 +14,14 @@ class EmployeeBasketSeeder extends Seeder
      */
     public function run(): void
     {
-        $employeeBaskets = [
-            [
-                'employee_id' => 1,
-            ],
-            [
-                'employee_id' => 2,
-            ],
-            [
-                'employee_id' => 3,
-            ],
-        ];
+        // Récupérer tous les employés
+        $employees = Employee::all();
 
-        foreach ($employeeBaskets as $employeeBasket) {
-            EmployeeBasket::create($employeeBasket);
+        // Boucle à travers chaque employé et créer une entrée dans employee_baskets
+        foreach ($employees as $employee) {
+            EmployeeBasket::create([
+                'employee_id' => $employee->id,
+            ]);
         }
     }
 }

@@ -42,7 +42,7 @@ class EmployeeBasketZonesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('employee_basket_zone_charged')
                     ->label('Panier/H Chargé')
                     ->colors([
-                        'warning' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                        'warning' => fn ($state): bool => true, // Appliquer la couleur "warning" à toutes les valeurs
                     ])
                     ->sortable(),
                 Tables\Columns\TextColumn::make('employee_basket_zone')
@@ -52,6 +52,7 @@ class EmployeeBasketZonesRelationManager extends RelationManager
                     ])
                     ->sortable(),
             ])
+            ->defaultSort('zone.name', 'asc') // Tri par ordre alphabétique croissant
             ->filters([
                 //
             ])

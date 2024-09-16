@@ -42,8 +42,6 @@
                 <div class="flex justify-center gap-4 p-2 bg-gray-100 border rounded">
                     <button type="submit" name="hour_type" value="day_hours" class="border text-black font-bold py-2 px-4 rounded text-sm hover:bg-green-500 hover:text-white {{ $hourType === 'day_hours' ? 'bg-green-500 text-white' : 'bg-white' }}">Jour</button>
                     <button type="submit" name="hour_type" value="night_hours" class="border text-black font-bold py-2 px-4 rounded text-sm hover:bg-purple-500 hover:text-white {{ $hourType === 'night_hours' ? 'bg-purple-500 text-white' : 'bg-white' }}">Nuit</button>
-                    <button type="submit" name="hour_type" value="holiday_hours" class="border text-black font-bold py-2 px-4 rounded text-sm hover:bg-yellow-500 hover:text-white {{ $hourType === 'holiday_hours' ? 'bg-yellow-500 text-white' : 'bg-white' }}">Férié</button>
-                    <button type="submit" name="hour_type" value="rtt_hours" class="border text-black font-bold py-2 px-4 rounded text-sm hover:bg-cyan-500 hover:text-white {{ $hourType === 'rtt_hours' ? 'bg-cyan-500 text-white' : 'bg-white' }}">RTT</button>
                 </div>
             </form>
         </div>
@@ -82,7 +80,7 @@
                 <caption class="pb-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
                     Totaux d'heures par salarié
                     <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-                        Ce tableau affiche le total des heures travaillées par salarié pour chaque type d'heure (jour, nuit, férié, RTT) durant le mois sélectionné.
+                        Ce tableau affiche le total des heures travaillées par salarié pour chaque type d'heure (jour, nuit) durant le mois sélectionné.
                     </p>
                 </caption>
                 <thead class="text-sm text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
@@ -90,30 +88,22 @@
                     <th scope="col" class="px-6 py-1">salarié</th>
                     <th scope="col" class="px-6 py-1">Total heures Jour</th>
                     <th scope="col" class="px-6 py-1">Total heures Nuit</th>
-                    <th scope="col" class="px-6 py-1">Total heures Férié</th>
-                    <th scope="col" class="px-6 py-1">Total heures RTT</th>
                 </tr>
                 </thead>
                 <tbody>
                 @php
                     $totalDayHours = 0;
                     $totalNightHours = 0;
-                    $totalHolidayHours = 0;
-                    $totalRTTHours = 0;
                 @endphp
                 @foreach ($employeeData as $employee)
                     @php
                         // Calcul des heures pour chaque type
                         $dayHours = array_sum(array_map('floatval', $employee['days']));
                         $nightHours = array_sum(array_map('floatval', $employee['other_hours']['night_hours']));
-                        $holidayHours = array_sum(array_map('floatval', $employee['other_hours']['holiday_hours']));
-                        $rttHours = array_sum(array_map('floatval', $employee['other_hours']['rtt_hours']));
 
                         // Ajouter aux totaux globaux
                         $totalDayHours += $dayHours;
                         $totalNightHours += $nightHours;
-                        $totalHolidayHours += $holidayHours;
-                        $totalRTTHours += $rttHours;
                     @endphp
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <th scope="row" class="px-6 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -125,12 +115,6 @@
                         <td class="px-6 py-1">
                             {{ $nightHours > 0 ? $nightHours.' H' : '-' }}
                         </td>
-                        <td class="px-6 py-1">
-                            {{ $holidayHours > 0 ? $holidayHours.' H' : '-' }}
-                        </td>
-                        <td class="px-6 py-1">
-                            {{ $rttHours > 0 ? $rttHours.' H' : '-' }}
-                        </td>
                     </tr>
                 @endforeach
                 <!-- Ligne de cumul des heures pour tous les salariés -->
@@ -141,12 +125,6 @@
                     </td>
                     <td class="px-6 py-1 font-extrabold">
                         {{ $totalNightHours > 0 ? $totalNightHours.' H' : '-' }}
-                    </td>
-                    <td class="px-6 py-1 font-extrabold">
-                        {{ $totalHolidayHours > 0 ? $totalHolidayHours.' H' : '-' }}
-                    </td>
-                    <td class="px-6 py-1 font-extrabold">
-                        {{ $totalRTTHours > 0 ? $totalRTTHours.' H' : '-' }}
                     </td>
                 </tr>
                 </tbody>
@@ -246,10 +224,6 @@
                                 td.style.backgroundColor = '#ccffcc'; // Vert clair pour day_hours
                             } else if (hourType === 'night_hours') {
                                 td.style.backgroundColor = '#e6ccff'; // Violet clair pour night_hours
-                            } else if (hourType === 'holiday_hours') {
-                                td.style.backgroundColor = '#ffffcc'; // Jaune clair pour holiday_hours
-                            } else if (hourType === 'rtt_hours') {
-                                td.style.backgroundColor = '#ccffff'; // Cyan clair pour rtt_hours
                             }
                         } else {
                             td.style.backgroundColor = ''; // Couleur par défaut pour les autres valeurs
@@ -289,7 +263,6 @@
         }
 
         // Gestion de la sauvegarde
-// Gestion de la sauvegarde
         document.getElementById('save').addEventListener('click', function() {
             const data = hot.getData();
             let hasValidHours = false;

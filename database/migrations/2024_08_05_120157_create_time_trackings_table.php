@@ -17,8 +17,6 @@ return new class extends Migration
             $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
             $table->float('day_hours', 10)->nullable();
             $table->float('night_hours', 10)->nullable();
-            $table->float('holiday_hours', 10)->nullable();
-            $table->float('rtt_hours', 10)->nullable();
             $table->date('date');
             $table->timestamps();
         });

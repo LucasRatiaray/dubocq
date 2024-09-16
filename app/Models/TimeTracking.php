@@ -15,8 +15,6 @@ class TimeTracking extends Model
         'employee_id',
         'day_hours',
         'night_hours',
-        'holiday_hours',
-        'rtt_hours',
         'date',
     ];
 

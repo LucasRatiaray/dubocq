@@ -39,15 +39,24 @@
                 <input type="hidden" name="year" id="year-input" value="{{ $year }}">
                 <input type="hidden" name="hour_type" value="{{ $hourType }}">
 
-                <div class="flex justify-center gap-4 p-2 bg-gray-100 border rounded">
-                    <button type="submit" name="hour_type" value="day_hours" class="border text-black font-bold py-2 px-4 rounded text-sm hover:bg-green-500 hover:text-white {{ $hourType === 'day_hours' ? 'bg-green-500 text-white' : 'bg-white' }}">Jour</button>
-                    <button type="submit" name="hour_type" value="night_hours" class="border text-black font-bold py-2 px-4 rounded text-sm hover:bg-purple-500 hover:text-white {{ $hourType === 'night_hours' ? 'bg-purple-500 text-white' : 'bg-white' }}">Nuit</button>
-                </div>
+                @if(count($employeeData) > 0)
+                    <div class="flex justify-center gap-4 p-2 bg-gray-100 border rounded my-5">
+                        <button type="submit" name="hour_type" value="day_hours" class="border text-black font-bold py-2 px-4 rounded text-sm hover:bg-green-500 hover:text-white {{ $hourType === 'day_hours' ? 'bg-green-500 text-white' : 'bg-white' }}">Jour</button>
+                        <button type="submit" name="hour_type" value="night_hours" class="border text-black font-bold py-2 px-4 rounded text-sm hover:bg-purple-500 hover:text-white {{ $hourType === 'night_hours' ? 'bg-purple-500 text-white' : 'bg-white' }}">Nuit</button>
+                    </div>
+                @else
+                    <div></div>
+                @endif
             </form>
         </div>
 
         <!-- Handsontable -->
-        <div id="handsontable" class="w-full h-full mt-5"></div>
+        @if(count($employeeData) > 0)
+            <div id="handsontable"></div>
+        @else
+            <p class="text-gray-500 dark:text-gray-400">Chantier neuf ! </p>
+            <p class="text-gray-500 dark:text-gray-400">Veuillez ajouter un salarié.</p>
+        @endif
 
         <!-- Sauvegarde et ajout d'employé -->
         <div class="mt-4 mb-5 flex justify-between">

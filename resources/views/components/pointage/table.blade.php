@@ -111,7 +111,7 @@
                             {{ $employee['total_day_hours'] == 0 ? '-' : $employee['total_day_hours'].' H' }} <!-- Total heures Jour -->
                         </td>
                         <td class="px-6 py-1">
-                            {{ $employee['total_night_hours'] == 0 ? '-' : $employee['total_day_hours'].' H' }} <!-- Total heures Nuit -->
+                            {{ $employee['total_night_hours'] == 0 ? '-' : $employee['total_night_hours'].' H' }} <!-- Total heures Nuit -->
                         </td>
                     </tr>
                 @endforeach

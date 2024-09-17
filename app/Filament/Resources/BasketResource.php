@@ -25,6 +25,8 @@ class BasketResource extends Resource
 
     protected static ?string $modelLabel = 'Panier';
 
+    protected static ?string $navigationGroup = 'Taux chargé & Panier';
+
     public static function form(Form $form): Form
     {
         return $form

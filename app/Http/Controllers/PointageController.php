@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Models\NonWorkingDay;
 use App\Models\Project;
 use App\Models\TimeTracking;
 use Carbon\Carbon;
@@ -34,6 +35,12 @@ class PointageController extends Controller
         $year = $request->input('year');
         $hourType = $request->input('hour_type', 'day_hours');
         $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+
+        // Récupérer les jours non travaillés pour le mois et l'année sélectionnés
+        $nonWorkingDays = NonWorkingDay::whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->pluck('date')
+            ->toArray();  // Convertir les dates en tableau simple
 
         // Récupérer les employés associés au projet
         $employees = Employee::join('employee_projects', 'employees.id', '=', 'employee_projects.employee_id')
@@ -91,7 +98,8 @@ class PointageController extends Controller
             ];
         }
 
-        return view('pointage', compact('projects', 'project', 'month', 'year', 'employeeData', 'hourType', 'allEmployees'));
+        // Transmettre les jours non travaillés à la vue
+        return view('pointage', compact('projects', 'project', 'month', 'year', 'employeeData', 'hourType', 'allEmployees', 'nonWorkingDays'));
     }
 
     public function store(Request $request): JsonResponse

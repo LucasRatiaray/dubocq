@@ -25,6 +25,8 @@ class EmployeeResource extends Resource
 
     protected static ?string $modelLabel = 'Salarié';
 
+    protected static ?string $navigationGroup = 'Salariés & Chantiers';
+
     public static function form(Form $form): Form
     {
         return $form

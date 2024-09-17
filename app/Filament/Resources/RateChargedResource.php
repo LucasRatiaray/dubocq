@@ -25,6 +25,8 @@ class RateChargedResource extends Resource
 
     protected static ?string $modelLabel = 'Taux Chargé';
 
+    protected static ?string $navigationGroup = 'Taux chargé & Panier';
+
     public static function form(Form $form): Form
     {
         return $form

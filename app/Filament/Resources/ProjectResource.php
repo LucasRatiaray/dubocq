@@ -28,6 +28,8 @@ class ProjectResource extends Resource
 
     protected static ?string $modelLabel = 'Chantier';
 
+    protected static ?string $navigationGroup = 'Salariés & Chantiers';
+
     public static function form(Form $form): Form
     {
         return $form

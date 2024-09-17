@@ -273,7 +273,7 @@
                     const value = day !== null && day !== undefined && day.toString().trim() !== '' ? parseFloat(day) : null;
 
                     if (value !== null) {
-                        if (isNaN(value) || value < 0 || value > 7.4) {
+                        if (isNaN(value) || value < 0 || value > 12) {
                             validationError = true;
                         } else {
                             hasValidHours = true; // On a trouvé des heures valides
@@ -296,7 +296,7 @@
             });
 
             if (validationError) {
-                showMessage('Les heures doivent être des nombres compris entre 0 et 7.4 !', 'error');
+                showMessage('Les heures doivent être des nombres compris entre 0 et 12 !', 'error');
                 return;
             }
 

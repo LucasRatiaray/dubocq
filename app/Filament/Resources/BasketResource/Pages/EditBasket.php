@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\EmployeeResource\Pages;
+namespace App\Filament\Resources\BasketResource\Pages;
 
-use App\Filament\Resources\EmployeeResource;
+use App\Filament\Resources\BasketResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditEmployee extends EditRecord
+class EditBasket extends EditRecord
 {
-    protected static string $resource = EmployeeResource::class;
+    protected static string $resource = BasketResource::class;
 
     protected function getHeaderActions(): array
     {

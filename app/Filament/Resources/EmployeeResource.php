@@ -11,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -29,38 +30,60 @@ class EmployeeResource extends Resource
         return $form
             ->schema([
                 Section::make('Informations personnelles')
-                    ->columns(1)
+                    ->columns(2)
                     ->schema([
                         TextInput::make('last_name')
-                            ->label('Nom')
+                            ->label('Nom :')
                             ->required()
-                            ->placeholder('Nom'),
+                            ->placeholder('Doe'),
                         TextInput::make('first_name')
-                            ->label('Prénom')
+                            ->label('Prénom :')
                             ->required()
-                            ->placeholder('Prénom'),
+                            ->placeholder('John'),
                     ])->columnSpan(1),
                 Section::make('Informations contractuelles')
-                    ->columns(1)
+                    ->columns(7)  // Divise la section en 7 colonnes
                     ->schema([
                         Select::make('status')
-                            ->label('Statut')
+                            ->label('Statut :')
                             ->required()
                             ->options([
                                 'OUVRIER' => 'OUVRIER',
                                 'ETAM' => 'ETAM',
-                            ]),
-                        Select::make('contract')
-                            ->label('Contrat')
+                            ])
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if ($state === 'ETAM') {
+                                    $set('contract', '37');
+                                } elseif ($state === 'OUVRIER') {
+                                    $set('contract', '37');
+                                } else {
+                                    $set('contract', null); // Remet à null si aucun statut n'est sélectionné
+                                }
+                            })
+                            ->columnSpan(3),  // Occupe 3 colonnes
+                        TextInput::make('contract')
+                            ->label('Type de contrat :')
                             ->required()
-                            ->options([
-                                '37H' => '37H',
-                                '35H' => '35H',
-                            ]),
-                        TextInput::make('hourly_rate')
-                            ->label('Taux Horaire')
+                            ->numeric()
+                            ->placeholder('37')
+                            ->reactive()
+                            ->suffix('heures') // Ajouter le suffixe "heures" après la saisie
+                            ->disabled(fn ($get) => $get('status') === 'ETAM')  // Désactiver la saisie si ETAM est sélectionné
+                            ->afterStateUpdated(function ($set, $get) {
+                                if ($get('status') === 'ETAM') {
+                                    $set('contract', '37');
+                                }
+                            })
+                            ->columnSpan(2),  // Occupe 2 colonnes
+                        TextInput::make('monthly_salary')
+                            ->label('Salaire mensuel :')
                             ->required()
-                            ->placeholder('Taux Horaire'),
+                            ->numeric()
+                            ->step('0.01')
+                            ->placeholder('1 398,69')
+                            ->suffix('€')
+                            ->columnSpan(2),  // Occupe 2 colonnes
                     ])->columnSpan(1),
             ]);
     }
@@ -81,21 +104,65 @@ class EmployeeResource extends Resource
                     ->toggleable(),
                 TextColumn::make('status')
                     ->label('Statut')
+                    ->badge()
+                    ->colors([
+                        'success' => 'OUVRIER',
+                        'danger' => 'ETAM',
+                    ])
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
                 TextColumn::make('contract')
                     ->label('Contrat')
+                    ->badge()
+                    ->colors([
+                        'warning' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->suffix('h'),
+                TextColumn::make('monthly_salary')
+                    ->label('Salaire Mensuel')
+                    ->colors([
+                        'gray' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->suffix(' €'),
+                TextColumn::make('hourly_rate')
+                    ->label('Taux Horaire')
+                    ->colors([
+                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
-                TextColumn::make('hourly_rate')
-                    ->label('Taux Horaire')
+                TextColumn::make('hourly_rate_charged')
+                    ->label('Taux/H Chargé')
+                    ->badge()
+                    ->colors([
+                        'primary' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                TextColumn::make('hourly_basket_charged')
+                    ->label('Panier/H Chargé')
+                    ->badge()
+                    ->colors([
+                        'primary' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
                 TextColumn::make('basket')
                     ->label('Panier')
+                    ->badge()
+                    ->colors([
+                        'primary' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
@@ -105,7 +172,7 @@ class EmployeeResource extends Resource
             ])
             ->actions([
                 //Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                //Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -117,7 +184,7 @@ class EmployeeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\EmployeeBasketZonesRelationManager::class,
         ];
     }
 
@@ -129,5 +196,10 @@ class EmployeeResource extends Resource
             'view' => Pages\ViewEmployee::route('/{record}'),
             'edit' => Pages\EditEmployee::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 1;
     }
 }

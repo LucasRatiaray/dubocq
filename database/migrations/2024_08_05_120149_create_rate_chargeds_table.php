@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hourly_rates', function (Blueprint $table) {
+        Schema::create('rate_chargeds', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
-            $table->foreignId('zone_id')->constrained('zones')->onDelete('cascade');
-            $table->decimal('rate', 10, 2)->nullable();
+            $table->decimal('value');
+            $table->decimal('rate_charged');
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hourly_rates');
+        Schema::dropIfExists('rate_chargeds');
     }
 };

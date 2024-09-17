@@ -32,7 +32,7 @@ class PointageController extends Controller
         $project = Project::findOrFail($request->project_id);
         $month = $request->input('month');
         $year = $request->input('year');
-        $hourType = $request->input('hour_type', 'day_hours'); // Par défaut, jour
+        $hourType = $request->input('hour_type', 'day_hours');
         $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 
         // Récupérer les employés associés au projet
@@ -54,35 +54,40 @@ class PointageController extends Controller
         $employeeData = [];
         foreach ($employees as $employee) {
             $days = array_fill(0, $daysInMonth, '');
-            $otherHours = ['night_hours' => [], 'holiday_hours' => [], 'rtt_hours' => []];
+            $totalEmployeeDayHours = 0;
+            $totalEmployeeNightHours = 0;
+            $otherHours = ['night_hours' => []];
 
             foreach ($timeTrackings as $timeTracking) {
                 if ($timeTracking->employee_id == $employee->id) {
                     $day = (int) Carbon::parse($timeTracking->date)->format('d');
-                    $days[$day - 1] = $timeTracking->$hourType;  // Utilisation du type d'heures dynamique
+                    $days[$day - 1] = $timeTracking->$hourType;
+
+                    // Calcul des heures totales par type pour chaque employé
+                    if ($hourType === 'day_hours') {
+                        $totalEmployeeDayHours += $timeTracking->day_hours;
+                        $totalEmployeeNightHours += $timeTracking->night_hours ?? 0;
+                    } else {
+                        $totalEmployeeNightHours += $timeTracking->night_hours;
+                        $totalEmployeeDayHours += $timeTracking->day_hours ?? 0;
+                    }
 
                     // Stocker les autres types d'heures
                     if ($hourType !== 'night_hours' && $timeTracking->night_hours) {
                         $otherHours['night_hours'][$day - 1] = $timeTracking->night_hours;
                     }
-                    if ($hourType !== 'holiday_hours' && $timeTracking->holiday_hours) {
-                        $otherHours['holiday_hours'][$day - 1] = $timeTracking->holiday_hours;
-                    }
-                    if ($hourType !== 'rtt_hours' && $timeTracking->rtt_hours) {
-                        $otherHours['rtt_hours'][$day - 1] = $timeTracking->rtt_hours;
-                    }
                 }
             }
 
+            // Ajouter les heures totales pour chaque employé au tableau
             $employeeData[] = [
                 'employee_project_id' => $employee->employee_project_id,
                 'employee_id' => $employee->id,
                 'full_name' => $employee->last_name . ' ' . $employee->first_name,
                 'days' => $days,
+                'total_day_hours' => $totalEmployeeDayHours,
+                'total_night_hours' => $totalEmployeeNightHours,
                 'other_hours' => $otherHours,
-                'total_hours' => array_sum(array_filter($days, function($value) {
-                    return is_numeric($value);
-                }))
             ];
         }
 
@@ -93,7 +98,7 @@ class PointageController extends Controller
     {
         $request->validate([
             'data' => 'required|array',
-            'hour_type' => 'required|string|in:day_hours,night_hours,holiday_hours,rtt_hours',
+            'hour_type' => 'required|string|in:day_hours,night_hours',
             'deletedTimeTrackings' => 'nullable|array',
         ]);
 
@@ -138,26 +143,10 @@ class PointageController extends Controller
                 // Charger les autres types d'heures existants et les conserver
                 if ($hourType === 'day_hours') {
                     $timeTracking->night_hours = $timeTracking->night_hours ?? 0;
-                    $timeTracking->holiday_hours = $timeTracking->holiday_hours ?? 0;
-                    $timeTracking->rtt_hours = $timeTracking->rtt_hours ?? 0;
                 }
 
                 if ($hourType === 'night_hours') {
                     $timeTracking->day_hours = $timeTracking->day_hours ?? 0;
-                    $timeTracking->holiday_hours = $timeTracking->holiday_hours ?? 0;
-                    $timeTracking->rtt_hours = $timeTracking->rtt_hours ?? 0;
-                }
-
-                if ($hourType === 'holiday_hours') {
-                    $timeTracking->day_hours = $timeTracking->day_hours ?? 0;
-                    $timeTracking->night_hours = $timeTracking->night_hours ?? 0;
-                    $timeTracking->rtt_hours = $timeTracking->rtt_hours ?? 0;
-                }
-
-                if ($hourType === 'rtt_hours') {
-                    $timeTracking->day_hours = $timeTracking->day_hours ?? 0;
-                    $timeTracking->night_hours = $timeTracking->night_hours ?? 0;
-                    $timeTracking->holiday_hours = $timeTracking->holiday_hours ?? 0;
                 }
 
                 // Mettre à jour le type d'heure actuel avec les heures saisies

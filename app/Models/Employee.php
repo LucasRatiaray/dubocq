@@ -18,18 +18,21 @@ class Employee extends Model
         'hourly_rate_charged',
         'status',
         'contract',
+        'monthly_salary',
+        'hourly_basket_charged',
         'basket',
     ];
-
-    public static function getRateIncreasePercentage(): float
-    {
-        return 0.70; // 70%
-    }
 
     public function projects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class, 'employee_projects');
     }
+
+    public function employeeBasketZones(): HasMany
+    {
+        return $this->hasMany(EmployeeBasketZone::class);
+    }
+
 
     public function timeTrackings(): HasMany
     {

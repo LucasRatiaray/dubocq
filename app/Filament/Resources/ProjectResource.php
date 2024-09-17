@@ -6,6 +6,7 @@ use App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource\RelationManagers;
 use App\Models\Project;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -31,13 +32,19 @@ class ProjectResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Informations générales')
-                    ->columns(1)
+                Grid::make(5) // Divise la ligne en 5 parts égales
+                ->schema([
+                    Section::make('Code')
+                        ->schema([
+                            TextInput::make('code')
+                                ->label('Code chantier')
+                                ->required()
+                                ->placeholder('Code'),
+                        ])->columnSpan(1), // 1/5 de la largeur
+
+                    Section::make('Informations Générales')
+                    ->columns(3)
                     ->schema([
-                        TextInput::make('code')
-                            ->label('Code chantier')
-                            ->required()
-                            ->placeholder('Code'),
                         TextInput::make('business')
                             ->label('Affaire')
                             ->required()
@@ -50,11 +57,19 @@ class ProjectResource extends Resource
                             ->label('Adresse chantier')
                             ->required()
                             ->placeholder('Adresse'),
-                        TextInput::make('kilometers')
-                            ->label('Distance en km')
-                            ->required()
-                            ->placeholder('Distance'),
-                    ])->columnSpan(1),
+                    ])->columnSpan(3), // 3/5 de la largeur
+
+                    Section::make('Zone')
+                        ->schema([
+                            TextInput::make('kilometers')
+                                ->label('Distance en km')
+                                ->required()
+                                ->suffix('km')
+                                ->numeric()
+                                ->step('0.01')
+                                ->placeholder('Distance'),
+                        ])->columnSpan(1), // 1/5 de la largeur
+                ]),
             ]);
     }
 
@@ -64,6 +79,10 @@ class ProjectResource extends Resource
             ->columns([
                 TextColumn::make('code')
                     ->label('Code chantier')
+                    ->badge()
+                    ->colors([
+                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
@@ -77,15 +96,31 @@ class ProjectResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
-                TextColumn::make('kilometers')
-                    ->label('Distance en km')
+                TextColumn::make('city')
+                    ->label('Ville chantier')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
-                TextColumn::make('zone.name')
-                    ->label('Zone')
+                TextColumn::make('kilometers')
+                    ->label('Distance')
+                    ->badge()
+                    ->colors([
+                        'warning' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
+                    ->extraAttributes(['class' => 'large-badge'])
                     ->searchable()
                     ->sortable()
+                    ->suffix(' km')
+                    ->toggleable(),
+                TextColumn::make('zone.name')
+                    ->label('Zone')
+                    ->badge()
+                    ->colors([
+                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
+                    ->searchable()
+                    ->sortable()
+                    ->prefix('Zone ')
                     ->toggleable(),
             ])
             ->filters([
@@ -93,7 +128,7 @@ class ProjectResource extends Resource
             ])
             ->actions([
                 //Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                //Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -117,5 +152,10 @@ class ProjectResource extends Resource
             'view' => Pages\ViewProject::route('/{record}'),
             'edit' => Pages\EditProject::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 2;
     }
 }

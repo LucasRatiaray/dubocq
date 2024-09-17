@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('time_trackings', function (Blueprint $table) {
+        Schema::create('employee_basket_zones', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
-            $table->float('day_hours', 10)->nullable();
-            $table->float('night_hours', 10)->nullable();
-            $table->date('date');
+            $table->foreignId('zone_id')->constrained('zones')->onDelete('cascade');
+            $table->decimal('employee_basket_zone_charged')->nullable();
+            $table->decimal('employee_basket_zone')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('time_trackings');
+        Schema::dropIfExists('employe_basket_zones');
     }
 };

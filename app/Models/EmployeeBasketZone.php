@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class HourlyRate extends Model
+class EmployeeBasketZone extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'employee_id',
         'zone_id',
-        'rate',
+        'employee_basket_zone_charged'
     ];
 
     public function employee(): BelongsTo

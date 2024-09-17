@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('zones', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
-            $table->decimal('kilometers_range_min');
-            $table->decimal('kilometers_range_max');
+            $table->decimal('kilometers_range_min', 10, 2);
+            $table->decimal('kilometers_range_max', 10, 2);
             $table->decimal('tariff', 10, 2);
             $table->timestamps();
         });

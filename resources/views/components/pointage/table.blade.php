@@ -44,8 +44,6 @@
                         <button type="submit" name="hour_type" value="day_hours" class="border text-black font-bold py-2 px-4 rounded text-sm hover:bg-green-500 hover:text-white {{ $hourType === 'day_hours' ? 'bg-green-500 text-white' : 'bg-white' }}">Jour</button>
                         <button type="submit" name="hour_type" value="night_hours" class="border text-black font-bold py-2 px-4 rounded text-sm hover:bg-purple-500 hover:text-white {{ $hourType === 'night_hours' ? 'bg-purple-500 text-white' : 'bg-white' }}">Nuit</button>
                     </div>
-                @else
-                    <div></div>
                 @endif
             </form>
         </div>
@@ -78,11 +76,14 @@
                     <button type="submit" class="bg-gray-100 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">Ajouter un salarié</button>
                 </div>
             </form>
+            @if(count($employeeData) > 0)
             <button id="save" class="bg-gray-100 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">Sauvegarder</button>
+            @endif
         </div>
 
         <hr class="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700">
 
+        @if(count($employeeData) > 0)
         <!-- Tableau total des heures -->
         <div class="relative overflow-x-auto">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -138,6 +139,7 @@
                 </tbody>
             </table>
         </div>
+        @endif
     </div>
 </div>
 

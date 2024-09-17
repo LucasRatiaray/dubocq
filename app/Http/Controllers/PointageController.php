@@ -116,10 +116,22 @@ class PointageController extends Controller
 
         // Gestion des suppressions de TimeTracking
         foreach ($deletedTimeTrackings as $deleted) {
-            TimeTracking::where('project_id', $deleted['project_id'])
+            $timeTracking = TimeTracking::where('project_id', $deleted['project_id'])
                 ->where('employee_id', $deleted['employee_id'])
                 ->where('date', $deleted['date'])
-                ->delete();
+                ->first();
+
+            if ($timeTracking) {
+                // Ne supprimer que le type d'heures sélectionné
+                $timeTracking->{$hourType} = null;
+
+                // Si les deux types d'heures sont null, on supprime l'enregistrement
+                if (is_null($timeTracking->day_hours) && is_null($timeTracking->night_hours)) {
+                    $timeTracking->delete();
+                } else {
+                    $timeTracking->save();
+                }
+            }
         }
 
         // Gestion des ajouts/mises à jour des TimeTracking
@@ -132,15 +144,6 @@ class PointageController extends Controller
             foreach ($employee['days'] as $day => $hours) {
                 $date = Carbon::createFromDate($year, $month, $day + 1)->format('Y-m-d');
 
-                // Si l'heure est null, on supprime l'enregistrement correspondant
-                if ($hours === null) {
-                    TimeTracking::where('project_id', $project_id)
-                        ->where('employee_id', $employee_id)
-                        ->where('date', $date)
-                        ->delete();
-                    continue;
-                }
-
                 // Récupérer ou créer l'enregistrement de suivi de temps
                 $timeTracking = TimeTracking::firstOrNew([
                     'project_id' => $project_id,
@@ -148,20 +151,15 @@ class PointageController extends Controller
                     'date' => $date
                 ]);
 
-                // Charger les autres types d'heures existants et les conserver
-                if ($hourType === 'day_hours') {
-                    $timeTracking->night_hours = $timeTracking->night_hours ?? 0;
+                // Mettre à jour uniquement le type d'heure sélectionné sans toucher à l'autre
+                $timeTracking->{$hourType} = $hours !== null ? $hours : null;
+
+                // Si les deux types d'heures sont null, supprimer l'enregistrement
+                if (is_null($timeTracking->day_hours) && is_null($timeTracking->night_hours)) {
+                    $timeTracking->delete();
+                } else {
+                    $timeTracking->save();
                 }
-
-                if ($hourType === 'night_hours') {
-                    $timeTracking->day_hours = $timeTracking->day_hours ?? 0;
-                }
-
-                // Mettre à jour le type d'heure actuel avec les heures saisies
-                $timeTracking->{$hourType} = $hours;
-
-                // Sauvegarder les modifications
-                $timeTracking->save();
             }
         }
 

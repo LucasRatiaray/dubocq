@@ -20,6 +20,7 @@ class Project extends Model
         'business',
         'kilometers',
         'driver_id',
+        'archived',
     ];
 
     public function zone(): BelongsTo

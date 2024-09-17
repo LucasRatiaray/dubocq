@@ -11,7 +11,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -181,13 +180,13 @@ class EmployeeResource extends Resource
                     ->sortable()
                     ->toggleable(),
                 IconColumn::make('archived')
-                    ->label('Archivé')
+                    ->label('Dispo')
                     ->boolean() // Indique que cette colonne représente un état booléen (true/false)
-                    ->trueIcon('heroicon-o-check-circle') // Icône pour "archivé"
-                    ->falseIcon('heroicon-o-x-circle') // Icône pour "non archivé"
+                    ->trueIcon('heroicon-o-x-circle') // Icône pour "archivé"
+                    ->falseIcon('heroicon-o-check-circle') // Icône pour "non archivé"
                     ->colors([
-                        'danger' => fn ($state): bool => !$state, // Couleur verte pour "non archivé"
-                        'success' => fn ($state): bool => $state, // Couleur rouge pour "archivé"
+                        'danger' => fn ($state): bool => $state, // Couleur verte pour "non archivé"
+                        'success' => fn ($state): bool =>! $state, // Couleur rouge pour "archivé"
                     ])
                     ->sortable()
                     ->toggleable() // Permet de masquer/afficher la colonne

@@ -210,6 +210,19 @@
             },
             cells: function (row, col, prop) {
                 const cellProperties = {};
+                const employee = employeeData[row];  // Récupérer les données de l'employé pour cette ligne
+
+                // Vérifier si l'employé est archivé
+                const isArchived = employee.archived;
+
+                // Appliquer un style au nom de l'employé si archivé (colonne du nom = 2)
+                if (col === 2 && isArchived) {
+                    cellProperties.renderer = function (instance, td) {
+                        td.classList.add('employeeArchived');  // Fond gris pour les employés archivés
+                        Handsontable.renderers.TextRenderer.apply(this, arguments);  // Appliquer le rendu du texte
+                    };
+                }
+
                 if (col >= 3) { // Colonnes des jours du mois
                     const date = new Date(year, month - 1, col - 1);  // Obtenir la date correspondant à la colonne
                     const isNonWorking = isNonWorkingDay(date);  // Vérifier si c'est un jour non travaillé
@@ -246,14 +259,18 @@
                         // Appliquer une couleur grisée pour les jours non travaillés
                         if (isNonWorking) {
                             td.classList.add('nonWorkingDay');  // Griser la cellule
-                            //td.style.pointerEvents = 'none';  // Désactiver la saisie sur ce jour
+                        }
+
+                        // Appliquer un style grisé si l'employé est archivé
+                        if (isArchived) {
+                            td.classList.add('employeeArchived');  // Fond gris pour les employés archivés
                         }
                     };
                 }
                 return cellProperties;
             },
             licenseKey: 'non-commercial-and-evaluation'
-        });
+    });
 
         // Fonction pour afficher un message d'erreur ou de succès
         function showMessage(message, type) {

@@ -6,6 +6,10 @@
     background-color: #e0e0e0 !important;
 }
 
+.employeeArchived {
+    background-color: rgba(224, 224, 224, 0.5) !important;
+}
+
 #message-container-success,
 #message-container-error {
     position: fixed;

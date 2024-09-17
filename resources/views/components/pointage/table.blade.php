@@ -95,36 +95,35 @@
                     $totalDayHours = 0;
                     $totalNightHours = 0;
                 @endphp
+
                 @foreach ($employeeData as $employee)
                     @php
-                        // Calcul des heures pour chaque type
-                        $dayHours = array_sum(array_map('floatval', $employee['days']));
-                        $nightHours = array_sum(array_map('floatval', $employee['other_hours']['night_hours']));
-
-                        // Ajouter aux totaux globaux
-                        $totalDayHours += $dayHours;
-                        $totalNightHours += $nightHours;
+                        // Accumuler les heures de jour et de nuit pour chaque employé
+                        $totalDayHours += $employee['total_day_hours'];
+                        $totalNightHours += $employee['total_night_hours'];
                     @endphp
+
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <th scope="row" class="px-6 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ $employee['full_name'] }}
                         </th>
                         <td class="px-6 py-1">
-                            {{ $dayHours > 0 ? $dayHours.' H' : '-' }}
+                            {{ $employee['total_day_hours'] == 0 ? '-' : $employee['total_day_hours'].' H' }} <!-- Total heures Jour -->
                         </td>
                         <td class="px-6 py-1">
-                            {{ $nightHours > 0 ? $nightHours.' H' : '-' }}
+                            {{ $employee['total_night_hours'] == 0 ? '-' : $employee['total_day_hours'].' H' }} <!-- Total heures Nuit -->
                         </td>
                     </tr>
                 @endforeach
+
                 <!-- Ligne de cumul des heures pour tous les salariés -->
                 <tr class="text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
                     <th scope="row" class="px-6 py-1 font-bold text-gray-700 dark:text-white text-sm">Cumul du mois</th>
                     <td class="px-6 py-1 font-extrabold">
-                        {{ $totalDayHours > 0 ? $totalDayHours.' H' : '-' }}
+                        {{ $totalDayHours == 0 ? '-' : $totalDayHours.' H' }} <!-- Total cumulé des heures Jour -->
                     </td>
                     <td class="px-6 py-1 font-extrabold">
-                        {{ $totalNightHours > 0 ? $totalNightHours.' H' : '-' }}
+                        {{ $totalNightHours == 0 ? '-' : $totalNightHours.' H' }} <!-- Total cumulé des heures Nuit -->
                     </td>
                 </tr>
                 </tbody>

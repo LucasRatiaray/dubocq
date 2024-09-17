@@ -89,7 +89,7 @@ class EmployeeResource extends Resource
                             ->columnSpan(2),  // Occupe 2 colonnes
                     ])->columnSpan(1),
                 Section::make('')
-                    ->columns(4)
+                    ->columns(5)
                     ->schema([
                         Select::make('archived')
                             ->label('Archivé :')
@@ -97,7 +97,7 @@ class EmployeeResource extends Resource
                                 false => 'Non',
                                 true => 'Oui',
                             ])
-                            ->columnSpan(1),
+                            ->columnSpan(2),
                     ])->columnSpan(1),
             ]);
     }

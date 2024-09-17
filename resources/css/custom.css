@@ -2,6 +2,10 @@
     background-color: #e0e0e0 !important;
 }
 
+.nonWorkingDay {
+    background-color: #e0e0e0 !important;
+}
+
 #message-container-success,
 #message-container-error {
     position: fixed;

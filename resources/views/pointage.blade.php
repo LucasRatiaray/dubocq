@@ -17,7 +17,7 @@
     <x-pointage.form :projects="$projects"/>
 
     @if (isset($employeeData))
-        <x-pointage.table :project="$project" :month="$month" :year="$year" :employeeData="$employeeData" :hourType="$hourType" :allEmployees="$allEmployees"/>
+        <x-pointage.table :project="$project" :month="$month" :year="$year" :employeeData="$employeeData" :hourType="$hourType" :allEmployees="$allEmployees" :nonWorkingDays="$nonWorkingDays"/>
     @endif
 
     <!-- Conteneur pour les messages -->

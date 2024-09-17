@@ -26,6 +26,8 @@ class ZoneResource extends Resource
 
     protected static ?string $modelLabel = 'Zone';
 
+    protected static ?string $navigationGroup = 'Salariés & Chantiers';
+
     public static function form(Form $form): Form
     {
         return $form

@@ -144,6 +144,7 @@
         var month = document.body.getAttribute('data-month') !== 'null' ? parseInt(document.body.getAttribute('data-month')) : null;
         var year = document.body.getAttribute('data-year') !== 'null' ? parseInt(document.body.getAttribute('data-year')) : null;
         var employeeData = @json($employeeData);
+        var nonWorkingDays = @json($nonWorkingDays);  // Ajouter la récupération des jours non travaillés
         const months = [
             'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
         ];
@@ -164,6 +165,12 @@
         function isWeekend(date) {
             const day = date.getDay();
             return day === 0 || day === 6;
+        }
+
+        // Fonction pour vérifier si une date est un jour non travaillé
+        function isNonWorkingDay(date) {
+            const formattedDate = date.toISOString().split('T')[0];  // Format YYYY-MM-DD
+            return nonWorkingDays.includes(formattedDate);
         }
 
         var container = document.getElementById('handsontable');
@@ -203,7 +210,10 @@
             },
             cells: function (row, col, prop) {
                 const cellProperties = {};
-                if (col >= 3) { // Assurer que nous sommes dans les colonnes des jours
+                if (col >= 3) { // Colonnes des jours du mois
+                    const date = new Date(year, month - 1, col - 1);  // Obtenir la date correspondant à la colonne
+                    const isNonWorking = isNonWorkingDay(date);  // Vérifier si c'est un jour non travaillé
+
                     cellProperties.renderer = function (instance, td, row, col, prop, value) {
                         Handsontable.renderers.TextRenderer.apply(this, arguments);
 
@@ -213,24 +223,30 @@
                         // Récupérer le type d'heure actuel
                         const hourType = document.querySelector('form button[name="hour_type"].bg-green-500, form button[name="hour_type"].bg-purple-500, form button[name="hour_type"].bg-yellow-500, form button[name="hour_type"].bg-cyan-500').value;
 
-                        // Vérifiez la valeur et appliquez la couleur en conséquence
-                        if (isNaN(numericValue)) {
-                            td.style.backgroundColor = ''; // Couleur par défaut si la valeur n'est pas un nombre
-                        } else if (numericValue === 0) {
-                            td.style.backgroundColor = '#ffcccc'; // Rouge pour la valeur 0
-                        } else if (numericValue >= 1 && numericValue <= 12) {
-                            if (hourType === 'day_hours') {
-                                td.style.backgroundColor = '#ccffcc'; // Vert clair pour day_hours
-                            } else if (hourType === 'night_hours') {
-                                td.style.backgroundColor = '#e6ccff'; // Violet clair pour night_hours
+                        // Appliquer la couleur en conséquence pour les heures normales
+                        if (!isNaN(numericValue)) {
+                            if (numericValue === 0) {
+                                td.style.backgroundColor = '#ffcccc'; // Rouge pour la valeur 0
+                            } else if (numericValue >= 1 && numericValue <= 12) {
+                                if (hourType === 'day_hours') {
+                                    td.style.backgroundColor = '#ccffcc'; // Vert clair pour day_hours
+                                } else if (hourType === 'night_hours') {
+                                    td.style.backgroundColor = '#e6ccff'; // Violet clair pour night_hours
+                                }
                             }
                         } else {
                             td.style.backgroundColor = ''; // Couleur par défaut pour les autres valeurs
                         }
 
-                        // Ajouter la classe 'weekend' si la colonne correspond à un weekend
+                        // Appliquer une couleur différente pour les weekends
                         if (weekends.includes(col)) {
                             td.classList.add('weekend');
+                        }
+
+                        // Appliquer une couleur grisée pour les jours non travaillés
+                        if (isNonWorking) {
+                            td.classList.add('nonWorkingDay');  // Griser la cellule
+                            //td.style.pointerEvents = 'none';  // Désactiver la saisie sur ce jour
                         }
                     };
                 }

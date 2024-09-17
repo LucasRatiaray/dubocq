@@ -94,6 +94,7 @@ class PointageController extends Controller
                 'days' => $days,
                 'total_day_hours' => $totalEmployeeDayHours,
                 'total_night_hours' => $totalEmployeeNightHours,
+                'archived' => $employee->archived,
                 'other_hours' => $otherHours,
             ];
         }

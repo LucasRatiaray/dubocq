@@ -13,6 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -71,6 +72,17 @@ class ProjectResource extends Resource
                                 ->step('0.01')
                                 ->placeholder('Distance'),
                         ])->columnSpan(1), // 1/5 de la largeur
+                    Section::make('')
+                        ->columns(1)
+                        ->schema([
+                            Select::make('archived')
+                                ->label('Archivé :')
+                                ->options([
+                                    false => 'Non',
+                                    true => 'Oui',
+                                ])
+                                ->columnSpan(2),
+                        ])->columnSpan(1),
                 ]),
             ]);
     }
@@ -124,6 +136,18 @@ class ProjectResource extends Resource
                     ->sortable()
                     ->prefix('Zone ')
                     ->toggleable(),
+                TextColumn::make('archived')
+                    ->label('Statut')
+                    ->formatStateUsing(function ($state) {
+                        return $state ? 'Archivé' : 'En cours';
+                    })
+                    ->badge()
+                    ->colors([
+                        'success' => fn ($state): bool => !$state, // Couleur pour "Fini"
+                        'danger' => fn ($state): bool => $state, // Couleur pour "En cours"
+                    ])
+                    ->sortable()
+                    ->toggleable()
             ])
             ->filters([
                 //

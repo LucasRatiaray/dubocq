@@ -12,6 +12,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -87,6 +88,17 @@ class EmployeeResource extends Resource
                             ->suffix('€')
                             ->columnSpan(2),  // Occupe 2 colonnes
                     ])->columnSpan(1),
+                Section::make('')
+                    ->columns(4)
+                    ->schema([
+                        Select::make('archived')
+                            ->label('Archivé :')
+                            ->options([
+                                false => 'Non',
+                                true => 'Oui',
+                            ])
+                            ->columnSpan(1),
+                    ])->columnSpan(1),
             ]);
     }
 
@@ -125,7 +137,7 @@ class EmployeeResource extends Resource
                     ->toggleable()
                     ->suffix('h'),
                 TextColumn::make('monthly_salary')
-                    ->label('Salaire Mensuel')
+                    ->label('Salaire/Mois')
                     ->colors([
                         'gray' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
                     ])
@@ -142,7 +154,7 @@ class EmployeeResource extends Resource
                     ->sortable()
                     ->toggleable(),
                 TextColumn::make('hourly_rate_charged')
-                    ->label('Taux/H Chargé')
+                    ->label('T/H Chargé')
                     ->badge()
                     ->colors([
                         'primary' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
@@ -151,7 +163,7 @@ class EmployeeResource extends Resource
                     ->sortable()
                     ->toggleable(),
                 TextColumn::make('hourly_basket_charged')
-                    ->label('Panier/H Chargé')
+                    ->label('P/H Chargé')
                     ->badge()
                     ->colors([
                         'primary' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
@@ -168,6 +180,17 @@ class EmployeeResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
+                IconColumn::make('archived')
+                    ->label('Archivé')
+                    ->boolean() // Indique que cette colonne représente un état booléen (true/false)
+                    ->trueIcon('heroicon-o-check-circle') // Icône pour "archivé"
+                    ->falseIcon('heroicon-o-x-circle') // Icône pour "non archivé"
+                    ->colors([
+                        'danger' => fn ($state): bool => !$state, // Couleur verte pour "non archivé"
+                        'success' => fn ($state): bool => $state, // Couleur rouge pour "archivé"
+                    ])
+                    ->sortable()
+                    ->toggleable() // Permet de masquer/afficher la colonne
             ])
             ->filters([
                 //

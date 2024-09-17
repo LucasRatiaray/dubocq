@@ -22,6 +22,7 @@ return new class extends Migration
             $table->decimal('monthly_salary');
             $table->decimal('hourly_basket_charged')->nullable();
             $table->decimal('basket')->nullable();
+            $table->boolean('archived')->default(false);
             $table->timestamps();
         });
     }

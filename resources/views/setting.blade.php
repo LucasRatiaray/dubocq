@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <iframe src="/admin" class="border-0 w-full mt-1" height="850px">
+    <iframe src="/admin" class="border-0 w-full mt-1" height="950px">
         Votre navigateur ne supporte pas les iframes.
     </iframe>
 

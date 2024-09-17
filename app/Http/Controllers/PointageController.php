@@ -50,7 +50,7 @@ class PointageController extends Controller
         // Récupérer les employés disponibles pour ce projet
         $allEmployees = Employee::whereDoesntHave('projects', function ($query) use ($project) {
             $query->where('project_id', $project->id);
-        })->orderBy('last_name')->get();
+        })->where('archived', false)->orderBy('last_name')->get();
 
         // Récupérer les heures de travail
         $timeTrackings = TimeTracking::where('project_id', $project->id)

@@ -21,6 +21,7 @@ class Employee extends Model
         'monthly_salary',
         'hourly_basket_charged',
         'basket',
+        'archived'
     ];
 
     public function projects(): BelongsToMany

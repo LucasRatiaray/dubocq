@@ -16,7 +16,7 @@ class PointageController extends Controller
 {
     public function index(): View
     {
-        $projects = Project::all();
+        $projects = Project::where('archived', false)->get();
         return view('pointage', compact('projects'));
     }
 

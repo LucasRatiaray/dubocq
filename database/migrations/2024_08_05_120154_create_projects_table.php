@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('business', 100);
             $table->float('kilometers');
             $table->foreignId('driver_id')->nullable()->constrained('drivers')->onDelete('cascade');
+            $table->boolean('archived')->default(false);
             $table->timestamps();
         });
     }

@@ -45,6 +45,8 @@ class PointageController extends Controller
         // Récupérer les employés associés au projet
         $employees = Employee::join('employee_projects', 'employees.id', '=', 'employee_projects.employee_id')
             ->where('employee_projects.project_id', $project->id)
+            ->orderBy('archived', 'asc')   // Trier d'abord par statut d'archivage (non archivé en haut)
+            ->orderBy('last_name', 'asc')  // Puis trier par nom de famille (ordre alphabétique)
             ->get(['employees.*', 'employee_projects.id as employee_project_id']);
 
         // Récupérer les employés disponibles pour ce projet
@@ -63,6 +65,7 @@ class PointageController extends Controller
             $days = $employee->getHoursByDay($timeTrackings, $daysInMonth, $hourType);
             $totalDayHours = $employee->getTotalDayHours($timeTrackings);
             $totalNightHours = $employee->getTotalNightHours($timeTrackings);
+            $totalHours = $employee->getTotalHours($timeTrackings);
 
             $employeeData[] = [
                 'employee_project_id' => $employee->employee_project_id,
@@ -71,6 +74,7 @@ class PointageController extends Controller
                 'days' => $days,
                 'total_day_hours' => $totalDayHours,
                 'total_night_hours' => $totalNightHours,
+                'total_hours' => $totalHours,
                 'archived' => $employee->archived,
             ];
         }

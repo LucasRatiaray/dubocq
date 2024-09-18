@@ -1,5 +1,5 @@
 <div class="mx-10 flex justify-center">
-    <div class="bg-white shadow-md rounded-lg p-6 dark:bg-gray-400 min-w-full">
+    <div class="bg-white shadow-md rounded-lg p-6 dark:bg-gray-400 min-w-full mb-10">
         <!-- Titre avec navigation entre mois -->
         <div class="text-2xl font-bold flex items-center justify-between border rounded py-6 bg-gray-100">
 
@@ -98,6 +98,7 @@
                     <th scope="col" class="px-6 py-1">salarié</th>
                     <th scope="col" class="px-6 py-1">Total heures Jour</th>
                     <th scope="col" class="px-6 py-1">Total heures Nuit</th>
+                    <th scope="col" class="px-6 py-1">Total heures</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -112,17 +113,24 @@
                         $totalDayHours += $employee['total_day_hours'];
                         $totalNightHours += $employee['total_night_hours'];
                     @endphp
-
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <th scope="row" class="px-6 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ $employee['full_name'] }}
-                        </th>
+                        @if ($employee['archived'])
+                            <th scope="row" class="px-6 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {{ $employee['full_name'] }} <span class="text-xs text-red-500 dark:text-red-400">(Archivé)</span>
+                            </th>
+                        @else
+                            <th scope="row" class="px-6 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {{ $employee['full_name'] }}
+                            </th>
+                        @endif
                         <td class="px-6 py-1">
                             {{ $employee['total_day_hours'] == 0 ? '-' : $employee['total_day_hours'].' H' }} <!-- Total heures Jour -->
                         </td>
                         <td class="px-6 py-1">
                             {{ $employee['total_night_hours'] == 0 ? '-' : $employee['total_night_hours'].' H' }} <!-- Total heures Nuit -->
                         </td>
+                        <td class="px-6 py-1">
+                            {{ $employee['total_hours'] == 0 ? '-' : $employee['total_hours'].' H' }} <!-- Total heures -->
                     </tr>
                 @endforeach
 
@@ -134,6 +142,9 @@
                     </td>
                     <td class="px-6 py-1 font-extrabold">
                         {{ $totalNightHours == 0 ? '-' : $totalNightHours.' H' }} <!-- Total cumulé des heures Nuit -->
+                    </td>
+                    <td class="px-6 py-1 font-extrabold">
+                        {{ $totalDayHours + $totalNightHours == 0 ? '-' : ($totalDayHours + $totalNightHours).' H' }} <!-- Total cumulé des heures -->
                     </td>
                 </tr>
                 </tbody>

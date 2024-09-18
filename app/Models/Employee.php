@@ -64,8 +64,6 @@ class Employee extends Model
                 $days[$day - 1] = $timeTracking->$hourType; // Mettre l'heure pour le jour correspondant
             }
         }
-
         return $days;
     }
-
 }

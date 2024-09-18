@@ -386,15 +386,6 @@
             }
         });
 
-        // Vérifier s'il y a un message de succès après le rechargement de la page
-        window.addEventListener('load', () => {
-            const successMessage = sessionStorage.getItem('successMessage');
-            if (successMessage) {
-                showMessage(successMessage, 'success');
-                sessionStorage.removeItem('successMessage'); // Nettoyer le message après affichage
-            }
-        });
-
         // Navigation mois précédent/suivant
         const prevMonthBtn = document.getElementById('prev-month-btn');
         const nextMonthBtn = document.getElementById('next-month-btn');

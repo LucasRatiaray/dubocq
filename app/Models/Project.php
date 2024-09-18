@@ -42,4 +42,23 @@ class Project extends Model
     {
         return $this->belongsTo(Driver::class, 'driver_id');
     }
+
+    public function timeTrackings(): HasMany
+    {
+        return $this->hasMany(TimeTracking::class);
+    }
+
+    public function getHoursThisMonth(): float
+    {
+        return $this->timeTrackings()
+                ->whereMonth('date', now()->month)
+                ->sum('day_hours') + $this->timeTrackings()
+                ->whereMonth('date', now()->month)
+                ->sum('night_hours');
+    }
+
+    public function getTotalHours(): float
+    {
+        return $this->timeTrackings()->sum('day_hours') + $this->timeTrackings()->sum('night_hours');
+    }
 }

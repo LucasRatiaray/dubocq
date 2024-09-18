@@ -16,13 +16,18 @@ class PointageController extends Controller
 {
     public function index(): View
     {
-        $projects = Project::where('archived', false)->get();
+        $projects = Project::where('archived', false)
+            ->orderBy('business', 'asc')
+            ->get();
+
         return view('pointage', compact('projects'));
     }
 
     public function show(Request $request): View
     {
-        $projects = Project::all();
+        $projects = Project::where('archived', false)
+            ->orderBy('business', 'asc')
+            ->get();
 
         $request->validate([
             'project_id' => 'required|exists:projects,id',

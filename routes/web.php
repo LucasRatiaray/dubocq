@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PointageController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -20,17 +20,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/pointage/store', [PointageController::class, 'store'])->name('pointage.store');
     Route::post('/pointage/add/{id}', [PointageController::class, 'addEmployeeToProject'])->name('pointage.add');
 
-    Route::get('/projects/{project}', [ProjectController::class, 'show']);
-
     /*Route::redirect('/setting', '/admin')->name('setting');*/
 
     Route::get('/setting', function () {
         return view('setting');
     })->name('setting');
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'show'])->name('dashboard');
 });
 
 require __DIR__.'/auth.php';

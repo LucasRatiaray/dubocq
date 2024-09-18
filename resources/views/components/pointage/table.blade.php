@@ -52,8 +52,8 @@
         @if(count($employeeData) > 0)
             <div id="handsontable"></div>
         @else
-            <p class="text-gray-500 dark:text-gray-400 text-lg">Chantier neuf ? </p>
-            <p class="text-gray-500 dark:text-gray-400 text-lg">Veuillez ajouter un salarié.</p>
+            <p class="text-gray-500 dark:text-gray-400 text-sm font-normal">Chantier neuf ? </p>
+            <p class="text-gray-500 dark:text-gray-400 text-sm font-normal">Ajouter un salarié.</p>
         @endif
 
         <!-- Sauvegarde et ajout d'employé -->
@@ -369,7 +369,7 @@
                 },
                 body: JSON.stringify({
                     data: formattedData,
-                    hour_type: document.querySelector('form button[name="hour_type"].bg-green-500, form button[name="hour_type"].bg-purple-500, form button[name="hour_type"].bg-yellow-500, form button[name="hour_type"].bg-cyan-500').value
+                    hour_type: document.querySelector('form button[name="hour_type"].bg-green-500, form button[name="hour_type"].bg-purple-500').value
                 })
             })
                 .then(response => response.json())

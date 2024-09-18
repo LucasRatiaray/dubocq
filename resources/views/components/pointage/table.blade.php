@@ -9,8 +9,8 @@
             <!-- Mois et année au centre -->
             <div class="flex items-center justify-center gap-4">
                 <!-- Bouton mois précédent -->
-                <button type="button" id="prev-month-btn" class="border bg-white text-black rounded">
-                    <svg class="w-5 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <button type="button" id="prev-month-btn">
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white hover:scale-125" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
                     </svg>
                 </button>
@@ -19,8 +19,8 @@
                 <h1 id="month-year" class="text-center"></h1>
 
                 <!-- Bouton mois suivant -->
-                <button type="button" id="next-month-btn" class="border bg-white text-black rounded">
-                    <svg class="w-5 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <button type="button" id="next-month-btn">
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white hover:scale-125" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
                     </svg>
                 </button>
@@ -52,8 +52,8 @@
         @if(count($employeeData) > 0)
             <div id="handsontable"></div>
         @else
-            <p class="text-gray-500 dark:text-gray-400">Chantier neuf ! </p>
-            <p class="text-gray-500 dark:text-gray-400">Veuillez ajouter un salarié.</p>
+            <p class="text-gray-500 dark:text-gray-400 text-lg">Chantier neuf ? </p>
+            <p class="text-gray-500 dark:text-gray-400 text-lg">Veuillez ajouter un salarié.</p>
         @endif
 
         <!-- Sauvegarde et ajout d'employé -->
@@ -163,7 +163,7 @@
         // Mise à jour du titre
         if (month && year && projectCode && projectBusiness) {
             document.getElementById('code-title').innerHTML = `<span class="text-black px-2 py-1 uppercase">${projectCode} - ${projectBusiness}</span>`;
-            document.getElementById('month-year').innerHTML = `<span class="text-black px-2 py-1 lowercase">${months[month - 1]} ${year}</span>`;
+            document.getElementById('month-year').innerHTML = `<span class="text-black px-2 py-1">${months[month - 1]} ${year}</span>`;
             document.getElementById('zone').innerHTML = `<span class="text-black px-2 py-1 uppercase">Zone ${projectZone}</span>`;
         }
 

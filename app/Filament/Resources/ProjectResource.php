@@ -81,6 +81,8 @@ class ProjectResource extends Resource
                                     false => 'Non',
                                     true => 'Oui',
                                 ])
+                                ->required()
+                                ->default(false)
                                 ->columnSpan(2),
                         ])->columnSpan(1),
                 ]),
@@ -92,7 +94,7 @@ class ProjectResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('code')
-                    ->label('Code chantier')
+                    ->label('Code')
                     ->badge()
                     ->colors([
                         'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs

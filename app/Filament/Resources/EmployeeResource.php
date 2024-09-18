@@ -96,7 +96,9 @@ class EmployeeResource extends Resource
                                 false => 'Non',
                                 true => 'Oui',
                             ])
-                            ->columnSpan(2),
+                            ->columnSpan(2)
+                            ->required()
+                            ->default(false),
                     ])->columnSpan(1),
             ]);
     }

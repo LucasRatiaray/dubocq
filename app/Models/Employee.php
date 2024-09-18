@@ -39,41 +39,4 @@ class Employee extends Model
     {
         return $this->hasMany(TimeTracking::class);
     }
-
-    public function calculateHourlyCost(BasketZone $basketZone): float
-    {
-        if ($this->status === 'ETAM') {
-            return $this->basket;
-        } else {
-            if ($this->contract === '37H') {
-                $basketZoneChargedDaily = $basketZone->basket_zone_charged_daily_37H;
-            } else {
-                $basketZoneChargedDaily = $basketZone->basket_zone_charged_daily_35H;
-            }
-            return $this->basket + $basketZoneChargedDaily;
-        }
-    }
-
-    public function calculateCostForProject(Project $project): float
-    {
-        $totalDayHours = $this->timeTrackings()->where('project_id', $project->id)->sum('day_hours');  // Utilisation de 'day_hours'
-        $basketZone = BasketZone::where('zone_id', $project->zone_id)->first();
-        $hourlyCost = $this->calculateHourlyCost($basketZone);
-        return $hourlyCost * $totalDayHours;
-    }
-
-    public function calculateMonthlyCostForProject(Project $project): object
-    {
-        $basketZone = BasketZone::where('zone_id', $project->zone_id)->first();
-        $hourlyCost = $this->calculateHourlyCost($basketZone);
-
-        return $this->timeTrackings()
-            ->where('project_id', $project->id)
-            ->selectRaw('SUM(day_hours) as total_hours, TO_CHAR(date, \'YYYY-MM\') as month')
-            ->groupBy('month')
-            ->get()
-            ->mapWithKeys(function ($item) use ($hourlyCost) {
-                return [$item->month => $item->total_hours * $hourlyCost];
-            });
-    }
 }

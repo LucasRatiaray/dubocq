@@ -15,7 +15,7 @@ class EmployeeObserver
         $rateCharged = RateCharged::first();
         $basket = Basket::first();
 
-        if ($employee->monthly_salary) {
+        if ($employee->monthly_salary !== null && $employee->contract !== null) {
             $employee->hourly_rate = $employee->monthly_salary / ($employee->contract * 52 / 12);
             $employee->hourly_rate_charged = $employee->hourly_rate * $rateCharged->rate_charged;
             $employee->hourly_basket_charged = $basket->basket_charged / ($employee->contract / 5);
@@ -52,6 +52,15 @@ class EmployeeObserver
     {
         // Récupérer toutes les zones existantes
         $basketZones = BasketZone::all();
+        $rateCharged = RateCharged::first();
+        $basket = Basket::first();
+
+        if ($employee->monthly_salary !== null && $employee->contract !== null) {
+            $employee->hourly_rate = $employee->monthly_salary / ($employee->contract * 52 / 12);
+            $employee->hourly_rate_charged = $employee->hourly_rate * $rateCharged->rate_charged;
+            $employee->hourly_basket_charged = $basket->basket_charged / ($employee->contract / 5);
+            $employee->basket = $employee->hourly_rate_charged + $employee->hourly_basket_charged;
+        }
 
         // Créer des enregistrements pour chaque zone
         foreach ($basketZones as $basketZone) {

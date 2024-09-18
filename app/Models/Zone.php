@@ -21,9 +21,4 @@ class Zone extends Model
     {
         return $this->hasMany(Project::class);
     }
-
-    public function basketZones(): HasMany
-    {
-        return $this->hasMany(BasketZone::class);
-    }
 }

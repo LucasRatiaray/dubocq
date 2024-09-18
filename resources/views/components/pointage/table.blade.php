@@ -81,9 +81,9 @@
             @endif
         </div>
 
+        @if(count($employeeData) > 0)
         <hr class="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700">
 
-        @if(count($employeeData) > 0)
         <!-- Tableau total des heures -->
         <div class="relative overflow-x-auto">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">

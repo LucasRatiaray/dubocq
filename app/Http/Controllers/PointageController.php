@@ -40,7 +40,7 @@ class PointageController extends Controller
         $nonWorkingDays = NonWorkingDay::whereMonth('date', $month)
             ->whereYear('date', $year)
             ->pluck('date')
-            ->toArray();  // Convertir les dates en tableau simple
+            ->toArray();
 
         // Récupérer les employés associés au projet
         $employees = Employee::join('employee_projects', 'employees.id', '=', 'employee_projects.employee_id')
@@ -52,7 +52,7 @@ class PointageController extends Controller
             $query->where('project_id', $project->id);
         })->where('archived', false)->orderBy('last_name')->get();
 
-        // Récupérer les heures de travail
+        // Récupérer les heures de travail pour le mois et l'année
         $timeTrackings = TimeTracking::where('project_id', $project->id)
             ->whereMonth('date', $month)
             ->whereYear('date', $year)
@@ -60,46 +60,22 @@ class PointageController extends Controller
 
         $employeeData = [];
         foreach ($employees as $employee) {
-            $days = array_fill(0, $daysInMonth, '');
-            $totalEmployeeDayHours = 0;
-            $totalEmployeeNightHours = 0;
-            $otherHours = ['night_hours' => []];
+            $days = $employee->getHoursByDay($timeTrackings, $daysInMonth, $hourType);
+            $totalDayHours = $employee->getTotalDayHours($timeTrackings);
+            $totalNightHours = $employee->getTotalNightHours($timeTrackings);
 
-            foreach ($timeTrackings as $timeTracking) {
-                if ($timeTracking->employee_id == $employee->id) {
-                    $day = (int) Carbon::parse($timeTracking->date)->format('d');
-                    $days[$day - 1] = $timeTracking->$hourType;
-
-                    // Calcul des heures totales par type pour chaque employé
-                    if ($hourType === 'day_hours') {
-                        $totalEmployeeDayHours += $timeTracking->day_hours;
-                        $totalEmployeeNightHours += $timeTracking->night_hours ?? 0;
-                    } else {
-                        $totalEmployeeNightHours += $timeTracking->night_hours;
-                        $totalEmployeeDayHours += $timeTracking->day_hours ?? 0;
-                    }
-
-                    // Stocker les autres types d'heures
-                    if ($hourType !== 'night_hours' && $timeTracking->night_hours) {
-                        $otherHours['night_hours'][$day - 1] = $timeTracking->night_hours;
-                    }
-                }
-            }
-
-            // Ajouter les heures totales pour chaque employé au tableau
             $employeeData[] = [
                 'employee_project_id' => $employee->employee_project_id,
                 'employee_id' => $employee->id,
                 'full_name' => $employee->last_name . ' ' . $employee->first_name,
                 'days' => $days,
-                'total_day_hours' => $totalEmployeeDayHours,
-                'total_night_hours' => $totalEmployeeNightHours,
+                'total_day_hours' => $totalDayHours,
+                'total_night_hours' => $totalNightHours,
                 'archived' => $employee->archived,
-                'other_hours' => $otherHours,
             ];
         }
 
-        // Transmettre les jours non travaillés à la vue
+        // Transmettre les données à la vue, y compris $allEmployees
         return view('pointage', compact('projects', 'project', 'month', 'year', 'employeeData', 'hourType', 'allEmployees', 'nonWorkingDays'));
     }
 
@@ -178,6 +154,17 @@ class PointageController extends Controller
         $project = Project::findOrFail($id);
         $employee = Employee::findOrFail($request->employee_id);
 
+        // Vérifier si l'employé est déjà assigné au projet
+        if ($employee->projects()->where('project_id', $project->id)->exists()) {
+            return redirect()->route('pointage.show', [
+                'project_id' => $project->id,
+                'month' => $request->month,
+                'year' => $request->year,
+                'hour_type' => 'day_hours'
+            ])->with('error', 'Cet employé est déjà assigné à ce projet.');
+        }
+
+        // Si l'employé n'est pas encore assigné, on l'ajoute
         $employee->projects()->attach($project->id);
 
         return redirect()->route('pointage.show', [

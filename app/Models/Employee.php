@@ -34,9 +34,38 @@ class Employee extends Model
         return $this->hasMany(EmployeeBasketZone::class);
     }
 
-
-    public function timeTrackings(): HasMany
+    // Méthode pour calculer les heures de jour
+    public function getTotalDayHours($timeTrackings): float
     {
-        return $this->hasMany(TimeTracking::class);
+        return $timeTrackings->where('employee_id', $this->id)->sum('day_hours');
     }
+
+    // Méthode pour calculer les heures de nuit
+    public function getTotalNightHours($timeTrackings): float
+    {
+        return $timeTrackings->where('employee_id', $this->id)->sum('night_hours');
+    }
+
+    // Méthode pour calculer le total d'heures (jour + nuit)
+    public function getTotalHours($timeTrackings): float
+    {
+        $dayHours = $this->getTotalDayHours($timeTrackings);
+        $nightHours = $this->getTotalNightHours($timeTrackings);
+        return $dayHours + $nightHours;
+    }
+
+    public function getHoursByDay($timeTrackings, $daysInMonth, $hourType): array
+    {
+        $days = array_fill(0, $daysInMonth, '');
+
+        foreach ($timeTrackings as $timeTracking) {
+            if ($timeTracking->employee_id == $this->id) {
+                $day = (int) \Carbon\Carbon::parse($timeTracking->date)->format('d');
+                $days[$day - 1] = $timeTracking->$hourType; // Mettre l'heure pour le jour correspondant
+            }
+        }
+
+        return $days;
+    }
+
 }

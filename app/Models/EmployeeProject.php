@@ -26,9 +26,4 @@ class EmployeeProject extends Model
     {
         return $this->belongsTo(Project::class);
     }
-
-    public function timeTrackings(): HasMany
-    {
-        return $this->hasMany(TimeTracking::class);
-    }
 }

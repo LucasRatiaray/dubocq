@@ -61,4 +61,6 @@ class Project extends Model
     {
         return $this->timeTrackings()->sum('day_hours') + $this->timeTrackings()->sum('night_hours');
     }
+
+
 }

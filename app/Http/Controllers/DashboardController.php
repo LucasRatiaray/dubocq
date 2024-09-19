@@ -10,7 +10,10 @@ class DashboardController extends Controller
 {
     public function show(): View
     {
-        $projects = Project::with('timeTrackings')->get();
+        $projects = Project::with('timeTrackings')
+            ->orderBy('business')
+            ->where('archived', false)
+            ->get();
 
         return view('dashboard', compact('projects'));
     }

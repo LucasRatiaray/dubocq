@@ -14,7 +14,7 @@ class EmployeeBasketZonesRelationManager extends RelationManager
 {
     protected static string $relationship = 'employeeBasketZones';
 
-    protected static ?string $title = 'Panier par zone';
+    protected static ?string $title = 'Coûts par zone';
 
     public function form(Form $form): Form
     {
@@ -39,17 +39,18 @@ class EmployeeBasketZonesRelationManager extends RelationManager
                     ])
                     ->prefix('Zone ')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('employee.basket')
+                    ->label('Panier/H')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('employee_basket_zone_charged')
-                    ->label('Panier/H Chargé')
-                    ->colors([
-                        'warning' => fn ($state): bool => true, // Appliquer la couleur "warning" à toutes les valeurs
-                    ])
+                    ->label('Zone/H Chargé')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('employee_basket_zone')
-                    ->label('Panier/H')
+                    ->label('Coût salarié horaire')
                     ->colors([
-                        'info' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                        'warning' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
                     ])
+                    ->suffix(' €')
                     ->sortable(),
             ])
             ->defaultSort('zone.name', 'asc') // Tri par ordre alphabétique croissant

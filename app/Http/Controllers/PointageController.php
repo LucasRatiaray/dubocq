@@ -17,7 +17,7 @@ class PointageController extends Controller
     public function index(): View
     {
         $projects = Project::where('archived', false)
-            ->orderBy('business', 'asc')
+            ->orderBy('business')
             ->get();
 
         return view('pointage', compact('projects'));
@@ -26,7 +26,7 @@ class PointageController extends Controller
     public function show(Request $request): View
     {
         $projects = Project::where('archived', false)
-            ->orderBy('business', 'asc')
+            ->orderBy('business')
             ->get();
 
         $request->validate([
@@ -50,8 +50,8 @@ class PointageController extends Controller
         // Récupérer les employés associés au projet
         $employees = Employee::join('employee_projects', 'employees.id', '=', 'employee_projects.employee_id')
             ->where('employee_projects.project_id', $project->id)
-            ->orderBy('archived', 'asc')   // Trier d'abord par statut d'archivage (non archivé en haut)
-            ->orderBy('last_name', 'asc')  // Puis trier par nom de famille (ordre alphabétique)
+            ->orderBy('archived')   // Trier d'abord par statut d'archivage (non archivé en haut)
+            ->orderBy('last_name')  // Puis trier par nom de famille (ordre alphabétique)
             ->get(['employees.*', 'employee_projects.id as employee_project_id']);
 
         // Récupérer les employés disponibles pour ce projet

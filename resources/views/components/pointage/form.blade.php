@@ -11,7 +11,7 @@
             </select>
             <label for="month" class="sr-only">Choisir un mois</label>
             <select name="month" id="month" class="w-auto bg-gray-50 border border-gray-300 text-gray-900 font-bold text-sm focus:ring-customColor focus:border-customColor block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-customColor dark:focus:border-customColor" required>
-                <option disabled selected value="">Choisir un mois</option>
+                <option disabled value="">Choisir un mois</option>
                 @php
                     $months = [
                         1 => 'Janvier',
@@ -27,16 +27,20 @@
                         11 => 'Novembre',
                         12 => 'Décembre'
                     ];
+                    $currentMonth = date('n'); // Mois actuel
                 @endphp
                 @foreach($months as $key => $month)
-                    <option value="{{ $key }}">{{ $month }}</option>
+                    <option value="{{ $key }}" {{ $key == $currentMonth ? 'selected' : '' }}>{{ $month }}</option>
                 @endforeach
             </select>
             <label for="year" class="sr-only">Choisir une année</label>
             <select name="year" id="year" class="w-auto bg-gray-50 border border-gray-300 text-gray-900 font-bold text-sm rounded-r-lg focus:ring-customColor focus:border-customColor block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-customColor dark:focus:border-customColor" required>
-                <option disabled selected value="">Choisir une année</option>
-                <option value="2024">2024</option>
-                <option value="2025">2025</option>
+                <option disabled value="">Choisir une année</option>
+                @php
+                    $currentYear = date('Y'); // Année actuelle
+                @endphp
+                <option value="2024" {{ $currentYear == 2024 ? 'selected' : '' }}>2024</option>
+                <option value="2025" {{ $currentYear == 2025 ? 'selected' : '' }}>2025</option>
             </select>
         </div>
         <div>

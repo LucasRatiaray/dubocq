@@ -173,7 +173,7 @@ class EmployeeResource extends Resource
                     ->sortable()
                     ->toggleable(),
                 TextColumn::make('basket')
-                    ->label('Panier')
+                    ->label('Panier/H')
                     ->badge()
                     ->colors([
                         'primary' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs

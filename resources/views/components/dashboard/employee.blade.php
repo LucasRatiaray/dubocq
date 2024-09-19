@@ -86,7 +86,7 @@
 
             <!-- Contenu projet du tableau de bord -->
             <div class="bg-white p-6 rounded-lg shadow-md col-span-2">
-                <h3 class="text-xl font-semibold mb-4">Tableau Coûts Heures par salarié</h3>
+                <h3 class="text-xl font-semibold mb-4">Tableau Heures Coûts par salarié</h3>
                 <!-- Table HTML du projet -->
                 <table id="project" class="min-w-full bg-white text-sm">
                     <thead>

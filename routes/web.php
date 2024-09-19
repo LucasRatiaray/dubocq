@@ -20,13 +20,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/pointage/store', [PointageController::class, 'store'])->name('pointage.store');
     Route::post('/pointage/add/{id}', [PointageController::class, 'addEmployeeToProject'])->name('pointage.add');
 
-    /*Route::redirect('/setting', '/admin')->name('setting');*/
-
     Route::get('/setting', function () {
         return view('setting');
     })->name('setting');
 
-    Route::get('/dashboard', [DashboardController::class, 'show'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'show'])->name('dashboard.show');
+    Route::get('/dashboard/projects', [DashboardController::class, 'showProject'])->name('dashboard.showProject');
 });
 
 require __DIR__.'/auth.php';

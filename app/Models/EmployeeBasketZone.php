@@ -22,6 +22,11 @@ class EmployeeBasketZone extends Model
         return $this->belongsTo(Employee::class);
     }
 
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
+    }
+
     public function zone(): BelongsTo
     {
         return $this->belongsTo(Zone::class);

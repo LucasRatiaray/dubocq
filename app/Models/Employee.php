@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Carbon\Carbon;
 
 class Employee extends Model
 {
@@ -29,6 +30,11 @@ class Employee extends Model
         return $this->belongsToMany(Project::class, 'employee_projects');
     }
 
+    public function employeeProjects(): HasMany
+    {
+        return $this->hasMany(EmployeeProject::class);
+    }
+
     public function employeeBasketZones(): HasMany
     {
         return $this->hasMany(EmployeeBasketZone::class);
@@ -39,19 +45,16 @@ class Employee extends Model
         return $this->hasMany(TimeTracking::class);
     }
 
-    // Méthode pour calculer les heures de jour
     public function getTotalDayHours($timeTrackings): float
     {
         return $timeTrackings->where('employee_id', $this->id)->sum('day_hours');
     }
 
-    // Méthode pour calculer les heures de nuit
     public function getTotalNightHours($timeTrackings): float
     {
         return $timeTrackings->where('employee_id', $this->id)->sum('night_hours');
     }
 
-    // Méthode pour calculer le total d'heures (jour + nuit)
     public function getTotalHours($timeTrackings): float
     {
         $dayHours = $this->getTotalDayHours($timeTrackings);
@@ -65,8 +68,8 @@ class Employee extends Model
 
         foreach ($timeTrackings as $timeTracking) {
             if ($timeTracking->employee_id == $this->id) {
-                $day = (int) \Carbon\Carbon::parse($timeTracking->date)->format('d');
-                $days[$day - 1] = $timeTracking->$hourType; // Mettre l'heure pour le jour correspondant
+                $day = (int) Carbon::parse($timeTracking->date)->format('d');
+                $days[$day - 1] = $timeTracking->$hourType;
             }
         }
         return $days;

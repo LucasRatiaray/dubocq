@@ -130,9 +130,9 @@
             $('#hourProjectsTable').DataTable({
                 language: {
                     "sEmptyTable": "Aucune donnée disponible dans le tableau",
-                    "sInfo": "Affichage de _START_ à _END_ sur _TOTAL_ chantiers",
+                    "sInfo": "Affichage de _START_ à _END_ sur _TOTAL_ chantier(s)",
                     "sInfoEmpty": "Affichage de 0 à 0 sur 0 entrées",
-                    "sInfoFiltered": "(filtré de _MAX_ chantiers au total)",
+                    "sInfoFiltered": "(filtré de _MAX_ chantier(s) au total)",
                     "sLengthMenu": "Afficher _MENU_ entrées",
                     "sLoadingRecords": "Chargement...",
                     "sProcessing": "Traitement...",

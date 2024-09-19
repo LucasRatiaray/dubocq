@@ -41,5 +41,116 @@
             </nav>
         </aside>
 
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <div class="flex justify-evenly">
+                <!-- Chantier -->
+                <div class="flex items-center justify-center gap-4 mb-6">
+                    <!-- Bouton mois précédent -->
+                    <button type="button" id="prev-month-btn">
+                        <svg class="w-6 h-6 text-gray-800 dark:text-white hover:scale-125" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+                        </svg>
+                    </button>
+
+                    <!-- Chantier -->
+                    <h1 id="" class="text-center">chantier 1</h1>
+
+                    <!-- Bouton mois suivant -->
+                    <button type="button" id="next-month-btn">
+                        <svg class="w-6 h-6 text-gray-800 dark:text-white hover:scale-125" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Mois et année -->
+                <div class="flex items-center justify-center gap-4 mb-6">
+                    <!-- Bouton mois précédent -->
+                    <button type="button" id="prev-month-btn">
+                        <svg class="w-6 h-6 text-gray-800 dark:text-white hover:scale-125" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+                        </svg>
+                    </button>
+
+                    <!-- Mois et année -->
+                    <h1 id="" class="text-center">janvier 2024</h1>
+
+                    <!-- Bouton mois suivant -->
+                    <button type="button" id="next-month-btn">
+                        <svg class="w-6 h-6 text-gray-800 dark:text-white hover:scale-125" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Contenu projet du tableau de bord -->
+            <div class="bg-white p-6 rounded-lg shadow-md col-span-2">
+                <h3 class="text-xl font-semibold mb-4">Tableau Coût Heures par salarié</h3>
+                <!-- Table HTML du projet -->
+                <table id="project" class="min-w-full bg-white text-sm">
+                    <thead>
+                    <tr class="w-full">
+                        <th class="py-1 px-2 text-left">Salariés</th>
+                        <th class="py-1 px-2 text-center">Heures mois en cours</th>
+                        <th class="py-1 px-2 text-center">Coûts mois en cours</th>
+                        <th class="py-1 px-2 text-center">Heures depuis le début</th>
+                        <th class="py-1 px-2 text-center">Coût depuis le début</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+{{--                        @foreach($projects as $project)--}}
+                        <tr class="border-b border-stroke">
+                            <td class="py-1 px-2"></td>
+                            <td class="py-1 px-2 text-center"></td>
+                            <td class="py-1 px-2 text-center"></td>
+                            <td class="py-1 px-2 text-center"></td>
+                            <td class="py-1 px-2 text-center"></td>
+                        </tr>
+{{--                        @endforeach--}}
+                    </tbody>
+                </table>
+            </div>
+        </main>
     </div>
+
+    <!-- Inclure jQuery et DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+    <!-- Inclure Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+    <script>
+        // Initialisation de DataTables pour tableau heure
+        $(document).ready(function() {
+            $('#project').DataTable({
+                language: {
+                    "sEmptyTable": "Aucune donnée disponible dans le tableau",
+                    "sInfo": "Affichage de _START_ à _END_ sur _TOTAL_ salarié(s)",
+                    "sInfoEmpty": "Affichage de 0 à 0 sur 0 entrées",
+                    "sInfoFiltered": "(filtré de _MAX_ salarié(s) au total)",
+                    "sLengthMenu": "Afficher _MENU_ entrées",
+                    "sLoadingRecords": "Chargement...",
+                    "sProcessing": "Traitement...",
+                    "sSearch": "Rechercher :",
+                    "sZeroRecords": "Aucun enregistrement correspondant trouvé",
+                    "oPaginate": {
+                        "sFirst": "Premier",
+                        "sLast": "Dernier",
+                        "sNext": "Suivant",
+                        "sPrevious": "Précédent"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": activer pour trier la colonne par ordre croissant",
+                        "sSortDescending": ": activer pour trier la colonne par ordre décroissant"
+                    }
+                },
+                lengthChange: false
+            });
+        });
+    </script>
 </x-app-layout>

@@ -42,8 +42,8 @@
                         <thead>
                         <tr class="w-full">
                             <th class="py-1 px-2 text-left">Chantier</th>
-                            <th class="py-1 px-2 text-center">Heures réalisés mois en cours</th>
-                            <th class="py-1 px-2 text-center">Heures réalisés depuis le début</th>
+                            <th class="py-1 px-2 text-center">Heures réalisées mois en cours</th>
+                            <th class="py-1 px-2 text-center">Heures réalisées depuis le début</th>
                         </tr>
                         </thead>
                         <tbody>

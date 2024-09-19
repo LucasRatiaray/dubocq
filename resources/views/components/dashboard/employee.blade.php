@@ -42,27 +42,26 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 p-6">
+        <main class="flex-1 p-6 pt-4">
             <div class="flex justify-between">
-                <!-- Chantier -->
-                <div class="flex items-center justify-center gap-4 mb-6">
-                    <!-- Bouton mois précédent -->
-                    <button type="button" id="prev-month-btn">
-                        <svg class="w-6 h-6 text-gray-800 dark:text-white hover:scale-125" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
-                        </svg>
-                    </button>
-
-                    <!-- Chantier -->
-                    <h1 id="" class="text-center">nom d'un salarié</h1>
-
-                    <!-- Bouton mois suivant -->
-                    <button type="button" id="next-month-btn">
-                        <svg class="w-6 h-6 text-gray-800 dark:text-white hover:scale-125" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
-                        </svg>
-                    </button>
-                </div>
+                <!-- Salariés -->
+                <form class="flex justify-center items-center gap-4 mb-4" action="{{ route('dashboard.showEmployee') }}" method="GET">
+                    @csrf
+                    <div class="flex">
+                        <label for="project_id" class="sr-only">Choisir un salarié</label>
+                        <select name="project_id" id="project_id" class="w-auto bg-gray-50 border border-gray-300 text-gray-900 font-bold text-sm rounded-lg focus:ring-customColor focus:border-customColor block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-customColor dark:focus:border-customColor" required>
+                            <option disabled selected value="">Choisir un salarié</option>
+                            @foreach($employees as $employee)
+                                <option value="{{ $employee->id }}">{{ $employee->last_name }}  {{ $employee->first_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <button type="submit" class="bg-gray-100 hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">
+                            Changer
+                        </button>
+                    </div>
+                </form>
 
                 <!-- Mois et année -->
                 <div class="flex items-center justify-center gap-4 mb-6">

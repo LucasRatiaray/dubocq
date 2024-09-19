@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -53,11 +54,21 @@ class DashboardController extends Controller
 
     public function showProject(): View
     {
-        return view('components.dashboard.project');
+        $projects = Project::with('timeTrackings')
+            ->orderBy('business')
+            ->where('archived', false)
+            ->get();
+
+        return view('components.dashboard.project', compact('projects'));
     }
 
     public function showEmployee(): View
     {
-        return view('components.dashboard.employee');
+        $employees = Employee::with('timeTrackings')
+            ->orderBy('last_name')
+            ->where('archived', false)
+            ->get();
+
+        return view('components.dashboard.employee', compact('employees'));
     }
 }

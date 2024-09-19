@@ -55,4 +55,9 @@ class DashboardController extends Controller
     {
         return view('components.dashboard.project');
     }
+
+    public function showEmployee(): View
+    {
+        return view('components.dashboard.employee');
+    }
 }

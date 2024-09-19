@@ -43,7 +43,7 @@
 
         <!-- Main Content -->
         <main class="flex-1 p-6">
-            <div class="flex justify-evenly">
+            <div class="flex justify-between">
                 <!-- Chantier -->
                 <div class="flex items-center justify-center gap-4 mb-6">
                     <!-- Bouton mois précédent -->

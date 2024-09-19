@@ -13,7 +13,8 @@ class EmployeeBasketZone extends Model
     protected $fillable = [
         'employee_id',
         'zone_id',
-        'employee_basket_zone_charged'
+        'employee_basket_zone_charged',
+        'employee_basket_zone',
     ];
 
     public function employee(): BelongsTo

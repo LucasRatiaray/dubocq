@@ -34,6 +34,11 @@ class Employee extends Model
         return $this->hasMany(EmployeeBasketZone::class);
     }
 
+    public function timeTrackings(): HasMany
+    {
+        return $this->hasMany(TimeTracking::class);
+    }
+
     // Méthode pour calculer les heures de jour
     public function getTotalDayHours($timeTrackings): float
     {

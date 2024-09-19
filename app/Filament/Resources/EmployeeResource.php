@@ -178,6 +178,7 @@ class EmployeeResource extends Resource
                     ->colors([
                         'primary' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
                     ])
+                    ->formatStateUsing(fn ($state) => number_format($state, 2))
                     ->searchable()
                     ->sortable()
                     ->toggleable(),

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('employee_baskets', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
-            $table->decimal('value')->nullable();
+            $table->decimal('value', 20, 5)->nullable();
             $table->timestamps();
         });
     }

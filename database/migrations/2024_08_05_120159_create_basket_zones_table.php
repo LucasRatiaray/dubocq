@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('basket_zones', function (Blueprint $table) {
             $table->id();
             $table->foreignId('zone_id')->constrained('zones')->onDelete('cascade');
-            $table->decimal('basket_zone');
-            $table->decimal('basket_zone_charged')->nullable();
+            $table->decimal('basket_zone', 20, 5);
+            $table->decimal('basket_zone_charged', 20, 5)->nullable();
             $table->timestamps();
         });
     }

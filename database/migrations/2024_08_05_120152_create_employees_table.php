@@ -20,8 +20,8 @@ return new class extends Migration
             $table->enum('status', ['OUVRIER', 'ETAM'])->default('OUVRIER');
             $table->integer('contract')->default(37);
             $table->decimal('monthly_salary');
-            $table->decimal('hourly_basket_charged')->nullable();
-            $table->decimal('basket')->nullable();
+            $table->decimal('hourly_basket_charged', 10, 2)->nullable();
+            $table->decimal('basket', 20, 5)->nullable();
             $table->boolean('archived')->default(false);
             $table->timestamps();
         });

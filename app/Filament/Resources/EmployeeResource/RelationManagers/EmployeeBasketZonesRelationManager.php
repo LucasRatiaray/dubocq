@@ -41,6 +41,7 @@ class EmployeeBasketZonesRelationManager extends RelationManager
                     ->sortable(),
                 Tables\Columns\TextColumn::make('employee.basket')
                     ->label('Panier/H')
+                    ->formatStateUsing(fn ($state) => number_format($state, 2))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('employee_basket_zone_charged')
                     ->label('Zone/H Chargé')
@@ -50,6 +51,7 @@ class EmployeeBasketZonesRelationManager extends RelationManager
                     ->colors([
                         'warning' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
                     ])
+                    ->formatStateUsing(fn ($state) => number_format($state, 2))
                     ->suffix(' €')
                     ->sortable(),
             ])

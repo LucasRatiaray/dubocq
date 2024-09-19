@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
             $table->foreignId('zone_id')->constrained('zones')->onDelete('cascade');
-            $table->decimal('employee_basket_zone_charged')->nullable();
-            $table->decimal('employee_basket_zone')->nullable();
+            $table->decimal('employee_basket_zone_charged', 10, 2)->nullable();
+            $table->decimal('employee_basket_zone', 20, 5)->nullable();
             $table->timestamps();
         });
     }

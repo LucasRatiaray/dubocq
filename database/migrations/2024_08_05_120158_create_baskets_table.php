@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('baskets', function (Blueprint $table) {
             $table->id();
-            $table->decimal('basket', 20, 5);
+            $table->decimal('basket', 10, 2);
             $table->decimal('basket_charged', 10, 2)->nullable();
             $table->timestamps();
         });

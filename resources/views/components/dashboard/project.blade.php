@@ -229,7 +229,10 @@
                         "sSortDescending": ": activer pour trier la colonne par ordre décroissant"
                     }
                 },
-                lengthChange: false
+                lengthChange: false,
+                searching: false,
+                paging: false,
+                info: false
             });
         });
     </script>

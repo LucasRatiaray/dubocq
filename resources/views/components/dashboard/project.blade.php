@@ -43,7 +43,7 @@
 
         <!-- Main Content -->
         <main class="flex-1 p-6 pt-4">
-            <div class="flex justify-between">
+            <div class="flex gap-10">
                 <!-- Chantier -->
                 <form class="flex justify-center items-center gap-4 mb-4" action="{{ route('dashboard.showProject') }}" method="GET">
                     @csrf
@@ -59,7 +59,7 @@
                 </form>
 
                 <!-- Mois et année -->
-                <div class="flex items-center justify-center gap-4 mb-6">
+                <div class="flex items-center justify-center gap-4 mb-3">
                     <!-- Bouton mois précédent -->
                     <button type="button" id="prev-month-btn">
                         <svg class="w-6 h-6 text-gray-800 dark:text-white hover:scale-125" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -68,7 +68,7 @@
                     </button>
 
                     <!-- Mois et année -->
-                    <h1 id="month-year" class="text-center"></h1>
+                    <h1 id="month-year" class="text-center font-medium"></h1>
 
                     <!-- Bouton mois suivant -->
                     <button type="button" id="next-month-btn">
@@ -115,46 +115,93 @@
     <script>
         // Ajax pour récupérer les données du projet
         $(document).ready(function() {
-            $('#project_id').change(function() {
-                let projectId = $(this).val();
-                let projectName = $('#project_id option:selected').text(); // Récupérer le nom du projet sélectionné
+            let currentMonth = new Date().getMonth() + 1; // Mois actuel (les mois sont indexés à partir de 0 en JS)
+            let currentYear = new Date().getFullYear();
+
+            // Mettre à jour l'affichage du mois et de l'année
+            function updateMonthYearDisplay() {
+                const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+                $('#month-year').text(`${monthNames[currentMonth - 1]} ${currentYear}`);
+            }
+
+            // Initialiser l'affichage
+            updateMonthYearDisplay();
+
+            // Gestion des clics sur les boutons mois précédent et mois suivant
+            $('#prev-month-btn').click(function() {
+                if (currentMonth === 1) {
+                    currentMonth = 12;
+                    currentYear--;
+                } else {
+                    currentMonth--;
+                }
+                updateMonthYearDisplay();
+                loadProjectData(); // Recharger les données pour le mois précédent
+            });
+
+            $('#next-month-btn').click(function() {
+                if (currentMonth === 12) {
+                    currentMonth = 1;
+                    currentYear++;
+                } else {
+                    currentMonth++;
+                }
+                updateMonthYearDisplay();
+                loadProjectData(); // Recharger les données pour le mois suivant
+            });
+
+            // Fonction pour charger les données du projet sélectionné en fonction du mois et de l'année
+            function loadProjectData() {
+                let projectId = $('#project_id').val();
+                let projectName = $('#project_id option:selected').text();
                 let url = "{{ route('dashboard.getProjectData') }}";
                 let token = $('input[name="_token"]').val();
+
+                if (!projectId) return; // Si aucun projet sélectionné, ne rien faire
 
                 // Mettre à jour le nom du projet dans le titre
                 $('#selected-project-name').text(projectName);
 
-                // Afficher le tableau maintenant qu'un projet a été sélectionné
+                // Afficher le tableau
                 $('#project-table-container').removeAttr('hidden');
 
-                // Envoyer la requête AJAX pour récupérer les données du projet sélectionné
+                // Envoyer la requête AJAX avec le mois et l'année sélectionnés
                 $.ajax({
                     url: url,
                     method: 'POST',
                     data: {
                         project_id: projectId,
+                        month: currentMonth,
+                        year: currentYear,
                         _token: token
                     },
                     success: function(response) {
-                        // Vider le tableau avant de le remplir avec les nouvelles données
+                        // Vider le tableau avant de le remplir
                         $('#project tbody').empty();
 
-                        // Remplir le tableau avec les nouveaux employés et leurs coûts
+                        // Remplir le tableau avec les nouvelles données
                         $.each(response.employeeCosts, function(index, employee) {
                             let row = `<tr class="border-b border-stroke">
-                                        <td class="py-1 px-2">${employee.employee_name}</td>
-                                        <td class="py-1 px-2 text-center">${employee.monthly_hours} H</td>
-                                        <td class="py-1 px-2 text-center">${employee.monthly_cost} €</td>
-                                        <td class="py-1 px-2 text-center">${employee.total_hours} H</td>
-                                        <td class="py-1 px-2 text-center">${employee.total_cost} €</td>
-                                   </tr>`;
+                                <td class="py-1 px-2">${employee.employee_name}</td>
+                                <td class="py-1 px-2 text-center">${employee.monthly_hours > 0 ? employee.monthly_hours + ' H' : '-'}</td>
+                                <td class="py-1 px-2 text-center">${employee.monthly_cost > 0 ? employee.monthly_cost + ' €' : '-'}</td>
+                                <td class="py-1 px-2 text-center">${employee.total_hours > 0 ? employee.total_hours + ' H' : '-'}</td>
+                                <td class="py-1 px-2 text-center">${employee.total_cost > 0 ? employee.total_cost + ' €' : '-'}</td>
+                               </tr>`;
                             $('#project tbody').append(row);
                         });
+
+
                     },
                     error: function(xhr, status, error) {
                         console.log('Erreur lors du chargement des données du projet :', error);
                     }
                 });
+            }
+
+            // Lorsque l'utilisateur sélectionne un projet, charger les données pour le mois en cours
+            $('#project_id').change(function() {
+                loadProjectData();
             });
         });
 

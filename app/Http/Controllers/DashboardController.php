@@ -93,16 +93,26 @@ class DashboardController extends Controller
     public function getProjectData(Request $request)
     {
         $projectId = $request->input('project_id');
+        $selectedMonth = $request->input('month'); // Récupérer le mois sélectionné
+        $selectedYear = $request->input('year'); // Récupérer l'année sélectionnée
 
         // Récupérer le projet sélectionné avec les timeTrackings et les employés
         $project = Project::with('timeTrackings', 'employees')->findOrFail($projectId);
 
         $employeeCosts = [];
 
+        // Récupérer le nombre total de salariés dans la base de données
+        $totalEmployeesCount = Employee::count();
+
         // Calculer les heures et coûts pour chaque employé du projet
         foreach ($project->employees as $employee) {
-            // Récupérer les timeTrackings pour le mois en cours
-            $timeTrackingsThisMonth = $employee->timeTrackings()->where('project_id', $project->id)->whereMonth('date', now()->month)->get();
+            // Récupérer les timeTrackings pour le mois sélectionné
+            $timeTrackingsThisMonth = $employee->timeTrackings()
+                ->where('project_id', $project->id)
+                ->whereMonth('date', $selectedMonth)
+                ->whereYear('date', $selectedYear)
+                ->get();
+
             $monthlyCost = $employee->getEmployeeCost($timeTrackingsThisMonth);
             $monthlyHours = $employee->getTotalHours($timeTrackingsThisMonth);
 
@@ -123,6 +133,7 @@ class DashboardController extends Controller
         // Retourner les données au format JSON
         return response()->json([
             'employeeCosts' => $employeeCosts,
+            'totalEmployeesCount' => $totalEmployeesCount
         ]);
     }
 }

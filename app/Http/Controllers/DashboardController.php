@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Project;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -59,7 +60,24 @@ class DashboardController extends Controller
             ->where('archived', false)
             ->get();
 
-        return view('components.dashboard.project', compact('projects'));
+        $employeeCosts = [];
+
+        // Boucle sur chaque projet
+        foreach ($projects as $project) {
+            foreach ($project->employees as $employee) {
+                $timeTrackings = $employee->timeTrackings()->where('project_id', $project->id)->get();
+                $cost = $employee->getEmployeeCost($timeTrackings);
+
+                $employeeCosts[] = [
+                    'project_name' => $project->business,
+                    'employee_name' => $employee->first_name . ' ' . $employee->last_name,
+                    'hours' => $employee->getTotalHours($timeTrackings),
+                    'cost' => $cost
+                ];
+            }
+        }
+
+        return view('components.dashboard.project', compact('projects', 'employeeCosts'));
     }
 
     public function showEmployee(): View
@@ -70,5 +88,41 @@ class DashboardController extends Controller
             ->get();
 
         return view('components.dashboard.employee', compact('employees'));
+    }
+
+    public function getProjectData(Request $request)
+    {
+        $projectId = $request->input('project_id');
+
+        // Récupérer le projet sélectionné avec les timeTrackings et les employés
+        $project = Project::with('timeTrackings', 'employees')->findOrFail($projectId);
+
+        $employeeCosts = [];
+
+        // Calculer les heures et coûts pour chaque employé du projet
+        foreach ($project->employees as $employee) {
+            // Récupérer les timeTrackings pour le mois en cours
+            $timeTrackingsThisMonth = $employee->timeTrackings()->where('project_id', $project->id)->whereMonth('date', now()->month)->get();
+            $monthlyCost = $employee->getEmployeeCost($timeTrackingsThisMonth);
+            $monthlyHours = $employee->getTotalHours($timeTrackingsThisMonth);
+
+            // Récupérer tous les timeTrackings depuis le début
+            $timeTrackingsAllTime = $employee->timeTrackings()->where('project_id', $project->id)->get();
+            $totalCost = $employee->getEmployeeCost($timeTrackingsAllTime);
+            $totalHours = $employee->getTotalHours($timeTrackingsAllTime);
+
+            $employeeCosts[] = [
+                'employee_name' => $employee->first_name . ' ' . $employee->last_name,
+                'monthly_hours' => $monthlyHours,
+                'monthly_cost' => $monthlyCost,
+                'total_hours' => $totalHours,
+                'total_cost' => $totalCost
+            ];
+        }
+
+        // Retourner les données au format JSON
+        return response()->json([
+            'employeeCosts' => $employeeCosts,
+        ]);
     }
 }

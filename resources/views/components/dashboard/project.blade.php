@@ -56,11 +56,6 @@
                             @endforeach
                         </select>
                     </div>
-                    <div>
-                        <button type="submit" class="bg-gray-100 hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">
-                            Changer
-                        </button>
-                    </div>
                 </form>
 
                 <!-- Mois et année -->
@@ -73,7 +68,7 @@
                     </button>
 
                     <!-- Mois et année -->
-                    <h1 id="" class="text-center">janvier 2024</h1>
+                    <h1 id="month-year" class="text-center"></h1>
 
                     <!-- Bouton mois suivant -->
                     <button type="button" id="next-month-btn">
@@ -85,8 +80,12 @@
             </div>
 
             <!-- Contenu projet du tableau de bord -->
-            <div class="bg-white p-6 rounded-lg shadow-md col-span-2">
-                <h3 class="text-xl font-semibold mb-4">Tableau Coût Heures par salarié</h3>
+            <!-- Contenu projet du tableau de bord -->
+            <div id="project-table-container" class="bg-white p-6 rounded-lg shadow-md col-span-2" hidden>
+                <h3 class="text-xl font-semibold mb-4 flex justify-between">
+                    <span>Tableau Coût Heures par salarié</span>
+                    <span id="selected-project-name">Sélectionnez un chantier</span>
+                </h3>
                 <!-- Table HTML du projet -->
                 <table id="project" class="min-w-full bg-white text-sm">
                     <thead>
@@ -96,19 +95,9 @@
                         <th class="py-1 px-2 text-center">Coûts mois en cours</th>
                         <th class="py-1 px-2 text-center">Heures depuis le début</th>
                         <th class="py-1 px-2 text-center">Coût depuis le début</th>
-
                     </tr>
                     </thead>
                     <tbody>
-{{--                        @foreach($projects as $project)--}}
-                        <tr class="border-b border-stroke">
-                            <td class="py-1 px-2"></td>
-                            <td class="py-1 px-2 text-center"></td>
-                            <td class="py-1 px-2 text-center"></td>
-                            <td class="py-1 px-2 text-center"></td>
-                            <td class="py-1 px-2 text-center"></td>
-                        </tr>
-{{--                        @endforeach--}}
                     </tbody>
                 </table>
             </div>
@@ -124,6 +113,51 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
     <script>
+        // Ajax pour récupérer les données du projet
+        $(document).ready(function() {
+            $('#project_id').change(function() {
+                let projectId = $(this).val();
+                let projectName = $('#project_id option:selected').text(); // Récupérer le nom du projet sélectionné
+                let url = "{{ route('dashboard.getProjectData') }}";
+                let token = $('input[name="_token"]').val();
+
+                // Mettre à jour le nom du projet dans le titre
+                $('#selected-project-name').text(projectName);
+
+                // Afficher le tableau maintenant qu'un projet a été sélectionné
+                $('#project-table-container').removeAttr('hidden');
+
+                // Envoyer la requête AJAX pour récupérer les données du projet sélectionné
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: {
+                        project_id: projectId,
+                        _token: token
+                    },
+                    success: function(response) {
+                        // Vider le tableau avant de le remplir avec les nouvelles données
+                        $('#project tbody').empty();
+
+                        // Remplir le tableau avec les nouveaux employés et leurs coûts
+                        $.each(response.employeeCosts, function(index, employee) {
+                            let row = `<tr class="border-b border-stroke">
+                                        <td class="py-1 px-2">${employee.employee_name}</td>
+                                        <td class="py-1 px-2 text-center">${employee.monthly_hours} H</td>
+                                        <td class="py-1 px-2 text-center">${employee.monthly_cost} €</td>
+                                        <td class="py-1 px-2 text-center">${employee.total_hours} H</td>
+                                        <td class="py-1 px-2 text-center">${employee.total_cost} €</td>
+                                   </tr>`;
+                            $('#project tbody').append(row);
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Erreur lors du chargement des données du projet :', error);
+                    }
+                });
+            });
+        });
+
         // Initialisation de DataTables pour tableau heure
         $(document).ready(function() {
             $('#project').DataTable({

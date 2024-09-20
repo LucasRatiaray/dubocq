@@ -80,7 +80,6 @@
             </div>
 
             <!-- Contenu projet du tableau de bord -->
-            <!-- Contenu projet du tableau de bord -->
             <div id="project-table-container" class="bg-white p-6 rounded-lg shadow-md col-span-2" hidden>
                 <h3 class="text-xl font-semibold mb-4 flex justify-between">
                     <span>Tableau Coût Heures par salarié</span>

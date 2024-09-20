@@ -28,6 +28,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/projects', [DashboardController::class, 'showProject'])->name('dashboard.showProject');
     Route::get('/dashboard/employee', [DashboardController::class, 'showEmployee'])->name('dashboard.showEmployee');
     Route::post('/dashboard/project-data', [DashboardController::class, 'getProjectData'])->name('dashboard.getProjectData');
+    Route::post('/dashboard/employee-data', [DashboardController::class, 'getEmployeeData'])->name('dashboard.getEmployeeData');
+
 
 });
 

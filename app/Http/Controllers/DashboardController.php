@@ -90,7 +90,7 @@ class DashboardController extends Controller
         return view('components.dashboard.employee', compact('employees'));
     }
 
-    public function getProjectData(Request $request)
+    public function getProjectData(Request $request): JsonResponse
     {
         $projectId = $request->input('project_id');
         $selectedMonth = $request->input('month'); // Récupérer le mois sélectionné
@@ -134,6 +134,49 @@ class DashboardController extends Controller
         return response()->json([
             'employeeCosts' => $employeeCosts,
             'totalEmployeesCount' => $totalEmployeesCount
+        ]);
+    }
+
+    public function getEmployeeData(Request $request)
+    {
+        $employeeId = $request->input('employee_id');
+        $selectedMonth = $request->input('month'); // Récupérer le mois sélectionné
+        $selectedYear = $request->input('year'); // Récupérer l'année sélectionnée
+
+        // Récupérer l'employé avec ses timeTrackings et les projets associés
+        $employee = Employee::with(['timeTrackings' => function ($query) use ($selectedMonth, $selectedYear) {
+            $query->whereMonth('date', $selectedMonth)
+                ->whereYear('date', $selectedYear);
+        }, 'projects'])->findOrFail($employeeId);
+
+        $projectData = [];
+
+        // Parcourir chaque projet sur lequel l'employé a travaillé
+        foreach ($employee->projects as $project) {
+            // Récupérer les timeTrackings pour ce projet
+            $timeTrackings = $employee->timeTrackings->where('project_id', $project->id);
+
+            // Calculer les heures de jour, de nuit et le coût total pour ce projet
+            $dayHours = $timeTrackings->sum('day_hours');
+            $nightHours = $timeTrackings->sum('night_hours');
+            $totalHours = $dayHours + $nightHours;
+
+            // Calculer le coût basé sur les heures travaillées et le tarif de l'employé pour ce projet
+            $cost = $employee->getEmployeeCost($timeTrackings);
+
+            // Ajouter les données pour ce projet
+            $projectData[] = [
+                'project_name' => $project->business,
+                'day_hours' => $dayHours,
+                'night_hours' => $nightHours,
+                'total_hours' => $totalHours,
+                'cost' => $cost
+            ];
+        }
+
+        // Retourner les données au format JSON
+        return response()->json([
+            'projectData' => $projectData
         ]);
     }
 }

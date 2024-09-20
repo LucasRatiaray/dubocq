@@ -43,28 +43,23 @@
 
         <!-- Main Content -->
         <main class="flex-1 p-6 pt-4">
-            <div class="flex justify-between">
-                <!-- Salariés -->
+            <div class="flex gap-10">
+                <!-- Chantier -->
                 <form class="flex justify-center items-center gap-4 mb-4" action="{{ route('dashboard.showEmployee') }}" method="GET">
                     @csrf
                     <div class="flex">
-                        <label for="project_id" class="sr-only">Choisir un salarié</label>
-                        <select name="project_id" id="project_id" class="w-auto bg-gray-50 border border-gray-300 text-gray-900 font-bold text-sm rounded-lg focus:ring-customColor focus:border-customColor block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-customColor dark:focus:border-customColor" required>
+                        <label for="employee_id" class="sr-only">Choisir un salarié</label>
+                        <select name="employee_id" id="employee_id" class="w-auto bg-gray-50 border border-gray-300 text-gray-900 font-bold text-sm rounded-lg focus:ring-customColor focus:border-customColor block" required>
                             <option disabled selected value="">Choisir un salarié</option>
                             @foreach($employees as $employee)
                                 <option value="{{ $employee->id }}">{{ $employee->last_name }}  {{ $employee->first_name }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div>
-                        <button type="submit" class="bg-gray-100 hover:bg-custom-900 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">
-                            Changer
-                        </button>
-                    </div>
                 </form>
 
                 <!-- Mois et année -->
-                <div class="flex items-center justify-center gap-4 mb-6">
+                <div class="flex items-center justify-center gap-4 mb-3">
                     <!-- Bouton mois précédent -->
                     <button type="button" id="prev-month-btn">
                         <svg class="w-6 h-6 text-gray-800 dark:text-white hover:scale-125" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -73,7 +68,7 @@
                     </button>
 
                     <!-- Mois et année -->
-                    <h1 id="" class="text-center">janvier 2024</h1>
+                    <h1 id="month-year" class="text-center font-medium"></h1>
 
                     <!-- Bouton mois suivant -->
                     <button type="button" id="next-month-btn">
@@ -84,29 +79,23 @@
                 </div>
             </div>
 
-            <!-- Contenu projet du tableau de bord -->
-            <div class="bg-white p-6 rounded-lg shadow-md col-span-2">
-                <h3 class="text-xl font-semibold mb-4">Tableau Heures Coûts par salarié</h3>
-                <!-- Table HTML du projet -->
-                <table id="project" class="min-w-full bg-white text-sm">
+            <!-- Conteneur du tableau -->
+            <div id="employee-table-container" class="bg-white p-6 rounded-lg shadow-md col-span-2" hidden>
+                <h3 class="text-xl font-semibold mb-4 flex justify-between">
+                    <span>Tableau Heures Coûts par salarié</span>
+                    <span id="selected-employee-name">Sélectionnez un salarié</span>
+                </h3>
+                <!-- Table HTML du salarié -->
+                <table id="employee-table" class="min-w-full bg-white text-sm">
                     <thead>
                     <tr class="w-full">
                         <th class="py-1 px-2 text-left">Chantiers</th>
-                        <th class="py-1 px-2 text-center">Heures normalse</th>
-                        <th class="py-1 px-2 text-center">Heures nuits</th>
-                        <th class="py-1 px-2 text-center">Coûts en €</th>
-
+                        <th class="py-1 px-2 text-center">Heures jour</th>
+                        <th class="py-1 px-2 text-center">Heures nuit</th>
+                        <th class="py-1 px-2 text-center">Coût</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {{--                        @foreach($projects as $project)--}}
-                    <tr class="border-b border-stroke">
-                        <td class="py-1 px-2"></td>
-                        <td class="py-1 px-2 text-center"></td>
-                        <td class="py-1 px-2 text-center"></td>
-                        <td class="py-1 px-2 text-center"></td>
-                    </tr>
-                    {{--                        @endforeach--}}
                     </tbody>
                 </table>
             </div>
@@ -122,14 +111,104 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
     <script>
-        // Initialisation de DataTables pour tableau heure
+        // Ajax pour récupérer les données du salarié
         $(document).ready(function() {
-            $('#project').DataTable({
+            let currentMonth = new Date().getMonth() + 1; // Mois actuel
+            let currentYear = new Date().getFullYear();
+
+            // Mettre à jour l'affichage du mois et de l'année
+            function updateMonthYearDisplay() {
+                const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+                $('#month-year').text(`${monthNames[currentMonth - 1]} ${currentYear}`);
+            }
+
+            // Initialiser l'affichage
+            updateMonthYearDisplay();
+
+            // Gestion des clics sur les boutons mois précédent et mois suivant
+            $('#prev-month-btn').click(function() {
+                if (currentMonth === 1) {
+                    currentMonth = 12;
+                    currentYear--;
+                } else {
+                    currentMonth--;
+                }
+                updateMonthYearDisplay();
+                loadEmployeeData(); // Recharger les données pour le mois précédent
+            });
+
+            $('#next-month-btn').click(function() {
+                if (currentMonth === 12) {
+                    currentMonth = 1;
+                    currentYear++;
+                } else {
+                    currentMonth++;
+                }
+                updateMonthYearDisplay();
+                loadEmployeeData(); // Recharger les données pour le mois suivant
+            });
+
+            // Fonction pour charger les données du salarié sélectionné en fonction du mois et de l'année
+            function loadEmployeeData() {
+                let employeeId = $('#employee_id').val();
+                let employeeName = $('#employee_id option:selected').text();
+                let url = "{{ route('dashboard.getEmployeeData') }}"; // Adapter la route vers la bonne méthode pour obtenir les données du salarié
+                let token = $('input[name="_token"]').val();
+
+                if (!employeeId) return; // Si aucun salarié sélectionné, ne rien faire
+
+                // Mettre à jour le nom du salarié dans le titre
+                $('#selected-employee-name').text(employeeName);
+
+                // Afficher le tableau
+                $('#employee-table-container').show();
+
+                // Envoyer la requête AJAX avec le mois et l'année sélectionnés
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: {
+                        employee_id: employeeId,
+                        month: currentMonth,
+                        year: currentYear,
+                        _token: token
+                    },
+                    success: function(response) {
+                        console.log(response); // Ajouter un log pour voir les données retournées
+                        // Vider le tableau avant de le remplir
+                        $('#employee-table tbody').empty();
+
+                        // Remplir le tableau avec les nouvelles données
+                        $.each(response.projectData, function(index, project) {
+                            let row = `<tr class="border-b border-stroke">
+                                <td class="py-1 px-2">${project.project_name}</td>
+                                <td class="py-1 px-2 text-center">${project.day_hours > 0 ? project.day_hours + ' H' : '-'}</td>
+                                <td class="py-1 px-2 text-center">${project.night_hours > 0 ? project.night_hours + ' H' : '-'}</td>
+                                <td class="py-1 px-2 text-center">${project.cost > 0 ? project.cost + ' €' : '-'}</td>
+                            </tr>`;
+                            $('#employee-table tbody').append(row);
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Erreur lors du chargement des données du salarié :', error);
+                    }
+                });
+            }
+
+            // Lorsque l'utilisateur sélectionne un salarié, charger les données pour le mois en cours
+            $('#employee_id').change(function() {
+                loadEmployeeData();
+            });
+        });
+
+        // Initialisation de DataTables pour tableau des salariés
+        $(document).ready(function() {
+            $('#employee-table').DataTable({
                 language: {
                     "sEmptyTable": "Aucune donnée disponible dans le tableau",
-                    "sInfo": "Affichage de _START_ à _END_ sur _TOTAL_ chantier(s)",
+                    "sInfo": "Affichage de _START_ à _END_ sur _TOTAL_ chantiers",
                     "sInfoEmpty": "Affichage de 0 à 0 sur 0 entrées",
-                    "sInfoFiltered": "(filtré de _MAX_ chantier(s) au total)",
+                    "sInfoFiltered": "(filtré de _MAX_ chantiers au total)",
                     "sLengthMenu": "Afficher _MENU_ entrées",
                     "sLoadingRecords": "Chargement...",
                     "sProcessing": "Traitement...",
@@ -146,7 +225,10 @@
                         "sSortDescending": ": activer pour trier la colonne par ordre décroissant"
                     }
                 },
-                lengthChange: false
+                lengthChange: false,
+                searching: false,
+                paging: false,
+                info: false
             });
         });
     </script>

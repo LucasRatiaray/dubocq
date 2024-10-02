@@ -32,64 +32,18 @@ class EmployeeResource extends Resource
         return $form
             ->schema([
                 Section::make('Informations personnelles')
-                    ->columns(2)
+                    ->columns(10)
                     ->schema([
                         TextInput::make('last_name')
                             ->label('Nom :')
                             ->required()
-                            ->placeholder('Doe'),
+                            ->placeholder('Doe')
+                            ->columnSpan(5),
                         TextInput::make('first_name')
                             ->label('Prénom :')
                             ->required()
-                            ->placeholder('John'),
-                    ])->columnSpan(1),
-                Section::make('Informations contractuelles')
-                    ->columns(7)  // Divise la section en 7 colonnes
-                    ->schema([
-                        Select::make('status')
-                            ->label('Statut :')
-                            ->required()
-                            ->options([
-                                'OUVRIER' => 'OUVRIER',
-                                'ETAM' => 'ETAM',
-                            ])
-                            ->reactive()
-                            ->afterStateUpdated(function ($state, callable $set) {
-                                if ($state === 'ETAM') {
-                                    $set('contract', '37');
-                                } elseif ($state === 'OUVRIER') {
-                                    $set('contract', '37');
-                                } else {
-                                    $set('contract', null); // Remet à null si aucun statut n'est sélectionné
-                                }
-                            })
-                            ->columnSpan(3),  // Occupe 3 colonnes
-                        TextInput::make('contract')
-                            ->label('Type de contrat :')
-                            ->required()
-                            ->numeric()
-                            ->placeholder('37')
-                            ->reactive()
-                            ->suffix('heures') // Ajouter le suffixe "heures" après la saisie
-                            ->disabled(fn ($get) => $get('status') === 'ETAM')  // Désactiver la saisie si ETAM est sélectionné
-                            ->afterStateUpdated(function ($set, $get) {
-                                if ($get('status') === 'ETAM') {
-                                    $set('contract', '37');
-                                }
-                            })
-                            ->columnSpan(2),  // Occupe 2 colonnes
-                        TextInput::make('monthly_salary')
-                            ->label('Salaire mensuel :')
-                            ->required()
-                            ->numeric()
-                            ->step('0.01')
-                            ->placeholder('1 398,69')
-                            ->suffix('€')
-                            ->columnSpan(2),  // Occupe 2 colonnes
-                    ])->columnSpan(1),
-                Section::make('')
-                    ->columns(5)
-                    ->schema([
+                            ->placeholder('John')
+                            ->columnSpan(5),
                         Select::make('archived')
                             ->label('Archivé :')
                             ->options([
@@ -98,7 +52,64 @@ class EmployeeResource extends Resource
                             ])
                             ->columnSpan(2)
                             ->required()
+                            ->visibleOn('edit')
                             ->default(false),
+                    ])->columnSpan(1),
+                Section::make('Informations contractuelles')
+                    ->columns(7)
+                    ->schema([
+                        Select::make('status')
+                            ->label('Statut :')
+                            ->required()
+                            ->options([
+                                'OUVRIER' => 'OUVRIER',
+                                'ETAM' => 'ETAM',
+                                'INTERIMAIRE' => 'INTERIMAIRE',
+                            ])
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if ($state === 'ETAM') {
+                                    $set('contract', '37');
+                                } else {
+                                    $set('contract', null);
+                                }
+                            })
+                            ->columnSpan(3),
+                        TextInput::make('contract')
+                            ->label('Type de contrat :')
+                            ->required(fn ($get) => in_array($get('status'), ['OUVRIER', 'ETAM']))
+                            ->numeric()
+                            ->reactive()
+                            ->suffix('heures')
+                            ->placeholder('37')
+                            ->disabled(fn ($get) => $get('status') === 'ETAM')
+                            ->afterStateUpdated(function ($set, $get) {
+                                if ($get('status') === 'ETAM') {
+                                    $set('contract', '37');
+                                }
+                            })
+                            ->columnSpan(2)
+                            ->visible(fn ($get) => in_array($get('status'), ['OUVRIER', 'ETAM'])),
+                        TextInput::make('monthly_salary')
+                            ->label('Salaire mensuel :')
+                            ->required(fn ($get) => in_array($get('status'), ['OUVRIER', 'ETAM']))
+                            ->numeric()
+                            ->step('0.01')
+                            ->rules(['numeric', 'regex:/^\d+(\.\d{1,8})?$/'])
+                            ->placeholder('1 398,69')
+                            ->suffix('€')
+                            ->columnSpan(2)
+                            ->visible(fn ($get) => in_array($get('status'), ['OUVRIER', 'ETAM'])),
+                        TextInput::make('hourly_rate')
+                            ->label('Taux horaire :')
+                            ->required(fn ($get) => $get('status') === 'INTERIMAIRE')
+                            ->numeric()
+                            ->step('0.00000001')
+                            ->rules(['numeric', 'regex:/^\d+(\.\d{1,8})?$/'])
+                            ->placeholder('12.50')
+                            ->suffix('€ / heure')
+                            ->columnSpan(3)
+                            ->visible(fn ($get) => $get('status') === 'INTERIMAIRE'),
                     ])->columnSpan(1),
             ]);
     }
@@ -123,7 +134,11 @@ class EmployeeResource extends Resource
                     ->colors([
                         'success' => 'OUVRIER',
                         'danger' => 'ETAM',
+                        'info' => 'INTERIMAIRE',
                     ])
+                    ->formatStateUsing(function ($state) {
+                        return $state === 'INTERIMAIRE' ? 'INTERIM' : $state;
+                    })
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
@@ -140,7 +155,7 @@ class EmployeeResource extends Resource
                 TextColumn::make('monthly_salary')
                     ->label('Salaire/Mois')
                     ->colors([
-                        'gray' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                        'gray' => fn ($state): bool => true,
                     ])
                     ->searchable()
                     ->sortable()

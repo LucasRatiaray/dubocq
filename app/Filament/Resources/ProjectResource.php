@@ -84,7 +84,7 @@ class ProjectResource extends Resource
                                 ->required()
                                 ->default(false)
                                 ->columnSpan(2),
-                        ])->columnSpan(1),
+                        ])->columnSpan(1)->visibleOn('edit'),
                 ]),
             ]);
     }

@@ -30,11 +30,11 @@ class ProjectObserver
 
         if ($code) {
             if (str_starts_with($code, '1')) {
-                $description = 'Logement Neuf';
+                $description = 'Gros Œuvre';
+                $project->type = $description;
             } elseif (str_starts_with($code, '2')) {
                 $description = 'Monument Historique';
-            } else {
-                $description = null;
+                $project->type = $description;
             }
 
             if ($description) {

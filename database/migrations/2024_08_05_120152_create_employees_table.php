@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('first_name', 100);
             $table->decimal('hourly_rate', 20, 8)->nullable();
             $table->decimal('hourly_rate_charged', 10, 2)->nullable();
-            $table->enum('status', ['OUVRIER', 'ETAM'])->default('OUVRIER');
+            $table->enum('status', ['OUVRIER', 'ETAM', 'INTERIMAIRE'])->default('OUVRIER');
             $table->integer('contract')->default(37);
-            $table->decimal('monthly_salary');
+            $table->decimal('monthly_salary')->nullable();
             $table->decimal('hourly_basket_charged', 10, 2)->nullable();
             $table->decimal('basket', 10, 2)->nullable();
             $table->boolean('archived')->default(false);

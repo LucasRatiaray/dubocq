@@ -6,24 +6,37 @@
             <!-- Code Title à gauche (milieu à gauche) -->
             <h1 id="code-title" class="flex-1 flex justify-center"></h1>
 
-            <!-- Mois et année au centre -->
-            <div class="flex items-center justify-center gap-4">
-                <!-- Bouton mois précédent -->
-                <button type="button" id="prev-month-btn">
-                    <svg class="w-6 h-6 text-gray-800 dark:text-white hover:scale-125" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
-                    </svg>
-                </button>
+            <!-- Votre conteneur principal -->
+            <div class="flex gap-2 flex-col">
+                <!-- Navigation du mois adaptée -->
+                <nav aria-label="Page navigation example">
+                    <ul class="inline-flex -space-x-px text">
+                        <!-- Bouton mois précédent -->
+                        <li>
+                            <button type="button" id="prev-month-btn" class="group flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-customColor">
+                                <svg class="w-6 h-6 text-gray-900 group-hover:text-white transition-transform duration-100 ease-in-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+                                </svg>
+                            </button>
+                        </li>
 
-                <!-- Mois et année au centre -->
-                <h1 id="month-year" class="text-center"></h1>
+                        <!-- Mois et année -->
+                        <li>
+                            <span id="month-year" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-900 font-bold text-xl bg-white border border-gray-300 hover:cursor-default"
+                                  style="width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center;">
+                            </span>
+                        </li>
 
-                <!-- Bouton mois suivant -->
-                <button type="button" id="next-month-btn">
-                    <svg class="w-6 h-6 text-gray-800 dark:text-white hover:scale-125" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
-                    </svg>
-                </button>
+                        <!-- Bouton mois suivant -->
+                        <li>
+                            <button type="button" id="next-month-btn" class="group flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-customColor">
+                                <svg class="w-6 h-6 text-gray-900 group-hover:text-white transition-transform duration-100 ease-in-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                                </svg>
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
             </div>
 
             <!-- Zone à droite (centré dans la partie droite) -->

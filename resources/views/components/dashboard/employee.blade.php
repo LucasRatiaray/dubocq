@@ -43,13 +43,13 @@
 
         <!-- Main Content -->
         <main class="flex-1 p-6 pt-4">
-            <div class="flex gap-10">
-                <!-- Chantier -->
-                <form class="flex justify-center items-center gap-4 mb-4" action="{{ route('dashboard.showEmployee') }}" method="GET">
+            <div class="flex gap-2 flex-col mb-2">
+                <!-- Chantier Formulaire -->
+                <form class="flex items-center" action="{{ route('dashboard.showEmployee') }}" method="GET">
                     @csrf
                     <div class="flex">
                         <label for="employee_id" class="sr-only">Choisir un salarié</label>
-                        <select name="employee_id" id="employee_id" class="w-auto bg-gray-50 border border-gray-300 text-gray-900 font-bold text-sm rounded-lg focus:ring-customColor focus:border-customColor block" required>
+                        <select name="employee_id" id="employee_id" class="w-auto bg-white border border-gray-300 text-gray-900 font-bold text-sm rounded-lg focus:ring-customColor focus:border-customColor block" required>
                             <option disabled selected value="">Choisir un salarié</option>
                             @foreach($employees as $employee)
                                 <option value="{{ $employee->id }}">{{ $employee->last_name }}  {{ $employee->first_name }}</option>
@@ -58,25 +58,35 @@
                     </div>
                 </form>
 
-                <!-- Mois et année -->
-                <div class="flex items-center justify-center gap-4 mb-3">
-                    <!-- Bouton mois précédent -->
-                    <button type="button" id="prev-month-btn">
-                        <svg class="w-6 h-6 text-gray-800 dark:text-white hover:scale-125" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
-                        </svg>
-                    </button>
+                <!-- Navigation du mois -->
+                <nav aria-label="Page navigation example">
+                    <ul class="inline-flex -space-x-px text">
+                        <!-- Bouton mois précédent -->
+                        <li>
+                            <button type="button" id="prev-month-btn" class="group flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-customColor hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                <svg class="w-4 h-4 text-gray-900 dark:text-white group-hover:text-white transition-transform duration-100 ease-in-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+                                </svg>
+                            </button>
+                        </li>
 
-                    <!-- Mois et année -->
-                    <h1 id="month-year" class="text-center font-medium"></h1>
+                        <!-- Mois et année -->
+                        <li>
+                            <span id="month-year" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-900 font-bold text-sm bg-white border border-gray-300 hover:cursor-default dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                                  style="width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center;">
+                            </span>
+                        </li>
 
-                    <!-- Bouton mois suivant -->
-                    <button type="button" id="next-month-btn">
-                        <svg class="w-6 h-6 text-gray-800 dark:text-white hover:scale-125" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
-                        </svg>
-                    </button>
-                </div>
+                        <!-- Bouton mois suivant -->
+                        <li>
+                            <button type="button" id="next-month-btn" class="group flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-customColor hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                <svg class="w-4 h-4 text-gray-900 dark:text-white group-hover:text-white transition-transform duration-100 ease-in-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                                </svg>
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
             </div>
 
             <!-- Conteneur du tableau -->
@@ -90,9 +100,9 @@
                     <thead>
                     <tr class="w-full">
                         <th class="py-1 px-2 text-left">Chantiers</th>
-                        <th class="py-1 px-2 text-center">Heures jour</th>
-                        <th class="py-1 px-2 text-center">Heures nuit</th>
-                        <th class="py-1 px-2 text-center">Coût</th>
+                        <th class="py-1 px-2 text-left">Heures jour</th>
+                        <th class="py-1 px-2 text-left">Heures nuit</th>
+                        <th class="py-1 px-2 text-left">Coût</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -111,99 +121,12 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
     <script>
-        // Ajax pour récupérer les données du salarié
         $(document).ready(function() {
-            let currentMonth = new Date().getMonth() + 1; // Mois actuel
+            let currentMonth = new Date().getMonth() + 1;
             let currentYear = new Date().getFullYear();
 
-            // Mettre à jour l'affichage du mois et de l'année
-            function updateMonthYearDisplay() {
-                const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
-                $('#month-year').text(`${monthNames[currentMonth - 1]} ${currentYear}`);
-            }
-
-            // Initialiser l'affichage
-            updateMonthYearDisplay();
-
-            // Gestion des clics sur les boutons mois précédent et mois suivant
-            $('#prev-month-btn').click(function() {
-                if (currentMonth === 1) {
-                    currentMonth = 12;
-                    currentYear--;
-                } else {
-                    currentMonth--;
-                }
-                updateMonthYearDisplay();
-                loadEmployeeData(); // Recharger les données pour le mois précédent
-            });
-
-            $('#next-month-btn').click(function() {
-                if (currentMonth === 12) {
-                    currentMonth = 1;
-                    currentYear++;
-                } else {
-                    currentMonth++;
-                }
-                updateMonthYearDisplay();
-                loadEmployeeData(); // Recharger les données pour le mois suivant
-            });
-
-            // Fonction pour charger les données du salarié sélectionné en fonction du mois et de l'année
-            function loadEmployeeData() {
-                let employeeId = $('#employee_id').val();
-                let employeeName = $('#employee_id option:selected').text();
-                let url = "{{ route('dashboard.getEmployeeData') }}"; // Adapter la route vers la bonne méthode pour obtenir les données du salarié
-                let token = $('input[name="_token"]').val();
-
-                if (!employeeId) return; // Si aucun salarié sélectionné, ne rien faire
-
-                // Mettre à jour le nom du salarié dans le titre
-                $('#selected-employee-name').text(employeeName);
-
-                // Afficher le tableau
-                $('#employee-table-container').show();
-
-                // Envoyer la requête AJAX avec le mois et l'année sélectionnés
-                $.ajax({
-                    url: url,
-                    method: 'POST',
-                    data: {
-                        employee_id: employeeId,
-                        month: currentMonth,
-                        year: currentYear,
-                        _token: token
-                    },
-                    success: function(response) {
-                        console.log(response); // Ajouter un log pour voir les données retournées
-                        // Vider le tableau avant de le remplir
-                        $('#employee-table tbody').empty();
-
-                        // Remplir le tableau avec les nouvelles données
-                        $.each(response.projectData, function(index, project) {
-                            let row = `<tr class="border-b border-stroke">
-                                <td class="py-1 px-2">${project.project_name}</td>
-                                <td class="py-1 px-2 text-center">${project.day_hours > 0 ? project.day_hours + ' H' : '-'}</td>
-                                <td class="py-1 px-2 text-center">${project.night_hours > 0 ? project.night_hours + ' H' : '-'}</td>
-                                <td class="py-1 px-2 text-center">${project.cost > 0 ? project.cost + ' €' : '-'}</td>
-                            </tr>`;
-                            $('#employee-table tbody').append(row);
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        console.log('Erreur lors du chargement des données du salarié :', error);
-                    }
-                });
-            }
-
-            // Lorsque l'utilisateur sélectionne un salarié, charger les données pour le mois en cours
-            $('#employee_id').change(function() {
-                loadEmployeeData();
-            });
-        });
-
-        // Initialisation de DataTables pour tableau des salariés
-        $(document).ready(function() {
-            $('#employee-table').DataTable({
+            // Initialisation de DataTables et stockage de l'instance
+            var employeeTable = $('#employee-table').DataTable({
                 language: {
                     "sEmptyTable": "Aucune donnée disponible dans le tableau",
                     "sInfo": "Affichage de _START_ à _END_ sur _TOTAL_ chantiers",
@@ -229,6 +152,94 @@
                 searching: false,
                 paging: false,
                 info: false
+            });
+
+            // Mettre à jour l'affichage du mois et de l'année
+            function updateMonthYearDisplay() {
+                const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+                $('#month-year').text(`${monthNames[currentMonth - 1]} ${currentYear}`);
+            }
+
+            // Initialiser l'affichage
+            updateMonthYearDisplay();
+
+            // Gestion des clics sur les boutons mois précédent et mois suivant
+            $('#prev-month-btn').click(function() {
+                if (currentMonth === 1) {
+                    currentMonth = 12;
+                    currentYear--;
+                } else {
+                    currentMonth--;
+                }
+                updateMonthYearDisplay();
+                loadEmployeeData();
+            });
+
+            $('#next-month-btn').click(function() {
+                if (currentMonth === 12) {
+                    currentMonth = 1;
+                    currentYear++;
+                } else {
+                    currentMonth++;
+                }
+                updateMonthYearDisplay();
+                loadEmployeeData();
+            });
+
+            // Fonction pour charger les données du salarié sélectionné en fonction du mois et de l'année
+            function loadEmployeeData() {
+                let employeeId = $('#employee_id').val();
+                let employeeName = $('#employee_id option:selected').text();
+                let url = "{{ route('dashboard.getEmployeeData') }}";
+                let token = $('input[name="_token"]').val();
+
+                if (!employeeId) return;
+
+                // Mettre à jour le nom du salarié dans le titre
+                $('#selected-employee-name').text(employeeName);
+
+                // Afficher le tableau
+                $('#employee-table-container').show();
+
+                // Envoyer la requête AJAX avec le mois et l'année sélectionnés
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: {
+                        employee_id: employeeId,
+                        month: currentMonth,
+                        year: currentYear,
+                        _token: token
+                    },
+                    success: function(response) {
+                        console.log(response); // Pour déboguer
+
+                        // Utiliser l'API DataTables pour manipuler les données
+                        employeeTable.clear();
+
+                        if (response.projectData.length > 0) {
+                            $.each(response.projectData, function(index, project) {
+                                employeeTable.row.add([
+                                    project.project_name,
+                                    project.day_hours > 0 ? project.day_hours + ' H' : '-',
+                                    project.night_hours > 0 ? project.night_hours + ' H' : '-',
+                                    project.cost > 0 ? project.cost + ' €' : '-'
+                                ]);
+                            });
+                        }
+
+                        // Redessiner le tableau
+                        employeeTable.draw();
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Erreur lors du chargement des données du salarié :', error);
+                    }
+                });
+            }
+
+            // Lorsque l'utilisateur sélectionne un salarié, charger les données pour le mois en cours
+            $('#employee_id').change(function() {
+                loadEmployeeData();
             });
         });
     </script>

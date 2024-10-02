@@ -15,6 +15,7 @@ class Project extends Model
 
     protected $fillable = [
         'code',
+        'type',
         'zone_id',
         'city',
         'address',

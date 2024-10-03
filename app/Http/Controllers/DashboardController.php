@@ -12,8 +12,19 @@ class DashboardController extends Controller
 {
     public function show(): View
     {
-        // Récupérer tous les projets non archivés avec leurs timeTrackings
-        $projects = Project::with('timeTrackings')
+        // Obtenir le mois et l'année actuels
+        $currentMonth = now()->month;
+        $currentYear = now()->year;
+
+        // Récupérer les projets non archivés qui ont des timeTrackings durant le mois en cours
+        $projects = Project::with(['timeTrackings' => function ($query) use ($currentMonth, $currentYear) {
+            $query->whereMonth('date', $currentMonth)
+                ->whereYear('date', $currentYear);
+        }])
+            ->whereHas('timeTrackings', function($query) use ($currentMonth, $currentYear) {
+                $query->whereMonth('date', $currentMonth)
+                    ->whereYear('date', $currentYear);
+            })
             ->orderBy('code')
             ->where('archived', false)
             ->get();
@@ -21,9 +32,6 @@ class DashboardController extends Controller
         // Préparer les données de coûts pour le graphique
         $costData = [];
         $hourData = [];
-        $filteredProjects = $projects->filter(function ($project) {
-            return $project->getHoursThisMonth() > 0;
-        });
 
         foreach ($projects as $project) {
             // Calculer le coût du projet pour le mois en cours
@@ -31,26 +39,22 @@ class DashboardController extends Controller
             // Calculer le coût total du projet depuis le début
             $totalCost = $project->calculateTotalCost();
 
-            // Ajouter les coûts au tableau des coûts uniquement s'ils sont supérieurs à 0
-            if ($monthlyCost > 0) {
-                $costData[] = [
-                    'project_name' => $project->business,
-                    'monthly_cost' => $monthlyCost,
-                    'total_cost' => $totalCost,
-                ];
-            }
+            // Ajouter les coûts au tableau des coûts
+            $costData[] = [
+                'project_name' => $project->business,
+                'monthly_cost' => $monthlyCost,
+                'total_cost' => $totalCost,
+            ];
 
-            // Ajouter les heures au tableau des heures si supérieur à 0
-            if ($project->getHoursThisMonth() > 0) {
-                $hourData[] = [
-                    'project_name' => $project->business,
-                    'hours' => $project->getHoursThisMonth(),
-                ];
-            }
+            // Ajouter les heures au tableau des heures
+            $hourData[] = [
+                'project_name' => $project->business,
+                'hours' => $project->getHoursThisMonth(),
+            ];
         }
 
         // Passer les données des coûts et des heures à la vue
-        return view('dashboard', compact('projects', 'costData', 'hourData', 'filteredProjects'));
+        return view('dashboard', compact('projects', 'costData', 'hourData'));
     }
 
     public function showProject(): View

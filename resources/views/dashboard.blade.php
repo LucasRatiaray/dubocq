@@ -46,7 +46,10 @@
             <div class="grid grid-cols-3 gap-6 mb-20">
                 <!-- Content Box 1: prend 2 colonnes : Table -->
                 <div class="bg-white p-6 rounded-lg shadow-md col-span-2">
-                    <h3 class="text-xl font-semibold mb-4">Tableau des heures par chantier - {{ now()->translatedFormat('F Y') }}</h3>
+                    <h3 class="text-xl font-semibold mb-4 flex justify-between">
+                        <span>Tableau des coûts par chantier</span>
+                        <span>{{ now()->translatedFormat('F Y') }}</span>
+                    </h3>
                     <!-- Table HTML des heures -->
                     <table id="hourProjectsTable" class="min-w-full bg-white text-sm">
                         <thead>
@@ -82,7 +85,10 @@
             <div class="grid grid-cols-3 gap-6 mb-20">
                 <!-- Content Box 1: prend 2 colonnes : Table -->
                 <div class="bg-white p-6 rounded-lg shadow-md col-span-2">
-                    <h3 class="text-xl font-semibold mb-4">Tableau des coûts par chantier - {{ now()->translatedFormat('F Y') }}</h3>
+                    <h3 class="text-xl font-semibold mb-4 flex justify-between">
+                        <span>Tableau des coûts par chantier</span>
+                        <span>{{ now()->translatedFormat('F Y') }}</span>
+                    </h3>
                     <!-- Table HTML des coûts -->
                     <table id="costProjectsTable" class="min-w-full bg-white text-sm">
                         <thead>
@@ -151,7 +157,7 @@
                 language: {
                     "sEmptyTable": "Aucune donnée disponible dans le tableau",
                     "sInfo": "Affichage de _START_ à _END_ sur _TOTAL_ chantier(s)",
-                    "sInfoEmpty": "Affichage de 0 à 0 sur 0 entrées",
+                    "sInfoEmpty": "Affichage de 0 à 0 chantier(s)",
                     "sInfoFiltered": "(filtré de _MAX_ chantier(s) au total)",
                     "sLengthMenu": "Afficher _MENU_ entrées",
                     "sLoadingRecords": "Chargement...",
@@ -332,7 +338,25 @@
         $(document).ready(function() {
             $('#costProjectsTable').DataTable({
                 language: {
-                    // Vos paramètres de langue
+                    "sEmptyTable": "Aucune donnée disponible dans le tableau",
+                    "sInfo": "Affichage de _START_ à _END_ sur _TOTAL_ chantier(s)",
+                    "sInfoEmpty": "Affichage de 0 à 0 chantier(s)",
+                    "sInfoFiltered": "(filtré de _MAX_ chantier(s) au total)",
+                    "sLengthMenu": "Afficher _MENU_ entrées",
+                    "sLoadingRecords": "Chargement...",
+                    "sProcessing": "Traitement...",
+                    "sSearch": "Rechercher :",
+                    "sZeroRecords": "Aucun enregistrement correspondant trouvé",
+                    "oPaginate": {
+                        "sFirst": "Premier",
+                        "sLast": "Dernier",
+                        "sNext": "Suivant",
+                        "sPrevious": "Précédent"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": activer pour trier la colonne par ordre croissant",
+                        "sSortDescending": ": activer pour trier la colonne par ordre décroissant"
+                    }
                 },
                 lengthChange: false
             });

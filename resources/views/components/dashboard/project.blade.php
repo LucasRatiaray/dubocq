@@ -59,11 +59,11 @@
 
                     <!-- Radio pour filtrer le type de chantier -->
                     <div class="flex items-center ps-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
-                        <input id="radio-monument" type="radio" value="Monument Historique" name="project-type" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor">
+                        <input id="radio-monument" type="radio" value="Monument Historique" name="project-type" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor" checked>
                         <label for="radio-monument" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">Monument Historique</label>
                     </div>
                     <div class="flex items-center ps-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
-                        <input id="radio-gros-oeuvre" type="radio" value="Gros Œuvre" name="project-type" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor" checked>
+                        <input id="radio-gros-oeuvre" type="radio" value="Gros Œuvre" name="project-type" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor">
                         <label for="radio-gros-oeuvre" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">Gros Œuvre</label>
                     </div>
 
@@ -105,7 +105,7 @@
                 <h3 class="text-xl font-semibold mb-4 flex justify-between">
                     <span>Tableau coût et heure :</span>
                     <span id="selected-project-name"></span>
-                    <span id="selected-project-type" class="text-customColor px-1 rounded border-2 border-customColor"></span>
+                    <span id="selected-project-type" class="text-customColor px-1 rounded border-2 border-customColor bg-blue-100 font-medium"></span>
                 </h3>
                 <!-- Table HTML du projet -->
                 <table id="project" class="min-w-full bg-white text-sm">
@@ -228,6 +228,7 @@
                         console.log(response); // Pour déboguer
 
                         $('#selected-project-type').text(response.projectType && response.projectType === 'Monument Historique' ? 'MO' : 'GO');
+/*                        $('#selected-project-type').text(response.projectType ? response.projectType : '');*/
 
                         // Utiliser l'API DataTables pour manipuler les données
                         projectTable.clear();

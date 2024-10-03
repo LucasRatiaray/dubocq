@@ -179,6 +179,63 @@ class DashboardController extends Controller
 
         // Retourner les données au format JSON
         return response()->json([
+            'projectData' => $projectData,
+            'employeeStatus' => $employee->status
+        ]);
+    }
+
+    public function getEmployeeProjectTypeData(Request $request)
+    {
+        $employeeId = $request->input('employee_id');
+        $selectedMonth = $request->input('month');
+        $selectedYear = $request->input('year');
+        $projectType = $request->input('project_type');
+
+        // Récupérer l'employé
+        $employee = Employee::findOrFail($employeeId);
+
+        // Récupérer les projets de l'employé du type sélectionné
+        $projects = $employee->projects()
+            ->where('type', $projectType)
+            ->get();
+
+        $projectData = [];
+
+        foreach ($projects as $project) {
+            // Heures du mois pour ce projet
+            $timeTrackingsMonth = $employee->timeTrackings()
+                ->where('project_id', $project->id)
+                ->whereMonth('date', $selectedMonth)
+                ->whereYear('date', $selectedYear)
+                ->get();
+
+            $totalHoursMonth = $timeTrackingsMonth->sum('day_hours') + $timeTrackingsMonth->sum('night_hours');
+
+            // Heures de l'année pour ce projet
+            $timeTrackingsYear = $employee->timeTrackings()
+                ->where('project_id', $project->id)
+                ->whereYear('date', $selectedYear)
+                ->get();
+
+            $totalHoursYear = $timeTrackingsYear->sum('day_hours') + $timeTrackingsYear->sum('night_hours');
+
+            // Calcul du coût total pour l'année pour ce projet
+            $totalCostYear = $employee->getEmployeeCost($timeTrackingsYear);
+
+            // Ajouter les données pour ce projet seulement si l'employé a travaillé dessus
+            if ($totalHoursMonth > 0 || $totalHoursYear > 0) {
+                $projectData[] = [
+                    'project_code' => $project->code,
+                    'project_name' => $project->business,
+                    'project_city' => $project->city,
+                    'total_hours_month' => $totalHoursMonth,
+                    'total_hours_year' => $totalHoursYear,
+                    'total_cost_year' => $totalCostYear,
+                ];
+            }
+        }
+
+        return response()->json([
             'projectData' => $projectData
         ]);
     }

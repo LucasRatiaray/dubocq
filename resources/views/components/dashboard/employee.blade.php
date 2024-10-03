@@ -45,7 +45,7 @@
         <main class="flex-1 p-6 pt-4">
             <div class="flex gap-2 flex-col mb-2">
                 <!-- Chantier Formulaire -->
-                <form class="flex items-center" action="{{ route('dashboard.showEmployee') }}" method="GET">
+                <form class="flex items-center gap-5" action="{{ route('dashboard.showEmployee') }}" method="GET">
                     @csrf
                     <div class="flex">
                         <label for="employee_id" class="sr-only">Choisir un salarié</label>
@@ -56,6 +56,17 @@
                             @endforeach
                         </select>
                     </div>
+
+                    <!-- Radio pour filtrer le type de chantier -->
+                    <div class="flex items-center ps-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
+                        <input id="radio-monument" type="radio" value="Monument Historique" name="project-type" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor" checked>
+                        <label for="radio-monument" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">Monument Historique</label>
+                    </div>
+                    <div class="flex items-center ps-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
+                        <input id="radio-gros-oeuvre" type="radio" value="Gros Œuvre" name="project-type" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor">
+                        <label for="radio-gros-oeuvre" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">Gros Œuvre</label>
+                    </div>
+
                 </form>
 
                 <!-- Navigation du mois -->
@@ -89,10 +100,12 @@
                 </nav>
             </div>
 
-            <!-- Conteneur du tableau -->
-            <div id="employee-table-container" class="bg-white p-6 rounded-lg shadow-md col-span-2" hidden>
-                <h3 class="text-xl font-semibold mb-4 flex">
-                    <span>Tableau Heures Coûts : <span id="selected-employee-name"></span></span>
+            <!-- Conteneur du premier tableau -->
+            <div id="employee-table-container" class="bg-white p-6 rounded-lg shadow-md col-span-2 mb-10" hidden>
+                <h3 class="text-xl font-semibold mb-4 flex justify-between">
+                    <span>Heures et coûts par salarié :</span>
+                    <span id="selected-employee-name"></span>
+                    <span id="selected-employee-status" class=""></span>
                 </h3>
                 <!-- Table HTML du salarié -->
                 <table id="employee-table" class="min-w-full bg-white text-sm">
@@ -100,15 +113,38 @@
                     <tr class="w-full">
                         <th class="py-1 px-2 text-left">Code</th>
                         <th class="py-1 px-2 text-left">Chantier</th>
-                        <th class="py-1 px-2 text-left">Heures jour</th>
-                        <th class="py-1 px-2 text-left">Heures nuit</th>
-                        <th class="py-1 px-2 text-left">Coût</th>
+                        <th class="py-1 px-2 text-left">Heures Jour</th>
+                        <th class="py-1 px-2 text-left">Heures Nuit</th>
+                        <th class="py-1 px-2 text-left">Coût pour le mois</th>
                     </tr>
                     </thead>
                     <tbody>
                     </tbody>
                 </table>
             </div>
+
+            <!-- Conteneur du deuxième tableau -->
+            <div id="employee-project-type-table-container" class="bg-white p-6 rounded-lg shadow-md col-span-2" hidden>
+                <h3 class="text-xl font-semibold mb-4 flex justify-between">
+                    <span>Heures et coûts par type de chantier :</span>
+                    <span id="selected-project-type" class="text-customColor px-1 rounded border-2 border-customColor bg-blue-100 font-medium"></span>
+                </h3>
+                <!-- Table HTML du deuxième tableau -->
+                <table id="employee-project-type-table" class="min-w-full bg-white text-sm">
+                    <thead>
+                    <tr class="w-full">
+                        <th class="py-1 px-2 text-left">Code</th>
+                        <th class="py-1 px-2 text-left">Chantier</th>
+                        <th class="py-1 px-2 text-left">Heures Mois</th>
+                        <th class="py-1 px-2 text-left">Heures Année</th>
+                        <th class="py-1 px-2 text-left">Coût pour l'année</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+
         </main>
     </div>
 
@@ -149,7 +185,35 @@
                     }
                 },
                 lengthChange: false,
-/*                searching: false,  */
+                paging: false,
+                info: false
+            });
+
+            // Initialisation de DataTables pour le deuxième tableau
+            var employeeProjectTypeTable = $('#employee-project-type-table').DataTable({
+                language: {
+                    "sEmptyTable": "Aucune donnée disponible dans le tableau",
+                    "sInfo": "Affichage de _START_ à _END_ sur _TOTAL_ chantiers",
+                    "sInfoEmpty": "Affichage de 0 à 0 sur 0 entrées",
+                    "sInfoFiltered": "(filtré de _MAX_ chantiers au total)",
+                    "sLengthMenu": "Afficher _MENU_ entrées",
+                    "sLoadingRecords": "Chargement...",
+                    "sProcessing": "Traitement...",
+                    "sSearch": "Rechercher chantier :",
+                    "sZeroRecords": "Aucun enregistrement correspondant trouvé",
+                    "oPaginate": {
+                        "sFirst": "Premier",
+                        "sLast": "Dernier",
+                        "sNext": "Suivant",
+                        "sPrevious": "Précédent"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": activer pour trier la colonne par ordre croissant",
+                        "sSortDescending": ": activer pour trier la colonne par ordre décroissant"
+                    }
+                },
+                lengthChange: false,
+                searching: false,
                 paging: false,
                 info: false
             });
@@ -214,6 +278,30 @@
                     success: function(response) {
                         console.log(response); // Pour déboguer
 
+                        // Définir le statut de l'employé
+                        let statusElement = $('#selected-employee-status');
+                        statusElement.text(response.employeeStatus ? response.employeeStatus : '');
+
+                        // Retirer les anciennes classes de statut
+                        statusElement.removeClass('text-green-500 text-red-500 text-blue-500 border-green-500 border-red-500 border-blue-500 bg-red-100 bg-green-100 bg-blue-100');
+
+                        // Ajouter les classes en fonction du statut
+                        switch(response.employeeStatus) {
+                            case 'OUVRIER':
+                                statusElement.addClass('text-green-500 px-1 rounded border-2 border-green-500 bg-green-100 font-medium');
+                                break;
+                            case 'ETAM':
+                                statusElement.addClass('text-red-500 px-1 rounded border-2 border-red-500 bg-red-100 font-medium');
+                                break;
+                            case 'INTERIMAIRE':
+                                statusElement.addClass('text-blue-500 px-1 rounded border-2 border-blue-500 bg-blue-100 font-medium');
+                                break;
+                            default:
+                                // Optionnel: Si aucun des statuts ne correspond
+                                statusElement.addClass('text-gray-500 px-1 rounded border-2 border-gray-500 bg-gray-100 font-medium');
+                                break;
+                        }
+
                         // Utiliser l'API DataTables pour manipuler les données
                         employeeTable.clear();
 
@@ -238,9 +326,76 @@
                 });
             }
 
-            // Lorsque l'utilisateur sélectionne un salarié, charger les données pour le mois en cours
+            // Fonction pour charger les données du deuxième tableau
+            function loadEmployeeProjectTypeData() {
+                let employeeId = $('#employee_id').val();
+                let projectType = $('input[name="project-type"]:checked').val();
+                let url = "{{ route('dashboard.getEmployeeProjectTypeData') }}";
+                let token = $('input[name="_token"]').val();
+
+                if (!employeeId || !projectType) return;
+
+                // Mettre à jour le type de projet dans le titre
+                $('#selected-project-type').text(projectType);
+
+                // Afficher le deuxième tableau
+                $('#employee-project-type-table-container').show();
+
+                // Envoyer la requête AJAX avec le mois, l'année, le type de projet, etc.
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: {
+                        employee_id: employeeId,
+                        month: currentMonth,
+                        year: currentYear,
+                        project_type: projectType,
+                        _token: token
+                    },
+                    success: function(response) {
+                        console.log(response); // Pour déboguer
+
+                        // Utiliser l'API DataTables pour manipuler les données
+                        employeeProjectTypeTable.clear();
+
+                        if (response.projectData.length > 0) {
+                            $.each(response.projectData, function(index, project) {
+                                employeeProjectTypeTable.row.add([
+                                    project.project_code,
+                                    project.project_name + ' - ' + project.project_city,
+                                    project.total_hours_month > 0 ? project.total_hours_month + ' H' : '-',
+                                    project.total_hours_year > 0 ? project.total_hours_year + ' H' : '-',
+                                    project.total_cost_year > 0 ? project.total_cost_year.toFixed(2) + ' €' : '-' // Nouvelle colonne
+                                ]);
+                            });
+                        } else {
+                            // Si aucune donnée, masquer le tableau
+                            $('#employee-project-type-table-container').hide();
+                        }
+
+                        // Redessiner le tableau
+                        employeeProjectTypeTable.draw();
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Erreur lors du chargement des données du salarié par type de projet :', error);
+                    }
+                });
+            }
+
+            // Événements pour recharger les données
             $('#employee_id').change(function() {
                 loadEmployeeData();
+                loadEmployeeProjectTypeData();
+            });
+
+            $('input[name="project-type"]').change(function() {
+                loadEmployeeProjectTypeData();
+            });
+
+            $('#prev-month-btn, #next-month-btn').click(function() {
+                updateMonthYearDisplay();
+                loadEmployeeData();
+                loadEmployeeProjectTypeData();
             });
         });
     </script>

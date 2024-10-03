@@ -52,18 +52,19 @@
                         <select name="project_id" id="project_id" class="w-auto bg-white border border-gray-300 text-gray-900 font-bold text-sm rounded-lg focus:ring-customColor focus:border-customColor block" required>
                             <option disabled selected value="">Choisir un chantier</option>
                             @foreach($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->code }} - {{ $project->business }} - {{ $project->city }}</option>
+                                <option value="{{ $project->id }}" data-type="{{ $project->type }}">{{ $project->code }} - {{ $project->business }} - {{ $project->city }}</option>
                             @endforeach
                         </select>
                     </div>
+
                     <!-- Radio pour filtrer le type de chantier -->
                     <div class="flex items-center ps-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
-                        <input id="bordered-radio-1" type="radio" value="" name="bordered-radio" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                        <label for="bordered-radio-1" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm dark:text-gray-300">Monument Historique</label>
+                        <input id="radio-monument" type="radio" value="Monument Historique" name="project-type" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor">
+                        <label for="radio-monument" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">Monument Historique</label>
                     </div>
                     <div class="flex items-center ps-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
-                        <input checked id="bordered-radio-2" type="radio" value="" name="bordered-radio" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                        <label for="bordered-radio-2" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm dark:text-gray-300">Gros Œuvre</label>
+                        <input id="radio-gros-oeuvre" type="radio" value="Gros Œuvre" name="project-type" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor" checked>
+                        <label for="radio-gros-oeuvre" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">Gros Œuvre</label>
                     </div>
 
                 </form>
@@ -104,7 +105,7 @@
                 <h3 class="text-xl font-semibold mb-4 flex justify-between">
                     <span>Tableau coût et heure :</span>
                     <span id="selected-project-name"></span>
-                    <span id="selected-project-type" class="bg-customColor p-1 rounded text-white"></span>
+                    <span id="selected-project-type" class="text-customColor px-1 rounded border-2 border-customColor"></span>
                 </h3>
                 <!-- Table HTML du projet -->
                 <table id="project" class="min-w-full bg-white text-sm">
@@ -226,7 +227,7 @@
                     success: function(response) {
                         console.log(response); // Pour déboguer
 
-                        $('#selected-project-type').text(response.projectType ? `${response.projectType}` : '');
+                        $('#selected-project-type').text(response.projectType && response.projectType === 'Monument Historique' ? 'MO' : 'GO');
 
                         // Utiliser l'API DataTables pour manipuler les données
                         projectTable.clear();
@@ -257,5 +258,32 @@
                 loadProjectData();
             });
         });
+
+        $(document).ready(function() {
+            function filterProjectsByType(selectedType) {
+                $('#project_id option').each(function() {
+                    let optionType = $(this).data('type');
+                    if (optionType === selectedType) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                // Réinitialiser la sélection du projet
+                $('#project_id').val('');
+            }
+
+            // Filtrer initialement les projets en fonction du radio bouton sélectionné
+            let initialType = $('input[name="project-type"]:checked').val();
+            filterProjectsByType(initialType);
+
+            // Écouter les changements sur les radios boutons
+            $('input[name="project-type"]').change(function() {
+                let selectedType = $(this).val();
+                filterProjectsByType(selectedType);
+            });
+        });
+
     </script>
 </x-app-layout>

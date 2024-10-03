@@ -223,7 +223,7 @@
                                     project.project_name,
                                     project.day_hours > 0 ? project.day_hours + ' H' : '-',
                                     project.night_hours > 0 ? project.night_hours + ' H' : '-',
-                                    project.cost > 0 ? project.cost + ' €' : '-'
+                                    project.cost > 0 ? project.cost.toFixed(2) + ' €' : '-'
                                 ]);
                             });
                         }

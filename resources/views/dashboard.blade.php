@@ -46,7 +46,7 @@
             <div class="grid grid-cols-3 gap-6 mb-20">
                 <!-- Content Box 1: prend 2 colonnes : Table -->
                 <div class="bg-white p-6 rounded-lg shadow-md col-span-2">
-                    <h3 class="text-xl font-semibold mb-4">Tableau des heures par chantier - {{ now()->format('F Y') }}</h3>
+                    <h3 class="text-xl font-semibold mb-4">Tableau des heures par chantier - {{ now()->translatedFormat('F Y') }}</h3>
                     <!-- Table HTML des heures -->
                     <table id="hourProjectsTable" class="min-w-full bg-white text-sm">
                         <thead>
@@ -69,7 +69,7 @@
                 </div>
                 <!-- Content Box 2 : Chart -->
                 <div class="p-6">
-                    <h3 class="text-xl font-semibold mb-4 text-center">Répartition des heures du mois en cours</h3>
+                    <h3 class="text-xl font-semibold mb-4 text-center">Répartition des heures et coûts du mois en cours</h3>
                     <div>
                         <canvas id="hourChart"></canvas>
                     </div>
@@ -80,7 +80,7 @@
             <div class="grid grid-cols-3 gap-6 mb-20">
                 <!-- Content Box 1: prend 2 colonnes : Table -->
                 <div class="bg-white p-6 rounded-lg shadow-md col-span-2">
-                    <h3 class="text-xl font-semibold mb-4">Tableau des coûts par chantier - {{ now()->format('F Y') }}</h3>
+                    <h3 class="text-xl font-semibold mb-4">Tableau des coûts par chantier - {{ now()->translatedFormat('F Y') }}</h3>
                     <!-- Table HTML des coûts -->
                     <table id="costProjectsTable" class="min-w-full bg-white text-sm">
                         <thead>
@@ -107,7 +107,7 @@
                 </div>
                 <!-- Content Box 2 : Chart -->
                 <div class="p-6">
-                    <h3 class="text-xl font-semibold mb-4 text-center">Répartition des coûts du mois en cours</h3>
+                    <h3 class="text-xl font-semibold mb-4 text-center">Répartition des heures et coûts depuis le début des chantiers</h3>
                     <div>
                         <canvas id="costChart"></canvas>
                     </div>
@@ -123,6 +123,22 @@
     <!-- Inclure Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+    @php
+        $projectData = [];
+        foreach ($projects as $project) {
+            $earliestEntry = $project->getEarliestEntryDate(); // Assurez-vous que cette méthode existe
+            $projectData[] = [
+                'project_name' => $project->business . ' - ' . $project->city,
+                'hours_this_month' => $project->getHoursThisMonth(),
+                'cost_this_month' => $project->calculateMonthlyCost(),
+                'total_hours' => $project->getTotalHours(),
+                'total_cost' => $project->calculateTotalCost(),
+                'earliest_entry' => $earliestEntry ? $earliestEntry->translatedFormat('F Y') : 'N/A',
+                'actual_month' => now()->translatedFormat('F Y'),
+            ];
+        }
+    @endphp
 
     <script>
         // Initialisation de DataTables pour tableau heure
@@ -153,7 +169,20 @@
             });
         });
 
-        // Initialisation de Chart.js pour tableau heure
+        // Données pour les graphiques
+        const projectData = @json($projectData);
+
+        const labels = projectData.map(project => project.project_name);
+
+        // Données pour le premier graphique (mois en cours)
+        const costThisMonthData = projectData.map(project => project.cost_this_month);
+        const hoursThisMonthData = projectData.map(project => project.hours_this_month);
+
+        // Données pour le deuxième graphique (depuis le début)
+        const totalCostData = projectData.map(project => project.total_cost);
+        const totalHoursData = projectData.map(project => project.total_hours);
+        const earliestEntries = projectData.map(project => project.earliest_entry);
+
         const backgroundColors = [
             'rgba(255, 99, 132, 0.6)',
             'rgba(54, 162, 235, 0.6)',
@@ -200,19 +229,12 @@
             'rgba(240, 230, 140, 1)',
         ];
 
+        // Configuration du premier graphique (mois en cours)
         const data = {
-            labels: [
-                @foreach($filteredProjects as $project)
-                    '{!! addslashes($project->business) !!}',
-                @endforeach
-            ],
+            labels: labels,
             datasets: [{
-                label: 'Heures du mois en cours',
-                data: [
-                    @foreach($filteredProjects as $project)
-                        {{ $project->getHoursThisMonth() }},
-                    @endforeach
-                ],
+                label: 'Coûts du mois en cours (€)',
+                data: costThisMonthData,
                 backgroundColor: backgroundColors,
                 borderColor: borderColors,
                 borderWidth: 1
@@ -227,25 +249,25 @@
                 maintainAspectRatio: true,
                 plugins: {
                     legend: {
-                        position: 'top',
+                        display: false,
                     },
                     tooltip: {
                         callbacks: {
-                            title: function() {
-                                return '';
-                            },
                             label: function(tooltipItem) {
-                                const label = tooltipItem.label || '';
-                                const value = tooltipItem.raw || 0;
-                                return `${label}: ${value} heures`;
+                                const index = tooltipItem.dataIndex;
+                                const project = projectData[index];
+                                const label = project.project_name || '';
+                                const hours = project.hours_this_month || 0;
+                                const cost = project.cost_this_month || 0;
+                                return `${hours} heures / ${cost.toFixed(2)} € (${project.actual_month})`;
                             },
                         },
                         bodyFont: {
-                            size: 14, // Taille de la police
-                            weight: 'bold', // Épaisseur de la police
+                            size: 14,
+                            weight: 'bold',
                         },
-                        padding: 10, // Espacement interne
-                        boxPadding: 10, // Espacement autour de la boîte
+                        padding: 10,
+                        boxPadding: 10,
                     },
                 },
             },
@@ -254,89 +276,63 @@
         const ctx = document.getElementById('hourChart');
         const hourChart = new Chart(ctx, config);
 
-        // Initialisation de DataTables pour tableau coût
-        $(document).ready(function() {
-            $('#costProjectsTable').DataTable({
-                language: {
-                    "sEmptyTable": "Aucune donnée disponible dans le tableau",
-                    "sInfo": "Affichage de _START_ à _END_ sur _TOTAL_ chantiers",
-                    "sInfoEmpty": "Affichage de 0 à 0 sur 0 entrées",
-                    "sInfoFiltered": "(filtré de _MAX_ chantiers au total)",
-                    "sLengthMenu": "Afficher _MENU_ entrées",
-                    "sLoadingRecords": "Chargement...",
-                    "sProcessing": "Traitement...",
-                    "sSearch": "Rechercher :",
-                    "sZeroRecords": "Aucun enregistrement correspondant trouvé",
-                    "oPaginate": {
-                        "sFirst": "Premier",
-                        "sLast": "Dernier",
-                        "sNext": "Suivant",
-                        "sPrevious": "Précédent"
-                    },
-                    "oAria": {
-                        "sSortAscending": ": activer pour trier la colonne par ordre croissant",
-                        "sSortDescending": ": activer pour trier la colonne par ordre décroissant"
-                    }
-                },
-                lengthChange: false
-            });
-        });
-
-        // Initialisation de Chart.js pour tableau coût
-        const costData = {
-            labels: [
-                @foreach($costData as $data)
-                    '{{ $data['project_name'] }}',
-                @endforeach
-            ],
+        // Configuration du deuxième graphique (depuis le début)
+        const data2 = {
+            labels: labels,
             datasets: [{
-                label: 'Coûts du mois en cours (€)',
-                data: [
-                    @foreach($costData as $data)
-                        {{ $data['monthly_cost'] }},
-                    @endforeach
-                ],
+                label: 'Coûts totaux (€)',
+                data: totalCostData,
                 backgroundColor: backgroundColors,
                 borderColor: borderColors,
                 borderWidth: 1
             }]
         };
 
-        const costConfig = {
+        const config2 = {
             type: 'doughnut',
-            data: costData,
+            data: data2,
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
                 plugins: {
                     legend: {
-                        position: 'top',
+                        display: false,
                     },
                     tooltip: {
                         callbacks: {
-                            title: function() {
-                                return '';
-                            },
                             label: function(tooltipItem) {
-                                const label = tooltipItem.label || '';
-                                const value = tooltipItem.raw || 0;
-                                return `${label}: ${value} €`;
+                                const index = tooltipItem.dataIndex;
+                                const project = projectData[index];
+                                const label = project.project_name || '';
+                                const hours = project.total_hours || 0;
+                                const cost = project.total_cost || 0;
+                                const earliestEntry = project.earliest_entry || 'N/A';
+                                return `${hours} heures / ${cost.toFixed(2)} € (depuis ${earliestEntry})`;
                             },
                         },
                         bodyFont: {
-                            size: 14, // Taille de la police
-                            weight: 'bold', // Épaisseur de la police
+                            size: 14,
+                            weight: 'bold',
                         },
-                        padding: 10, // Espacement interne
-                        boxPadding: 10, // Espacement autour de la boîte
+                        padding: 10,
+                        boxPadding: 10,
                     },
                 },
             },
         };
 
-        const costCtx = document.getElementById('costChart');
-        const costChart = new Chart(costCtx, costConfig);
+        const ctx2 = document.getElementById('costChart');
+        const costChart = new Chart(ctx2, config2);
 
+        // Initialisation de DataTables pour tableau coût
+        $(document).ready(function() {
+            $('#costProjectsTable').DataTable({
+                language: {
+                    // Vos paramètres de langue
+                },
+                lengthChange: false
+            });
+        });
     </script>
 
 </x-app-layout>

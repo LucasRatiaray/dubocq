@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -53,6 +54,13 @@ class Project extends Model
     public function timeTrackings(): HasMany
     {
         return $this->hasMany(TimeTracking::class);
+    }
+
+    public function getEarliestEntryDate()
+    {
+        $earliestDate = $this->timeTrackings->min('date');
+
+        return $earliestDate ? Carbon::parse($earliestDate) : null;
     }
 
     public function getHoursThisMonth(): float

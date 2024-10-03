@@ -222,10 +222,10 @@
                             $.each(response.employeeCosts, function(index, employee) {
                                 projectTable.row.add([
                                     employee.employee_name,
-                                    employee.monthly_hours > 0 ? employee.monthly_hours + ' H' : '-',
-                                    employee.monthly_cost > 0 ? employee.monthly_cost + ' €' : '-',
-                                    employee.total_hours > 0 ? employee.total_hours + ' H' : '-',
-                                    employee.total_cost > 0 ? employee.total_cost + ' €' : '-'
+                                    employee.monthly_hours > 0 ? employee.monthly_hours + ' H' : '-', // Formatage des heures mensuelles
+                                    employee.monthly_cost > 0 ? employee.monthly_cost + ' €' : '-', // Formatage des coûts mensuels
+                                    employee.total_hours > 0 ? employee.total_hours + ' H' : '-', // Formatage des heures totales
+                                    employee.total_cost > 0 ? employee.total_cost.toFixed(2) + ' €' : '-' // Formatage des coûts totaux
                                 ]);
                             });
                         }

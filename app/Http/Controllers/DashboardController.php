@@ -14,7 +14,7 @@ class DashboardController extends Controller
     {
         // Récupérer tous les projets non archivés avec leurs timeTrackings
         $projects = Project::with('timeTrackings')
-            ->orderBy('business')
+            ->orderBy('code')
             ->where('archived', false)
             ->get();
 
@@ -56,7 +56,7 @@ class DashboardController extends Controller
     public function showProject(): View
     {
         $projects = Project::with('timeTrackings')
-            ->orderBy('business')
+            ->orderBy('code')
             ->where('archived', false)
             ->get();
 
@@ -133,7 +133,8 @@ class DashboardController extends Controller
         // Retourner les données au format JSON
         return response()->json([
             'employeeCosts' => $employeeCosts,
-            'totalEmployeesCount' => $totalEmployeesCount
+            'totalEmployeesCount' => $totalEmployeesCount,
+            'projectType' => $project->type
         ]);
     }
 
@@ -167,6 +168,8 @@ class DashboardController extends Controller
             // Ajouter les données pour ce projet
             $projectData[] = [
                 'project_name' => $project->business,
+                'project_city' => $project->city,
+                'project_code' => $project->code,
                 'day_hours' => $dayHours,
                 'night_hours' => $nightHours,
                 'total_hours' => $totalHours,

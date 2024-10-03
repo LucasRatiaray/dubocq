@@ -45,17 +45,27 @@
         <main class="flex-1 p-6 pt-4">
             <div class="flex gap-2 flex-col mb-2">
                 <!-- Formulaire Chantier -->
-                <form class="flex items-center" action="{{ route('dashboard.showProject') }}" method="GET">
+                <form class="flex items-center gap-5" action="{{ route('dashboard.showProject') }}" method="GET">
                     @csrf
                     <div class="flex">
                         <label for="project_id" class="sr-only">Choisir un chantier</label>
                         <select name="project_id" id="project_id" class="w-auto bg-white border border-gray-300 text-gray-900 font-bold text-sm rounded-lg focus:ring-customColor focus:border-customColor block" required>
                             <option disabled selected value="">Choisir un chantier</option>
                             @foreach($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->business }} - {{ $project->city }}</option>
+                                <option value="{{ $project->id }}">{{ $project->code }} - {{ $project->business }} - {{ $project->city }}</option>
                             @endforeach
                         </select>
                     </div>
+                    <!-- Radio pour filtrer le type de chantier -->
+                    <div class="flex items-center ps-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
+                        <input id="bordered-radio-1" type="radio" value="" name="bordered-radio" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="bordered-radio-1" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm dark:text-gray-300">Monument Historique</label>
+                    </div>
+                    <div class="flex items-center ps-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
+                        <input checked id="bordered-radio-2" type="radio" value="" name="bordered-radio" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="bordered-radio-2" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm dark:text-gray-300">Gros Œuvre</label>
+                    </div>
+
                 </form>
 
                 <!-- Navigation du mois -->
@@ -92,16 +102,17 @@
             <!-- Conteneur du tableau -->
             <div id="project-table-container" class="bg-white p-6 rounded-lg shadow-md col-span-2" hidden>
                 <h3 class="text-xl font-semibold mb-4 flex justify-between">
-                    <span>Tableau Coût Heures par salarié</span>
-                    <span id="selected-project-name">Sélectionnez un chantier</span>
+                    <span>Tableau coût et heure :</span>
+                    <span id="selected-project-name"></span>
+                    <span id="selected-project-type" class="bg-customColor p-1 rounded text-white"></span>
                 </h3>
                 <!-- Table HTML du projet -->
                 <table id="project" class="min-w-full bg-white text-sm">
                     <thead>
                     <tr class="w-full">
                         <th class="py-1 px-2 text-left">Salariés</th>
-                        <th class="py-1 px-2 text-left">Heures mois</th>
-                        <th class="py-1 px-2 text-left">Coûts mois</th>
+                        <th class="py-1 px-2 text-left">Heures pour le mois</th>
+                        <th class="py-1 px-2 text-left">Coûts pour le mois</th>
                         <th class="py-1 px-2 text-left">Heures depuis le début</th>
                         <th class="py-1 px-2 text-left">Coût depuis le début</th>
                     </tr>
@@ -136,7 +147,7 @@
                     "sLengthMenu": "Afficher _MENU_ entrées",
                     "sLoadingRecords": "Chargement...",
                     "sProcessing": "Traitement...",
-                    "sSearch": "Rechercher :",
+                    "sSearch": "Rechercher salarié :",
                     "sZeroRecords": "Aucun enregistrement correspondant trouvé",
                     "oPaginate": {
                         "sFirst": "Premier",
@@ -150,7 +161,7 @@
                     }
                 },
                 lengthChange: false,
-                searching: false,
+/*                searching: false, */
                 paging: false,
                 info: false
             });
@@ -190,7 +201,7 @@
             // Fonction pour charger les données du projet sélectionné en fonction du mois et de l'année
             function loadProjectData() {
                 let projectId = $('#project_id').val();
-                let projectName = $('#project_id option:selected').text();
+                let projectName = $('#project_id option:selected').text(); // ICI D'OU VIENT LE PROJECTNAME ?
                 let url = "{{ route('dashboard.getProjectData') }}";
                 let token = $('input[name="_token"]').val();
 
@@ -215,6 +226,8 @@
                     success: function(response) {
                         console.log(response); // Pour déboguer
 
+                        $('#selected-project-type').text(response.projectType ? `${response.projectType}` : '');
+
                         // Utiliser l'API DataTables pour manipuler les données
                         projectTable.clear();
 
@@ -223,7 +236,7 @@
                                 projectTable.row.add([
                                     employee.employee_name,
                                     employee.monthly_hours > 0 ? employee.monthly_hours + ' H' : '-', // Formatage des heures mensuelles
-                                    employee.monthly_cost > 0 ? employee.monthly_cost + ' €' : '-', // Formatage des coûts mensuels
+                                    employee.monthly_cost > 0 ? employee.monthly_cost.toFixed(2) + ' €' : '-', // Formatage des coûts mensuels
                                     employee.total_hours > 0 ? employee.total_hours + ' H' : '-', // Formatage des heures totales
                                     employee.total_cost > 0 ? employee.total_cost.toFixed(2) + ' €' : '-' // Formatage des coûts totaux
                                 ]);

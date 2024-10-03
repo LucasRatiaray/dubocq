@@ -91,15 +91,15 @@
 
             <!-- Conteneur du tableau -->
             <div id="employee-table-container" class="bg-white p-6 rounded-lg shadow-md col-span-2" hidden>
-                <h3 class="text-xl font-semibold mb-4 flex justify-between">
-                    <span>Tableau Heures Coûts par salarié</span>
-                    <span id="selected-employee-name">Sélectionnez un salarié</span>
+                <h3 class="text-xl font-semibold mb-4 flex">
+                    <span>Tableau Heures Coûts : <span id="selected-employee-name"></span></span>
                 </h3>
                 <!-- Table HTML du salarié -->
                 <table id="employee-table" class="min-w-full bg-white text-sm">
                     <thead>
                     <tr class="w-full">
-                        <th class="py-1 px-2 text-left">Chantiers</th>
+                        <th class="py-1 px-2 text-left">Code</th>
+                        <th class="py-1 px-2 text-left">Chantier</th>
                         <th class="py-1 px-2 text-left">Heures jour</th>
                         <th class="py-1 px-2 text-left">Heures nuit</th>
                         <th class="py-1 px-2 text-left">Coût</th>
@@ -135,7 +135,7 @@
                     "sLengthMenu": "Afficher _MENU_ entrées",
                     "sLoadingRecords": "Chargement...",
                     "sProcessing": "Traitement...",
-                    "sSearch": "Rechercher :",
+                    "sSearch": "Rechercher chantier :",
                     "sZeroRecords": "Aucun enregistrement correspondant trouvé",
                     "oPaginate": {
                         "sFirst": "Premier",
@@ -149,7 +149,7 @@
                     }
                 },
                 lengthChange: false,
-                searching: false,
+/*                searching: false,  */
                 paging: false,
                 info: false
             });
@@ -220,7 +220,8 @@
                         if (response.projectData.length > 0) {
                             $.each(response.projectData, function(index, project) {
                                 employeeTable.row.add([
-                                    project.project_name,
+                                    project.project_code,
+                                    `${project.project_name} - ${project.project_city}`,
                                     project.day_hours > 0 ? project.day_hours + ' H' : '-',
                                     project.night_hours > 0 ? project.night_hours + ' H' : '-',
                                     project.cost > 0 ? project.cost.toFixed(2) + ' €' : '-'

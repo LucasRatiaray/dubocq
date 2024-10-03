@@ -51,7 +51,8 @@
                     <table id="hourProjectsTable" class="min-w-full bg-white text-sm">
                         <thead>
                         <tr class="w-full">
-                            <th class="py-1 px-2 text-left">Chantiers</th>
+                            <th class="py-1 px-2 text-left">Code</th>
+                            <th class="py-1 px-2 text-left">Chantier</th>
                             <th class="py-1 px-2 text-center">Heures réalisées mois en cours</th>
                             <th class="py-1 px-2 text-center">Heures réalisées depuis le début</th>
                         </tr>
@@ -59,6 +60,7 @@
                         <tbody>
                         @foreach($projects as $project)
                             <tr class="border-b border-stroke">
+                                <td class="py-1 px-2">{{ $project->code }}</td>
                                 <td class="py-1 px-2">{{ $project->business }} - {{ $project->city }}</td>
                                 <td class="py-1 px-2 text-center">{{ $project->getHoursThisMonth() == 0 ? '-' : $project->getHoursThisMonth().' H' }}</td>
                                 <td class="py-1 px-2 text-center">{{ $project->getTotalHours() == 0 ? '-' : $project->getTotalHours().' H' }}</td>
@@ -85,7 +87,8 @@
                     <table id="costProjectsTable" class="min-w-full bg-white text-sm">
                         <thead>
                         <tr class="w-full">
-                            <th class="py-1 px-2 text-left">Chantiers</th>
+                            <th class="py-1 px-2 text-left">Code</th>
+                            <th class="py-1 px-2 text-left">Chantier</th>
                             <th class="py-1 px-2 text-center">Coûts salariés mois en cours</th>
                             <th class="py-1 px-2 text-center">Coûts salariés depuis le début</th>
                         </tr>
@@ -93,6 +96,7 @@
                         <tbody>
                         @foreach($projects as $project)
                             <tr class="border-b border-stroke">
+                                <td class="py-1 px-2">{{ $project->code }}</td>
                                 <td class="py-1 px-2">{{ $project->business }} - {{ $project->city }}</td>
                                 <td class="py-1 px-2 text-center">
                                     {{ $project->calculateMonthlyCost() == 0 ? '-' : number_format($project->calculateMonthlyCost(), 2).' €' }}
@@ -165,7 +169,7 @@
                         "sSortDescending": ": activer pour trier la colonne par ordre décroissant"
                     }
                 },
-                lengthChange: false
+                lengthChange: false,
             });
         });
 
@@ -184,7 +188,6 @@
         const earliestEntries = projectData.map(project => project.earliest_entry);
 
         const backgroundColors = [
-            'rgba(255, 99, 132, 0.6)',
             'rgba(54, 162, 235, 0.6)',
             'rgba(255, 206, 86, 0.6)',
             'rgba(75, 192, 192, 0.6)',
@@ -204,29 +207,30 @@
             'rgba(255, 228, 196, 0.6)',
             'rgba(210, 105, 30, 0.6)',
             'rgba(240, 230, 140, 0.6)',
+            'rgba(255, 99, 132, 0.6)',
         ];
 
         const borderColors = [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
-            'rgba(255, 159, 64, 1)',
-            'rgba(255, 99, 132, 1)',
-            'rgba(255, 44, 0, 1)',
-            'rgba(42, 85, 191, 1)',
-            'rgba(255, 165, 0, 1)',
-            'rgba(128, 0, 128, 1)',
-            'rgba(0, 128, 0, 1)',
-            'rgba(0, 255, 255, 1)',
-            'rgba(255, 20, 147, 1)',
-            'rgba(128, 128, 0, 1)',
-            'rgba(255, 192, 203, 1)',
-            'rgba(135, 206, 235, 1)',
-            'rgba(255, 228, 196, 1)',
-            'rgba(210, 105, 30, 1)',
-            'rgba(240, 230, 140, 1)',
+            'rgba(54, 162, 235, 0.6)',
+            'rgba(255, 206, 86, 0.6)',
+            'rgba(75, 192, 192, 0.6)',
+            'rgba(153, 102, 255, 0.6)',
+            'rgba(255, 159, 64, 0.6)',
+            'rgba(255, 99, 132, 0.6)',
+            'rgba(255, 44, 0, 0.6)',
+            'rgba(42, 85, 191, 0.6)',
+            'rgba(255, 165, 0, 0.6)',
+            'rgba(128, 0, 128, 0.6)',
+            'rgba(0, 128, 0, 0.6)',
+            'rgba(0, 255, 255, 0.6)',
+            'rgba(255, 20, 147, 0.6)',
+            'rgba(128, 128, 0, 0.6)',
+            'rgba(255, 192, 203, 0.6)',
+            'rgba(135, 206, 235, 0.6)',
+            'rgba(255, 228, 196, 0.6)',
+            'rgba(210, 105, 30, 0.6)',
+            'rgba(240, 230, 140, 0.6)',
+            'rgba(255, 99, 132, 0.6)',
         ];
 
         // Configuration du premier graphique (mois en cours)

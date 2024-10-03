@@ -14,7 +14,8 @@ class EmployeeBasketZone extends Model
         'employee_id',
         'zone_id',
         'employee_basket_zone_charged',
-        'employee_basket_zone',
+        'employee_basket_zone_day',
+        'employee_basket_zone_night',
     ];
 
     public function employee(): BelongsTo

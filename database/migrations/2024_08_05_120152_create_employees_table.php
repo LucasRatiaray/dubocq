@@ -21,7 +21,8 @@ return new class extends Migration
             $table->integer('contract')->default(37);
             $table->decimal('monthly_salary')->nullable();
             $table->decimal('hourly_basket_charged', 10, 2)->nullable();
-            $table->decimal('basket', 10, 2)->nullable();
+            $table->decimal('basket_day', 10, 2)->nullable();
+            $table->decimal('basket_night', 10, 2)->nullable();
             $table->boolean('archived')->default(false);
             $table->timestamps();
         });

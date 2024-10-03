@@ -106,13 +106,13 @@ class Project extends Model
             $totalHours = $dayHours + $nightHours;
 
             // Si le tarif est nul ou incorrect, loguer une erreur et continuer
-            if ($employeeBasketZone->employee_basket_zone == 0) {
+            if ($employeeBasketZone->employee_basket_zone_day == 0) {
                 Log::error('Le tarif est zéro pour l\'employé ' . $employee->first_name . ' dans la zone ' . $this->zone_id . ' sur le projet ' . $this->business);
                 continue; // Passer à l'employé suivant
             }
 
             // Calcul du coût pour cet employé
-            $employeeCost = $totalHours * $employeeBasketZone->employee_basket_zone;
+            $employeeCost = $totalHours * $employeeBasketZone->employee_basket_zone_day;
             $totalCost += $employeeCost;
         }
 
@@ -152,13 +152,13 @@ class Project extends Model
             $totalHours = $dayHours + $nightHours;
 
             // Si le tarif est nul ou incorrect, loguer une erreur et continuer
-            if ($employeeBasketZone->employee_basket_zone == 0) {
+            if ($employeeBasketZone->employee_basket_zone_day == 0) {
                 Log::error('Le tarif est zéro pour l\'employé ' . $employee->first_name . ' dans la zone ' . $this->zone_id . ' sur le projet ' . $this->business);
                 continue;
             }
 
             // Calcul du coût pour cet employé
-            $employeeCost = $totalHours * $employeeBasketZone->employee_basket_zone;
+            $employeeCost = $totalHours * $employeeBasketZone->employee_basket_zone_day;
             $totalCost += $employeeCost;
         }
 

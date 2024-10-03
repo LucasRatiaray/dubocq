@@ -46,8 +46,16 @@ class EmployeeBasketZonesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('employee_basket_zone_charged')
                     ->label('Zone/H Chargé')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('employee_basket_zone')
-                    ->label('Coût salarié horaire')
+                Tables\Columns\TextColumn::make('employee_basket_zone_day')
+                    ->label('Coût salarié horaire jour')
+                    ->colors([
+                        'warning' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
+                    ])
+                    ->formatStateUsing(fn ($state) => number_format($state, 2))
+                    ->suffix(' €')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('employee_basket_zone_night')
+                    ->label('Coût salarié horaire nuit')
                     ->colors([
                         'warning' => fn ($state): bool => true, // Appliquer la couleur "info" à toutes les valeurs
                     ])

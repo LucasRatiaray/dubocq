@@ -187,7 +187,7 @@ class EmployeeResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
-                TextColumn::make('basket')
+                TextColumn::make('basket_day')
                     ->label('Panier/H')
                     ->badge()
                     ->colors([

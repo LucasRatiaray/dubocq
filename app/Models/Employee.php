@@ -21,7 +21,8 @@ class Employee extends Model
         'contract',
         'monthly_salary',
         'hourly_basket_charged',
-        'basket',
+        'basket_day',
+        'basket_night',
         'archived'
     ];
 
@@ -77,13 +78,17 @@ class Employee extends Model
 
     public function getEmployeeCost($timeTrackings): float
     {
-        $totalHours = $this->getTotalHours($timeTrackings);
+        $totalHoursDay = $this->getTotalDayHours($timeTrackings);
+        $totalHoursNight = $this->getTotalNightHours($timeTrackings);
 
         // Récupérer le tarif horaire de l'employé pour la zone du projet
         $employeeBasketZone = $this->employeeBasketZones->first(); // Assure-toi de bien gérer la relation avec les zones
 
         if ($employeeBasketZone) {
-            return $totalHours * $employeeBasketZone->employee_basket_zone;
+            $totalCostHoursDay = $totalHoursDay * $employeeBasketZone->employee_basket_zone_day;
+            $totalCostHoursNight = $totalHoursNight * $employeeBasketZone->employee_basket_zone_night;
+
+            return $totalCostHoursDay + $totalCostHoursNight;
         }
 
         return 0; // Si aucune zone trouvée, retourne 0

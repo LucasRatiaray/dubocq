@@ -9,6 +9,7 @@ use App\Models\EmployeeBasket;
 use App\Models\EmployeeBasketZone;
 use App\Models\Project;
 use App\Models\RateCharged;
+use App\Models\User;
 use App\Observers\BasketObserver;
 use App\Observers\BasketZoneObserver;
 use App\Observers\EmployeeBasketObserver;
@@ -16,6 +17,7 @@ use App\Observers\EmployeeBasketZoneObserver;
 use App\Observers\EmployeeObserver;
 use App\Observers\ProjectObserver;
 use App\Observers\RateChargedObserver;
+use App\Policies\UserPolicy;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -41,4 +43,8 @@ class AppServiceProvider extends ServiceProvider
         EmployeeBasket::observe(EmployeeBasketObserver::class);
         EmployeeBasketZone::observe(EmployeeBasketZoneObserver::class);
     }
+
+    protected $policies = [
+        User::class => UserPolicy::class,
+    ];
 }

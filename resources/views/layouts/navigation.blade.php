@@ -16,21 +16,33 @@
                         {{ __('Accueil') }}
                     </x-nav-link>
                 </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('pointage.index')" :active="request()->routeIs('pointage.*')">
-                        {{ __('Pointage') }}
-                    </x-nav-link>
-                </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('setting')" :active="request()->routeIs('setting')">
-                        {{ __('Paramétrage') }}
-                    </x-nav-link>
-                </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard.show')" :active="request()->routeIs('dashboard.*')">
-                        {{ __('Tableau de bord') }}
-                    </x-nav-link>
-                </div>
+
+                <!-- Lien Pointage : Visible pour les conducteurs et administrateurs -->
+                @if(auth()->user()->hasRole('Conducteur') || auth()->user()->hasRole('Administrateur') || auth()->user()->hasRole('Super Admin'))
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('pointage.index')" :active="request()->routeIs('pointage.*')">
+                            {{ __('Pointage') }}
+                        </x-nav-link>
+                    </div>
+                @endif
+
+                <!-- Lien Paramétrage : Visible uniquement pour les administrateurs -->
+                @if(auth()->user()->hasRole('Administrateur') || auth()->user()->hasRole('Super Admin'))
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('setting')" :active="request()->routeIs('setting')">
+                            {{ __('Paramétrage') }}
+                        </x-nav-link>
+                    </div>
+                @endif
+
+                <!-- Lien Tableau de bord : Visible uniquement pour les administrateurs et super admin -->
+                @if(auth()->user()->hasRole('Administrateur') || auth()->user()->hasRole('Super Admin'))
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('dashboard.show')" :active="request()->routeIs('dashboard.*')">
+                            {{ __('Tableau de bord') }}
+                        </x-nav-link>
+                    </div>
+                @endif
             </div>
 
             <!-- Settings Dropdown -->

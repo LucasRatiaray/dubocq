@@ -8,6 +8,7 @@ use App\Models\Role;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -22,19 +23,39 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can('viewAny', User::class);
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can('create', User::class);
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->user()->can('update', $record);
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->user()->can('delete', $record);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->label('Nom')
                     ->required()
                     ->placeholder('John Doe'),
-                Forms\Components\TextInput::make('firstname')
+                TextInput::make('firstname')
                     ->label('Prénom')
                     ->required()
                     ->placeholder('John'),
-                Forms\Components\TextInput::make('email')
+                TextInput::make('email')
                     ->label('Email')
                     ->required()
                     ->placeholder('john@example.com'),
@@ -45,6 +66,11 @@ class UserResource extends Resource
                     ->multiple()
                     ->placeholder('Sélectionner les rôles')
                     ->required(),
+                TextInput::make('password')
+                    ->label('Mot de passe')
+                    ->required()
+                    ->password()
+                    ->placeholder('********'),
             ]);
     }
 

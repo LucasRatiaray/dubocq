@@ -14,12 +14,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
+Route::middleware(['auth', 'role:Super Admin,Administrateur,Conducteur'])->group(function () {
     Route::get('/pointage', [PointageController::class, 'index'])->name('pointage.index');
     Route::match(['post','get'],'/pointage/show', [PointageController::class, 'show'])->name('pointage.show');
     Route::post('/pointage/store', [PointageController::class, 'store'])->name('pointage.store');
     Route::post('/pointage/add/{id}', [PointageController::class, 'addEmployeeToProject'])->name('pointage.add');
+});
 
+Route::middleware(['auth', 'role:Super Admin,Administrateur'])->group(function () {
     Route::get('/setting', function () {
         return view('setting');
     })->name('setting');

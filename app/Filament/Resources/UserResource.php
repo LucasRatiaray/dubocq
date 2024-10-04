@@ -73,7 +73,7 @@ class UserResource extends Resource
                     ->dehydrateStateUsing(fn ($state) => $state ? bcrypt($state) : null)  // Hash le mot de passe uniquement s'il est soumis
                     ->placeholder('*********')
                     ->required(fn ($record) => !$record)  // Obligatoire seulement à la création
-                    ->visibleOn('create'),
+                    /*->visibleOn('create'),*/
             ]);
     }
 

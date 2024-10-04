@@ -17,7 +17,7 @@ class DashboardController extends Controller
         $currentYear = now()->year;
 
         // Récupérer les projets non archivés qui ont des timeTrackings durant le mois en cours
-        $projects = Project::with(['timeTrackings' => function ($query) use ($currentMonth, $currentYear) {
+        $projects = Project::with(['timeTrackingsCurrentMonth' => function ($query) use ($currentMonth, $currentYear) {
             $query->whereMonth('date', $currentMonth)
                 ->whereYear('date', $currentYear);
         }])

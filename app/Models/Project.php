@@ -56,9 +56,17 @@ class Project extends Model
         return $this->hasMany(TimeTracking::class);
     }
 
+    public function timeTrackingsCurrentMonth(): HasMany
+    {
+        return $this->hasMany(TimeTracking::class)
+            ->whereMonth('date', now()->month)
+            ->whereYear('date', now()->year);
+    }
+
+
     public function getEarliestEntryDate()
     {
-        $earliestDate = $this->timeTrackings->min('date');
+        $earliestDate = $this->timeTrackings()->min('date');
 
         return $earliestDate ? Carbon::parse($earliestDate) : null;
     }
@@ -81,46 +89,19 @@ class Project extends Model
     {
         $totalCost = 0;
 
-        // Récupérer les timeTrackings du mois en cours pour ce projet
-        $timeTrackingsThisMonth = $this->timeTrackings()
-            ->whereMonth('date', now()->month)
-            ->get();
+        $currentMonth = now()->month;
+        $currentYear = now()->year;
 
-        // Si aucun timeTracking pour ce mois, retourner 0
-        if ($timeTrackingsThisMonth->isEmpty()) {
-            // Loguer une erreur pour faciliter le débogage (optionnel)
-            Log::warning('Aucun timeTracking pour le projet ' . $this->business . ' sur le mois en cours.');
-            return 0;
-        }
+        foreach ($this->employees as $employee) {
+            // Récupérer les timeTrackings pour cet employé sur ce projet durant le mois en cours
+            $timeTrackings = $employee->timeTrackings()
+                ->where('project_id', $this->id)
+                ->whereMonth('date', $currentMonth)
+                ->whereYear('date', $currentYear)
+                ->get();
 
-        // Parcourir chaque timeTracking
-        foreach ($timeTrackingsThisMonth as $timeTracking) {
-            $employee = $timeTracking->employee;
-
-            // Vérifier si l'employé a une EmployeeBasketZone pour la zone du projet
-            $employeeBasketZone = $employee->employeeBasketZones()
-                ->where('zone_id', $this->zone_id)
-                ->first();
-
-            // Si aucune EmployeeBasketZone n'est trouvée, loguer une erreur et continuer
-            if (!$employeeBasketZone) {
-                Log::error('Aucune EmployeeBasketZone trouvée pour l\'employé ' . $employee->first_name . ' sur le projet ' . $this->business . ' et la zone ' . $this->zone_id);
-                continue; // Passer à l'employé suivant
-            }
-
-            // Calcul des heures travaillées
-            $dayHours = $timeTracking->day_hours ?? 0;
-            $nightHours = $timeTracking->night_hours ?? 0;
-            $totalHours = $dayHours + $nightHours;
-
-            // Si le tarif est nul ou incorrect, loguer une erreur et continuer
-            if ($employeeBasketZone->employee_basket_zone_day == 0) {
-                Log::error('Le tarif est zéro pour l\'employé ' . $employee->first_name . ' dans la zone ' . $this->zone_id . ' sur le projet ' . $this->business);
-                continue; // Passer à l'employé suivant
-            }
-
-            // Calcul du coût pour cet employé
-            $employeeCost = $totalHours * $employeeBasketZone->employee_basket_zone_day;
+            // Calculer le coût en utilisant la méthode mise à jour
+            $employeeCost = $employee->getEmployeeCost($timeTrackings, $this->zone_id);
             $totalCost += $employeeCost;
         }
 
@@ -131,46 +112,17 @@ class Project extends Model
     {
         $totalCost = 0;
 
-        // Récupérer tous les timeTrackings pour ce projet (sans filtrer par mois)
-        $timeTrackings = $this->timeTrackings()->get();
+        foreach ($this->employees as $employee) {
+            // Récupérer tous les timeTrackings pour cet employé sur ce projet
+            $timeTrackings = $employee->timeTrackings()
+                ->where('project_id', $this->id)
+                ->get();
 
-        if ($timeTrackings->isEmpty()) {
-            // Aucun timeTracking pour ce projet, retourner 0
-            return 0;
-        }
-
-        // Parcourir chaque timeTracking
-        foreach ($timeTrackings as $timeTracking) {
-            $employee = $timeTracking->employee;
-
-            // Vérifier si l'employé a une EmployeeBasketZone pour la zone du projet
-            $employeeBasketZone = $employee->employeeBasketZones()
-                ->where('zone_id', $this->zone_id)
-                ->first();
-
-            if (!$employeeBasketZone) {
-                // Passer cet employé si aucun tarif n'est trouvé pour cette zone
-                Log::error('Aucune EmployeeBasketZone trouvée pour l\'employé ' . $employee->first_name . ' sur le projet ' . $this->business . ' et la zone ' . $this->zone_id);
-                continue;
-            }
-
-            // Calcul des heures travaillées
-            $dayHours = $timeTracking->day_hours ?? 0;
-            $nightHours = $timeTracking->night_hours ?? 0;
-            $totalHours = $dayHours + $nightHours;
-
-            // Si le tarif est nul ou incorrect, loguer une erreur et continuer
-            if ($employeeBasketZone->employee_basket_zone_day == 0) {
-                Log::error('Le tarif est zéro pour l\'employé ' . $employee->first_name . ' dans la zone ' . $this->zone_id . ' sur le projet ' . $this->business);
-                continue;
-            }
-
-            // Calcul du coût pour cet employé
-            $employeeCost = $totalHours * $employeeBasketZone->employee_basket_zone_day;
+            // Calculer le coût en utilisant la méthode mise à jour
+            $employeeCost = $employee->getEmployeeCost($timeTrackings, $this->zone_id);
             $totalCost += $employeeCost;
         }
 
         return $totalCost;
     }
-
 }

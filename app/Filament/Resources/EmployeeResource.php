@@ -101,7 +101,7 @@ class EmployeeResource extends Resource
                             ->columnSpan(2)
                             ->visible(fn ($get) => in_array($get('status'), ['OUVRIER', 'ETAM'])),
                         TextInput::make('hourly_rate')
-                            ->label('Taux horaire :')
+                            ->label('Tarif horaire :')
                             ->required(fn ($get) => $get('status') === 'INTERIMAIRE')
                             ->numeric()
                             ->step('0.00000001')

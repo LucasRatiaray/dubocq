@@ -80,18 +80,23 @@ class Employee extends Model
     {
         $totalHoursDay = $this->getTotalDayHours($timeTrackings);
         $totalHoursNight = $this->getTotalNightHours($timeTrackings);
+        $totalHours = $totalHoursDay + $totalHoursNight;
 
-        // Récupérer le tarif horaire de l'employé pour la zone du projet
-        $employeeBasketZone = $this->employeeBasketZones->first(); // Assure-toi de bien gérer la relation avec les zones
+        if ($this->status == 'INTERIMAIRE') {
+            // For interim employees, cost is hourly_rate * total_hours
+            return $this->hourly_rate * $totalHours;
+        } else {
+            // For other employees, use existing logic
+            $employeeBasketZone = $this->employeeBasketZones->first();
 
-        if ($employeeBasketZone) {
-            $totalCostHoursDay = $totalHoursDay * $employeeBasketZone->employee_basket_zone_day;
-            $totalCostHoursNight = $totalHoursNight * $employeeBasketZone->employee_basket_zone_night;
+            if ($employeeBasketZone) {
+                $totalCostHoursDay = $totalHoursDay * $employeeBasketZone->employee_basket_zone_day;
+                $totalCostHoursNight = $totalHoursNight * $employeeBasketZone->employee_basket_zone_night;
 
-            return $totalCostHoursDay + $totalCostHoursNight;
+                return $totalCostHoursDay + $totalCostHoursNight;
+            }
+
+            return 0; // If no zone found, return 0
         }
-
-        return 0; // Si aucune zone trouvée, retourne 0
     }
-
 }

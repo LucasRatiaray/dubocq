@@ -1,20 +1,20 @@
 <div class="mx-10 flex justify-center">
-    <div class="bg-white shadow-md rounded-lg p-6 dark:bg-gray-400 min-w-full mb-10">
+    <div class="bg-white shadow-md rounded-md p-6 dark:bg-customGray min-w-full mb-10">
         <!-- Titre avec navigation entre mois -->
-        <div class="text-2xl font-bold flex items-center justify-between border rounded py-6 bg-gray-100">
+        <div class="text-2xl font-bold flex items-center justify-between border rounded py-6 bg-gray-100 dark:bg-customGrayLight dark:border-customGray">
 
             <!-- Code Title à gauche (milieu à gauche) -->
-            <h1 id="code-title" class="flex-1 flex justify-center"></h1>
+            <h1 id="code-title" class="flex-1 flex justify-center dark:text-white"></h1>
 
             <!-- Votre conteneur principal -->
             <div class="flex gap-2 flex-col">
                 <!-- Navigation du mois adaptée -->
-                <nav aria-label="Page navigation example">
+                <nav aria-label="">
                     <ul class="inline-flex -space-x-px text">
                         <!-- Bouton mois précédent -->
                         <li>
-                            <button type="button" id="prev-month-btn" class="group flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-customColor">
-                                <svg class="w-6 h-6 text-gray-900 group-hover:text-white transition-transform duration-100 ease-in-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <button type="button" id="prev-month-btn" class="group flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-md hover:bg-customColor dark:bg-customGray dark:border-customGray dark:hover:border-customColor">
+                                <svg class="w-6 h-6 text-gray-900 group-hover:text-white dark:text-white transition-transform duration-100 ease-in-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
                                 </svg>
                             </button>
@@ -22,15 +22,15 @@
 
                         <!-- Mois et année -->
                         <li>
-                            <span id="month-year" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-900 font-bold text-xl bg-white border border-gray-300 hover:cursor-default"
+                            <span id="month-year" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-900 font-bold text-xl bg-white border border-gray-300 hover:cursor-default dark:bg-customGray dark:border-customGray dark:border-l-gray-500"
                                   style="width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center;">
                             </span>
                         </li>
 
                         <!-- Bouton mois suivant -->
                         <li>
-                            <button type="button" id="next-month-btn" class="group flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-customColor">
-                                <svg class="w-6 h-6 text-gray-900 group-hover:text-white transition-transform duration-100 ease-in-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <button type="button" id="next-month-btn" class="group flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-md hover:bg-customColor dark:bg-customGray dark:border-customGray dark:hover:border-customColor dark:border-l-gray-500">
+                                <svg class="w-6 h-6 text-gray-900 group-hover:text-white dark:text-white transition-transform duration-100 ease-in-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
                                 </svg>
                             </button>
@@ -75,7 +75,7 @@
                 @csrf
                 <div class="flex">
                     <label for="employee" class="sr-only">Choisir un salarié</label>
-                    <select name="employee_id" id="employee" class="w-auto bg-gray-100 border border-gray-300 text-gray-900 font-bold text-sm rounded-lg focus:ring-customColor focus:border-customColor block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-customColor dark:focus:border-customColor">
+                    <select name="employee_id" id="employee" class="w-auto bg-gray-100 border border-gray-300 text-gray-900 font-bold text-sm rounded-md focus:ring-customColor focus:border-customColor block dark:bg-customGrayLight dark:border-customGray dark:placeholder-gray-400 dark:text-white dark:focus:ring-customColor dark:focus:border-customColor">
                         <option selected disabled>Choisir un salarié</option>
                         @foreach ($allEmployees as $employee)
                             <option value="{{ $employee->id }}">{{ $employee->last_name }} {{ $employee->first_name }}</option>
@@ -86,27 +86,27 @@
                 <input type="hidden" name="year" value="{{ $year }}">
                 <input type="hidden" name="hour_type" value="{{ $hourType }}">
                 <div>
-                    <button type="submit" class="bg-gray-100 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">Ajouter un salarié</button>
+                    <button type="submit" class="bg-gray-100 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300 dark:bg-customGrayLight dark:border-customGrayLight dark:text-white">Ajouter un salarié</button>
                 </div>
             </form>
             @if(count($employeeData) > 0)
-            <button id="save" class="bg-gray-100 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300">Sauvegarder</button>
+            <button id="save" class="bg-customColor hover:scale-110 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300 dark:bg-customColor dark:border-customGrayLight dark:text-white dark:hover:scale-110">Sauvegarder</button>
             @endif
         </div>
 
         @if(count($employeeData) > 0)
-        <hr class="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700">
+        <hr class="h-px my-4 bg-gray-200 border-0 dark:bg-gray-500">
 
         <!-- Tableau total des heures -->
         <div class="relative overflow-x-auto">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <caption class="pb-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+                <caption class="pb-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-customGray">
                     Totaux d'heures par salarié
                     <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
                         Ce tableau affiche le total des heures travaillées par salarié pour chaque type d'heure (jour, nuit) durant le mois sélectionné.
                     </p>
                 </caption>
-                <thead class="text-sm text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
+                <thead class="text-sm text-gray-700 uppercase bg-gray-200 dark:bg-customGrayDark dark:text-white">
                 <tr>
                     <th scope="col" class="px-6 py-1">salarié</th>
                     <th scope="col" class="px-6 py-1">Total heures Jour</th>
@@ -126,7 +126,7 @@
                         $totalDayHours += $employee['total_day_hours'];
                         $totalNightHours += $employee['total_night_hours'];
                     @endphp
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <tr class="bg-white border-b dark:bg-customGrayLight dark:border-gray-700 dark:text-white">
                         @if ($employee['archived'])
                             <th scope="row" class="px-6 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 {{ $employee['full_name'] }} <span class="text-xs text-red-500 dark:text-red-400">(Archivé)</span>
@@ -148,7 +148,7 @@
                 @endforeach
 
                 <!-- Ligne de cumul des heures pour tous les salariés -->
-                <tr class="text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
+                <tr class="text-gray-700 uppercase bg-gray-200 dark:bg-customGrayDark dark:text-gray-400">
                     <th scope="row" class="px-6 py-1 font-bold text-gray-700 dark:text-white text-sm">Cumul du mois</th>
                     <td class="px-6 py-1 font-extrabold">
                         {{ $totalDayHours == 0 ? '-' : $totalDayHours.' H' }} <!-- Total cumulé des heures Jour -->
@@ -186,9 +186,9 @@
 
         // Mise à jour du titre
         if (month && year && projectCode && projectBusiness) {
-            document.getElementById('code-title').innerHTML = `<span class="text-black px-2 py-1 uppercase">${projectCode} - ${projectBusiness}</span>`;
-            document.getElementById('month-year').innerHTML = `<span class="text-black px-2 py-1">${months[month - 1]} ${year}</span>`;
-            document.getElementById('zone').innerHTML = `<span class="text-black px-2 py-1 uppercase">Zone ${projectZone}</span>`;
+            document.getElementById('code-title').innerHTML = `<span class="text-black dark:text-white px-2 py-1 uppercase">${projectCode} - ${projectBusiness}</span>`;
+            document.getElementById('month-year').innerHTML = `<span class="text-black dark:text-white px-2 py-1">${months[month - 1]} ${year}</span>`;
+            document.getElementById('zone').innerHTML = `<span class="text-black dark:text-white px-2 py-1 uppercase">Zone ${projectZone}</span>`;
         }
 
         // Obtenir le nombre de jours dans un mois

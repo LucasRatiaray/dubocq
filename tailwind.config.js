@@ -16,6 +16,10 @@ export default {
             },
             colors: {
                 customColor: '#049ce3',
+                customBlack: '#0A0A0BFF',
+                customGrayDark: '#121212FF',
+                customGray: '#1E1E20FF',
+                customGrayLight: '#3C4045FF',
             }
         },
     },

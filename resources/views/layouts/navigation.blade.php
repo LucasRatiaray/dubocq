@@ -1,3 +1,4 @@
+@if(auth()->user()->hasRole('Utilisateur'))
 <nav x-data="{ open: false }" class="bg-white dark:bg-customGrayDark">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -50,7 +51,7 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-white bg-white dark:bg-customGrayLight dark:hover:bg-customColor hover:text-gray-700 dark:hover:text-white focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+                            <div>{{ Auth::user()->firstname }} {{ Auth::user()->name }}</div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -140,3 +141,4 @@
         </div>
     </div>
 </nav>
+@endif

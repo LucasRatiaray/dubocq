@@ -17,4 +17,14 @@ class EditUser extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        // Si le champ mot de passe est vide, on le retire des données à mettre à jour
+        if (empty($data['password'])) {
+            unset($data['password']);
+        }
+
+        return $data;
+    }
 }

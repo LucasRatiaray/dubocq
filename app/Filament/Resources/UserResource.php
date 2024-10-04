@@ -68,9 +68,12 @@ class UserResource extends Resource
                     ->required(),
                 TextInput::make('password')
                     ->label('Mot de passe')
-                    ->required()
                     ->password()
-                    ->placeholder('********'),
+                    ->nullable()  // Rendre le champ nullable
+                    ->dehydrateStateUsing(fn ($state) => $state ? bcrypt($state) : null)  // Hash le mot de passe uniquement s'il est soumis
+                    ->placeholder('*********')
+                    ->required(fn ($record) => !$record)  // Obligatoire seulement à la création
+                    ->visibleOn('create'),
             ]);
     }
 

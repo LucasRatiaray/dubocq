@@ -90,7 +90,7 @@
                 </div>
             </form>
             @if(count($employeeData) > 0)
-            <button id="save" class="bg-customColor hover:scale-110 text-black font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300 dark:bg-customColor dark:border-customGrayLight dark:text-white dark:hover:scale-110">Sauvegarder</button>
+            <button id="save" class="bg-customColor hover:scale-110 text-white font-bold py-2 px-4 rounded text-sm hover:bg-customColor hover:text-white border border-gray-300 dark:bg-customColor dark:border-customGrayLight dark:text-white dark:hover:scale-110">Sauvegarder</button>
             @endif
         </div>
 

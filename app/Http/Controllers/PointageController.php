@@ -39,7 +39,7 @@ class PointageController extends Controller
         $month = $request->input('month');
         $year = $request->input('year');
         $hourType = $request->input('hour_type', 'day_hours');
-        $daysInMonth = \cal_days_in_month(CAL_GREGORIAN, $month, $year);
+        $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 
         // Récupérer les jours non travaillés pour le mois et l'année sélectionnés
         $nonWorkingDays = NonWorkingDay::whereMonth('date', $month)

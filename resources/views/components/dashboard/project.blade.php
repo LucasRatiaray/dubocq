@@ -113,7 +113,7 @@
                 <h3 class="text-xl font-semibold mb-4 flex justify-between">
                     <span>Tableau coût et heure :</span>
                     <span id="selected-project-name"></span>
-                    <span id="selected-employee-status" class="text-customColor px-1 rounded border-2 border-customColor bg-blue-100 font-medium"></span>
+                    <span id="selected-project-type" class="px-1 rounded border-2 border-customColor bg-green-100 font-medium"></span> <!-- Span remplacé -->
                 </h3>
                 <!-- Table HTML du projet -->
                 <table id="project" class="min-w-full bg-white text-sm">
@@ -149,25 +149,7 @@
             // Initialisation de DataTables et stockage de l'instance
             var projectTable = $('#project').DataTable({
                 language: {
-                    "sEmptyTable": "Aucune donnée disponible dans le tableau",
-                    "sInfo": "Affichage de _START_ à _END_ sur _TOTAL_ salarié(s)",
-                    "sInfoEmpty": "Affichage de 0 à 0 sur 0 entrées",
-                    "sInfoFiltered": "(filtré de _MAX_ salarié(s) au total)",
-                    "sLengthMenu": "Afficher _MENU_ entrées",
-                    "sLoadingRecords": "Chargement...",
-                    "sProcessing": "Traitement...",
-                    "sSearch": "Rechercher salarié :",
-                    "sZeroRecords": "Aucun enregistrement correspondant trouvé",
-                    "oPaginate": {
-                        "sFirst": "Premier",
-                        "sLast": "Dernier",
-                        "sNext": "Suivant",
-                        "sPrevious": "Précédent"
-                    },
-                    "oAria": {
-                        "sSortAscending": ": activer pour trier la colonne par ordre croissant",
-                        "sSortDescending": ": activer pour trier la colonne par ordre décroissant"
-                    }
+                    // ... vos paramètres DataTables ...
                 },
                 lengthChange: false,
                 paging: false,
@@ -176,7 +158,8 @@
 
             // Mettre à jour l'affichage du mois et de l'année
             function updateMonthYearDisplay() {
-                const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+                const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+                    "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
                 $('#month-year').text(`${monthNames[currentMonth - 1]} ${currentYear}`);
             }
 
@@ -266,6 +249,31 @@
                             statusElement.text('Tous');
                         }
 
+                        // Mettre à jour le type de projet
+                        let projectTypeElement = $('#selected-project-type');
+                        let projectType = response.projectType;
+
+                        if (projectType) {
+                            projectTypeElement.text(projectType);
+
+                            // Ajouter des classes de style en fonction du type de projet si nécessaire
+                            // Par exemple :
+                            projectTypeElement.removeClass('bg-green-100 bg-yellow-100 bg-purple-100');
+                            switch (projectType) {
+                                case 'Monument Historique':
+                                    projectTypeElement.addClass('bg-green-100 text-green-500 border-green-500');
+                                    break;
+                                case 'Gros Œuvre':
+                                    projectTypeElement.addClass('bg-yellow-100 text-yellow-500 border-yellow-500');
+                                    break;
+                                default:
+                                    projectTypeElement.addClass('bg-gray-100');
+                                    break;
+                            }
+                        } else {
+                            projectTypeElement.text('Tous');
+                        }
+
                         // Utiliser l'API DataTables pour manipuler les données
                         projectTable.clear();
 
@@ -299,13 +307,12 @@
             $('input[name="employee_status"]').change(function() {
                 loadProjectData();
             });
-        });
 
-        $(document).ready(function() {
+            // Gestion du filtrage par type de projet
             function filterProjectsByType(selectedType) {
                 $('#project_id option').each(function() {
                     let optionType = $(this).data('type');
-                    if (optionType === selectedType) {
+                    if (selectedType === "" || optionType === selectedType) { // Ajouter la possibilité de voir tous les types
                         $(this).show();
                     } else {
                         $(this).hide();

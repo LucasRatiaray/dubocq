@@ -91,7 +91,9 @@ class DashboardController extends Controller
             ->where('archived', false)
             ->get();
 
-        return view('components.dashboard.employee', compact('employees'));
+        $projectTypes = Project::select('type')->distinct()->pluck('type');
+
+        return view('components.dashboard.employee', compact('employees', 'projectTypes'));
     }
 
     public function getProjectData(Request $request): JsonResponse
@@ -99,14 +101,17 @@ class DashboardController extends Controller
         $projectId = $request->input('project_id');
         $selectedMonth = $request->input('month'); // Récupérer le mois sélectionné
         $selectedYear = $request->input('year'); // Récupérer l'année sélectionnée
+        $employeeStatus = $request->input('employee_status'); // Récupérer le statut des employés (si fourni)
 
         // Récupérer le projet sélectionné avec les timeTrackings et les employés
-        $project = Project::with('timeTrackings', 'employees')->findOrFail($projectId);
+        $project = Project::with(['timeTrackings', 'employees' => function ($query) use ($employeeStatus) {
+            // Appliquer le filtre de statut si une valeur est spécifiée
+            if (!empty($employeeStatus)) {
+                $query->where('status', $employeeStatus);
+            }
+        }])->findOrFail($projectId);
 
         $employeeCosts = [];
-
-        // Récupérer le nombre total de salariés dans la base de données
-        $totalEmployeesCount = Employee::count();
 
         // Calculer les heures et coûts pour chaque employé du projet
         foreach ($project->employees as $employee) {
@@ -130,15 +135,16 @@ class DashboardController extends Controller
                 'monthly_hours' => $monthlyHours,
                 'monthly_cost' => $monthlyCost,
                 'total_hours' => $totalHours,
-                'total_cost' => $totalCost
+                'total_cost' => $totalCost,
+                'employee_status' => $employee->status // Ajouter le statut de l'employé ici
             ];
         }
 
         // Retourner les données au format JSON
         return response()->json([
             'employeeCosts' => $employeeCosts,
-            'totalEmployeesCount' => $totalEmployeesCount,
-            'projectType' => $project->type
+            'projectType' => $project->type,
+            'employeeStatus' => $employeeStatus // Retourner également le statut sélectionné
         ]);
     }
 
@@ -147,6 +153,7 @@ class DashboardController extends Controller
         $employeeId = $request->input('employee_id');
         $selectedMonth = $request->input('month'); // Récupérer le mois sélectionné
         $selectedYear = $request->input('year'); // Récupérer l'année sélectionnée
+        $projectType = $request->input('project_type'); // Récupérer le type de chantier (si fourni)
 
         // Récupérer l'employé avec ses timeTrackings et les projets associés
         $employee = Employee::with(['timeTrackings' => function ($query) use ($selectedMonth, $selectedYear) {
@@ -158,6 +165,11 @@ class DashboardController extends Controller
 
         // Parcourir chaque projet sur lequel l'employé a travaillé
         foreach ($employee->projects as $project) {
+            // Appliquer le filtre de type de chantier si spécifié
+            if (!empty($projectType) && $project->type !== $projectType) {
+                continue; // Ignorer ce projet si le type ne correspond pas
+            }
+
             // Récupérer les timeTrackings pour ce projet
             $timeTrackings = $employee->timeTrackings->where('project_id', $project->id);
 
@@ -198,10 +210,14 @@ class DashboardController extends Controller
         // Récupérer l'employé
         $employee = Employee::findOrFail($employeeId);
 
-        // Récupérer les projets de l'employé du type sélectionné
-        $projects = $employee->projects()
-            ->where('type', $projectType)
-            ->get();
+        // Récupérer les projets de l'employé du type sélectionné si spécifié
+        $projects = $employee->projects();
+
+        if (!empty($projectType)) {
+            $projects->where('type', $projectType);
+        }
+
+        $projects = $projects->get();
 
         $projectData = [];
 
@@ -224,7 +240,7 @@ class DashboardController extends Controller
             $totalHoursYear = $timeTrackingsYear->sum('day_hours') + $timeTrackingsYear->sum('night_hours');
 
             // Calcul du coût total pour l'année pour ce projet
-            $totalCostYear = $employee->getEmployeeCost($timeTrackingsYear);
+            $totalCostYear = $employee->getEmployeeCost($timeTrackingsYear, $project->zone_id);
 
             // Ajouter les données pour ce projet seulement si l'employé a travaillé dessus
             if ($totalHoursMonth > 0 || $totalHoursYear > 0) {

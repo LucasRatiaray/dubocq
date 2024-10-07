@@ -66,10 +66,10 @@
                 <!-- Content Box 1: prend 2 colonnes : Table -->
                 <div class="bg-white p-6 rounded-lg shadow-md col-span-2">
                     <h3 class="text-xl font-semibold mb-4 flex justify-between">
-                        <span>Tableau des coûts par chantier</span>
+                        <span>Tableau des heures par chantier</span>
                         <span>{{ now()->translatedFormat('F Y') }}</span>
                     </h3>
-                    <!-- Table HTML des heures -->
+                    <!-- Table HTML des heures avec total -->
                     <table id="hourProjectsTable" class="min-w-full bg-white text-sm">
                         <thead>
                         <tr class="w-full">
@@ -80,15 +80,32 @@
                         </tr>
                         </thead>
                         <tbody>
+                        @php
+                            $totalHoursThisMonth = 0;
+                            $totalHoursAllTime = 0;
+                        @endphp
                         @foreach($projects as $project)
+                            @php
+                                $hoursThisMonth = $project->getHoursThisMonth();
+                                $totalHours = $project->getTotalHours();
+                                $totalHoursThisMonth += $hoursThisMonth;
+                                $totalHoursAllTime += $totalHours;
+                            @endphp
                             <tr class="border-b border-stroke">
                                 <td class="py-1 px-2">{{ $project->code }}</td>
                                 <td class="py-1 px-2">{{ $project->business }} - {{ $project->city }}</td>
-                                <td class="py-1 px-2 text-center">{{ $project->getHoursThisMonth() == 0 ? '-' : $project->getHoursThisMonth().' H' }}</td>
-                                <td class="py-1 px-2 text-center">{{ $project->getTotalHours() == 0 ? '-' : $project->getTotalHours().' H' }}</td>
+                                <td class="py-1 px-2 text-center">{{ $hoursThisMonth == 0 ? '-' : $hoursThisMonth.' H' }}</td>
+                                <td class="py-1 px-2 text-center">{{ $totalHours == 0 ? '-' : $totalHours.' H' }}</td>
                             </tr>
                         @endforeach
                         </tbody>
+                        <tfoot>
+                        <tr class="font-bold border-t border-stroke">
+                            <td class="py-1 px-2 text-left" colspan="2">Total</td>
+                            <td class="py-1 px-2 text-center">{{ $totalHoursThisMonth == 0 ? '-' : $totalHoursThisMonth.' H' }}</td>
+                            <td class="py-1 px-2 text-center">{{ $totalHoursAllTime == 0 ? '-' : $totalHoursAllTime.' H' }}</td>
+                        </tr>
+                        </tfoot>
                     </table>
                 </div>
                 <!-- Content Box 2 : Chart -->
@@ -109,7 +126,7 @@
                         <span>Tableau des coûts par chantier</span>
                         <span>{{ now()->translatedFormat('F Y') }}</span>
                     </h3>
-                    <!-- Table HTML des coûts -->
+                    <!-- Table HTML des coûts avec total -->
                     <table id="costProjectsTable" class="min-w-full bg-white text-sm">
                         <thead>
                         <tr class="w-full">
@@ -120,19 +137,36 @@
                         </tr>
                         </thead>
                         <tbody>
+                        @php
+                            $totalCostThisMonth = 0;
+                            $totalCostAllTime = 0;
+                        @endphp
                         @foreach($projects as $project)
+                            @php
+                                $monthlyCost = $project->calculateMonthlyCost();
+                                $totalCost = $project->calculateTotalCost();
+                                $totalCostThisMonth += $monthlyCost;
+                                $totalCostAllTime += $totalCost;
+                            @endphp
                             <tr class="border-b border-stroke">
                                 <td class="py-1 px-2">{{ $project->code }}</td>
                                 <td class="py-1 px-2">{{ $project->business }} - {{ $project->city }}</td>
                                 <td class="py-1 px-2 text-center">
-                                    {{ $project->calculateMonthlyCost() == 0 ? '-' : number_format($project->calculateMonthlyCost(), 2).' €' }}
+                                    {{ $monthlyCost == 0 ? '-' : number_format($monthlyCost, 2).' €' }}
                                 </td>
                                 <td class="py-1 px-2 text-center">
-                                    {{ $project->calculateTotalCost() == 0 ? '-' : number_format($project->calculateTotalCost(), 2).' €' }}
+                                    {{ $totalCost == 0 ? '-' : number_format($totalCost, 2).' €' }}
                                 </td>
                             </tr>
                         @endforeach
                         </tbody>
+                        <tfoot>
+                        <tr class="font-bold border-t border-stroke">
+                            <td class="py-1 px-2 text-left" colspan="2">Total</td>
+                            <td class="py-1 px-2 text-center">{{ $totalCostThisMonth == 0 ? '-' : number_format($totalCostThisMonth, 2).' €' }}</td>
+                            <td class="py-1 px-2 text-center">{{ $totalCostAllTime == 0 ? '-' : number_format($totalCostAllTime, 2).' €' }}</td>
+                        </tr>
+                        </tfoot>
                     </table>
                 </div>
                 <!-- Content Box 2 : Chart -->

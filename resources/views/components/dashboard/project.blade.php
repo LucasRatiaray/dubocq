@@ -45,6 +45,7 @@
         <main class="flex-1 p-6 pt-4">
             <div class="flex gap-2 flex-col mb-2">
                 <!-- Formulaire Chantier -->
+                <!-- Formulaire Chantier -->
                 <form class="flex items-center gap-5" action="{{ route('dashboard.showProject') }}" method="GET">
                     @csrf
                     <div class="flex">
@@ -52,21 +53,28 @@
                         <select name="project_id" id="project_id" class="w-auto bg-white border border-gray-300 text-gray-900 font-bold text-sm rounded-lg focus:ring-customColor focus:border-customColor block" required>
                             <option disabled selected value="">Choisir un chantier</option>
                             @foreach($projects as $project)
-                                <option value="{{ $project->id }}" data-type="{{ $project->type }}">{{ $project->code }} - {{ $project->business }} - {{ $project->city }}</option>
+                                <option value="{{ $project->id }}">{{ $project->code }} - {{ $project->business }} - {{ $project->city }}</option>
                             @endforeach
                         </select>
                     </div>
 
-                    <!-- Radio pour filtrer le type de chantier -->
-                    <div class="flex items-center ps-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
-                        <input id="radio-monument" type="radio" value="Monument Historique" name="project-type" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor" checked>
-                        <label for="radio-monument" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">Monument Historique</label>
+                    <!-- Boutons radio pour filtrer par statut des salariés -->
+                    <div class="flex items-center ps-4 pe-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
+                        <input id="radio-all" type="radio" value="" name="employee_status" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor" checked>
+                        <label for="radio-all" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">Tous</label>
                     </div>
-                    <div class="flex items-center ps-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
-                        <input id="radio-gros-oeuvre" type="radio" value="Gros Œuvre" name="project-type" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor">
-                        <label for="radio-gros-oeuvre" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">Gros Œuvre</label>
+                    <div class="flex items-center ps-4 pe-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
+                        <input id="radio-ouvrier" type="radio" value="OUVRIER" name="employee_status" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor">
+                        <label for="radio-ouvrier" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">OUVRIER</label>
                     </div>
-
+                    <div class="flex items-center ps-4 pe-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
+                        <input id="radio-etam" type="radio" value="ETAM" name="employee_status" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor">
+                        <label for="radio-etam" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">ETAM</label>
+                    </div>
+                    <div class="flex items-center ps-4 pe-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
+                        <input id="radio-interimaire" type="radio" value="INTERIMAIRE" name="employee_status" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor">
+                        <label for="radio-interimaire" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">INTERIMAIRE</label>
+                    </div>
                 </form>
 
                 <!-- Navigation du mois -->
@@ -105,7 +113,7 @@
                 <h3 class="text-xl font-semibold mb-4 flex justify-between">
                     <span>Tableau coût et heure :</span>
                     <span id="selected-project-name"></span>
-                    <span id="selected-project-type" class="text-customColor px-1 rounded border-2 border-customColor bg-blue-100 font-medium"></span>
+                    <span id="selected-employee-status" class="text-customColor px-1 rounded border-2 border-customColor bg-blue-100 font-medium"></span>
                 </h3>
                 <!-- Table HTML du projet -->
                 <table id="project" class="min-w-full bg-white text-sm">
@@ -162,7 +170,6 @@
                     }
                 },
                 lengthChange: false,
-/*                searching: false, */
                 paging: false,
                 info: false
             });
@@ -199,10 +206,11 @@
                 loadProjectData();
             });
 
-            // Fonction pour charger les données du projet sélectionné en fonction du mois et de l'année
+            // Fonction pour charger les données du projet sélectionné en fonction du mois, de l'année, et du statut des employés
             function loadProjectData() {
                 let projectId = $('#project_id').val();
-                let projectName = $('#project_id option:selected').text(); // ICI D'OU VIENT LE PROJECTNAME ?
+                let projectName = $('#project_id option:selected').text();
+                let employeeStatus = $('input[name="employee_status"]:checked').val(); // Statut de l'employé sélectionné
                 let url = "{{ route('dashboard.getProjectData') }}";
                 let token = $('input[name="_token"]').val();
 
@@ -214,7 +222,7 @@
                 // Afficher le tableau
                 $('#project-table-container').show();
 
-                // Envoyer la requête AJAX avec le mois et l'année sélectionnés
+                // Envoyer la requête AJAX avec le mois, l'année et le statut sélectionné
                 $.ajax({
                     url: url,
                     method: 'POST',
@@ -222,13 +230,41 @@
                         project_id: projectId,
                         month: currentMonth,
                         year: currentYear,
+                        employee_status: employeeStatus,
                         _token: token
                     },
                     success: function(response) {
                         console.log(response); // Pour déboguer
 
-                        $('#selected-project-type').text(response.projectType && response.projectType === 'Monument Historique' ? 'MO' : 'GO');
-/*                        $('#selected-project-type').text(response.projectType ? response.projectType : '');*/
+                        // Mettre à jour le statut de l'employé
+                        let statusElement = $('#selected-employee-status');
+                        let employeeStatus = response.employeeStatus;
+
+                        if (employeeStatus) {
+                            statusElement.text(employeeStatus);
+
+                            // Retirer les anciennes classes de statut
+                            statusElement.removeClass('text-green-500 text-red-500 text-blue-500 border-green-500 border-red-500 border-blue-500 bg-red-100 bg-green-100 bg-blue-100');
+
+                            // Ajouter les classes en fonction du statut
+                            switch (employeeStatus) {
+                                case 'OUVRIER':
+                                    statusElement.addClass('text-green-500 border-green-500 bg-green-100');
+                                    break;
+                                case 'ETAM':
+                                    statusElement.addClass('text-red-500 border-red-500 bg-red-100');
+                                    break;
+                                case 'INTERIMAIRE':
+                                    statusElement.addClass('text-blue-500 border-blue-500 bg-blue-100');
+                                    break;
+                                default:
+                                    // Classe pour un statut inconnu
+                                    statusElement.addClass('text-gray-500 border-gray-500 bg-gray-100');
+                                    break;
+                            }
+                        } else {
+                            statusElement.text('Tous');
+                        }
 
                         // Utiliser l'API DataTables pour manipuler les données
                         projectTable.clear();
@@ -256,6 +292,11 @@
 
             // Lorsque l'utilisateur sélectionne un projet, charger les données pour le mois en cours
             $('#project_id').change(function() {
+                loadProjectData();
+            });
+
+            // Lorsque l'utilisateur change de statut via les boutons radio, recharger les données
+            $('input[name="employee_status"]').change(function() {
                 loadProjectData();
             });
         });

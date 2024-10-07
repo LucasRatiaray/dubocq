@@ -3,10 +3,13 @@
 namespace App\Policies;
 
 use App\Models\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 
 class UserPolicy
 {
+    use HandlesAuthorization;
+
     /**
      * Determine whether the user can view any models.
      */
@@ -37,6 +40,18 @@ class UserPolicy
     public function update(User $user, User $model): bool
     {
         return $user->hasRole('Super Admin');
+    }
+
+    /**
+     * Déterminer si l'utilisateur peut mettre à jour son mot de passe.
+     *
+     * @param  \App\Models\User  $user
+     * @return mixed
+     */
+    public function updatePassword(User $user): Response
+    {
+        // Autoriser l'utilisateur à mettre à jour son propre mot de passe
+        return true;
     }
 
     /**

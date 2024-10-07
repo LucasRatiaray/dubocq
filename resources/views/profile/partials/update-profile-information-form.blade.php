@@ -56,8 +56,8 @@
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600 dark:text-gray-400"
-                >{{ __('Saved.') }}</p>
+                    class="font-bold text-sm text-white dark:text-white bg-green-500 px-2 py-2 rounded-lg"
+                >{{ __('Sauvegarder.') }}</p>
             @endif
         </div>
     </form>

@@ -25,6 +25,7 @@
                             Tableau de bord
                         </x-side-link>
                     </li>
+                    @if(auth()->user()->hasRole('Administrateur') || auth()->user()->hasRole('Super Admin') || auth()->user()->hasRole('Conducteur'))
                     <li class="mb-2">
                         <x-side-link href="{{ route('dashboard.showProject') }}"
                                      :active="request()->routeIs('dashboard.showProject')" class="flex">
@@ -42,6 +43,8 @@
                             Par Chantier
                         </x-side-link>
                     </li>
+                    @endif
+                    @if(auth()->user()->hasRole('Administrateur') || auth()->user()->hasRole('Super Admin'))
                     <li class="mb-2">
                         <x-side-link href="{{  route('dashboard.showEmployee') }}"
                                      :active="request()->routeIs('dashboard.showEmployee')" class="flex">
@@ -56,6 +59,7 @@
                             Par Salarié
                         </x-side-link>
                     </li>
+                    @endif
                 </ul>
             </nav>
         </aside>

@@ -36,7 +36,7 @@
                 @endif
 
                 <!-- Lien Tableau de bord : Visible uniquement pour les administrateurs et super admin -->
-                @if(auth()->user()->hasRole('Administrateur') || auth()->user()->hasRole('Super Admin'))
+                @if(auth()->user()->hasRole('Administrateur') || auth()->user()->hasRole('Super Admin') || auth()->user()->hasRole('Conducteur'))
                     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                         <x-nav-link :href="route('dashboard.show')" :active="request()->routeIs('dashboard.*')">
                             {{ __('Tableau de bord') }}

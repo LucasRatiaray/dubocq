@@ -136,7 +136,7 @@
                 <h3 class="text-xl font-semibold mb-4 flex justify-between">
                     <span>Tableau coût et heure :</span>
                     <span id="selected-project-name"></span>
-                    <span id="selected-project-type" class="px-1 rounded border-2 border-customColor bg-green-100 font-medium"></span> <!-- Span remplacé -->
+                    <span id="selected-project-type" class="px-1 rounded border-2 font-medium"></span>
                 </h3>
                 <!-- Table HTML du projet -->
                 <table id="project" class="min-w-full bg-white text-sm">

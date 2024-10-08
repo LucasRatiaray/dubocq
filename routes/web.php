@@ -39,7 +39,6 @@ Route::middleware(['auth', 'role:Super Admin,Administrateur'])->group(function (
 
     // Additional Dashboard Routes
     Route::get('/dashboard/employee', [DashboardController::class, 'showEmployee'])->name('dashboard.showEmployee');
-    Route::post('/dashboard/project-data', [DashboardController::class, 'getProjectData'])->name('dashboard.getProjectData');
     Route::post('/dashboard/employee-data', [DashboardController::class, 'getEmployeeData'])->name('dashboard.getEmployeeData');
     Route::post('/dashboard/get-employee-project-type-data', [DashboardController::class, 'getEmployeeProjectTypeData'])->name('dashboard.getEmployeeProjectTypeData');
 });

@@ -27,6 +27,7 @@ Route::middleware(['auth', 'role:Super Admin,Administrateur,Conducteur'])->group
     // Dashboard Routes Accessible by Conducteur
     Route::get('/dashboard', [DashboardController::class, 'show'])->name('dashboard.show');
     Route::get('/dashboard/projects', [DashboardController::class, 'showProject'])->name('dashboard.showProject');
+    Route::post('/dashboard/project-data', [DashboardController::class, 'getProjectData'])->name('dashboard.getProjectData');
 });
 
 // Dashboard Routes Accessible Only by Super Admin and Administrateur

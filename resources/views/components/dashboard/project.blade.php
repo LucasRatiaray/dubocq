@@ -136,7 +136,7 @@
                 <h3 class="text-xl font-semibold mb-4 flex justify-between">
                     <span>Tableau coût et heure :</span>
                     <span id="selected-project-name"></span>
-                    <span id="selected-project-type" class="px-1 rounded border-2 font-medium"></span>
+                    <span id="selected-project-type" class="px-1 font-medium rounded"></span>
                 </h3>
                 <!-- Table HTML du projet -->
                 <table id="project" class="min-w-full bg-white text-sm">
@@ -265,7 +265,7 @@
                                     break;
                                 default:
                                     // Classe pour un statut inconnu
-                                    statusElement.addClass('text-gray-500 border-gray-500 bg-gray-100');
+                                    statusElement.addClass('');
                                     break;
                             }
                         } else {
@@ -279,20 +279,17 @@
                         if (projectType) {
                             projectTypeElement.text(projectType);
 
-                            // Ajouter des classes de style en fonction du type de projet si nécessaire
-                            // Par exemple :
-                            projectTypeElement.removeClass('bg-green-100 bg-yellow-100 bg-purple-100');
                             switch (projectType) {
                                 case 'Monument Historique':
-                                    projectTypeElement.removeClass('bg-yellow-100 text-yellow-500 border-yellow-500');
-                                    projectTypeElement.addClass('bg-green-100 text-green-500 border-green-500');
+                                    projectTypeElement.removeClass('bg-yellow-100 text-yellow-500 border-yellow-500 border-2');
+                                    projectTypeElement.addClass('bg-green-100 text-green-500 border-green-500 border-2');
                                     break;
                                 case 'Gros Œuvre':
-                                    projectTypeElement.removeClass('bg-green-100 text-green-500 border-green-500');
-                                    projectTypeElement.addClass('bg-yellow-100 text-yellow-500 border-yellow-500');
+                                    projectTypeElement.removeClass('bg-green-100 text-green-500 border-green-500 border-2');
+                                    projectTypeElement.addClass('bg-yellow-100 text-yellow-500 border-yellow-500 border-2');
                                     break;
                                 default:
-                                    projectTypeElement.addClass('bg-gray-100');
+                                    projectTypeElement.addClass('');
                                     break;
                             }
                         } else {

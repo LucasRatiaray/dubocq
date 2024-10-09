@@ -99,13 +99,12 @@ class DashboardController extends Controller
     public function getProjectData(Request $request): JsonResponse
     {
         $projectId = $request->input('project_id');
-        $selectedMonth = $request->input('month'); // Récupérer le mois sélectionné
-        $selectedYear = $request->input('year'); // Récupérer l'année sélectionnée
-        $employeeStatus = $request->input('employee_status'); // Récupérer le statut des employés (si fourni)
+        $selectedMonth = $request->input('month');
+        $selectedYear = $request->input('year');
+        $employeeStatus = $request->input('employee_status');
 
-        // Récupérer le projet sélectionné avec les timeTrackings et les employés
+        // Récupérer le projet avec les employés filtrés par statut
         $project = Project::with(['timeTrackings', 'employees' => function ($query) use ($employeeStatus) {
-            // Appliquer le filtre de statut si une valeur est spécifiée
             if (!empty($employeeStatus)) {
                 $query->where('status', $employeeStatus);
             }
@@ -115,7 +114,6 @@ class DashboardController extends Controller
 
         // Calculer les heures et coûts pour chaque employé du projet
         foreach ($project->employees as $employee) {
-            // Récupérer les timeTrackings pour le mois sélectionné
             $timeTrackingsThisMonth = $employee->timeTrackings()
                 ->where('project_id', $project->id)
                 ->whereMonth('date', $selectedMonth)
@@ -125,7 +123,6 @@ class DashboardController extends Controller
             $monthlyCost = $employee->getEmployeeCost($timeTrackingsThisMonth);
             $monthlyHours = $employee->getTotalHours($timeTrackingsThisMonth);
 
-            // Récupérer tous les timeTrackings depuis le début
             $timeTrackingsAllTime = $employee->timeTrackings()->where('project_id', $project->id)->get();
             $totalCost = $employee->getEmployeeCost($timeTrackingsAllTime);
             $totalHours = $employee->getTotalHours($timeTrackingsAllTime);
@@ -136,19 +133,29 @@ class DashboardController extends Controller
                 'monthly_cost' => $monthlyCost,
                 'total_hours' => $totalHours,
                 'total_cost' => $totalCost,
-                'employee_status' => $employee->status // Ajouter le statut de l'employé ici
+                'employee_status' => $employee->status
             ];
         }
+
+        // Calculer les totaux
+        $totalMonthlyHours = collect($employeeCosts)->sum('monthly_hours');
+        $totalMonthlyCost = collect($employeeCosts)->sum('monthly_cost');
+        $totalHours = collect($employeeCosts)->sum('total_hours');
+        $totalCost = collect($employeeCosts)->sum('total_cost');
 
         // Retourner les données au format JSON
         return response()->json([
             'employeeCosts' => $employeeCosts,
             'projectType' => $project->type,
-            'employeeStatus' => $employeeStatus // Retourner également le statut sélectionné
+            'employeeStatus' => $employeeStatus,
+            'totalMonthlyHours' => $totalMonthlyHours,
+            'totalMonthlyCost' => $totalMonthlyCost,
+            'totalHours' => $totalHours,
+            'totalCost' => $totalCost,
         ]);
     }
 
-    public function getEmployeeData(Request $request)
+    public function getEmployeeData(Request $request): JsonResponse
     {
         $employeeId = $request->input('employee_id');
         $selectedMonth = $request->input('month'); // Récupérer le mois sélectionné
@@ -193,9 +200,17 @@ class DashboardController extends Controller
             ];
         }
 
+        // Calculer les totaux des heures et des coûts
+        $totalDayHours = array_sum(array_column($projectData, 'day_hours'));
+        $totalNightHours = array_sum(array_column($projectData, 'night_hours'));
+        $totalCost = array_sum(array_column($projectData, 'cost'));
+
         // Retourner les données au format JSON
         return response()->json([
             'projectData' => $projectData,
+            'totalDayHours' => $totalDayHours,
+            'totalNightHours' => $totalNightHours,
+            'totalCost' => $totalCost,
             'employeeStatus' => $employee->status
         ]);
     }

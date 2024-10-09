@@ -46,7 +46,7 @@
                     @endif
                     @if(auth()->user()->hasRole('Administrateur') || auth()->user()->hasRole('Super Admin'))
                         <li class="mb-2">
-                            <x-side-link href="{{  route('dashboard.showEmployee') }}"
+                            <x-side-link href="{{ route('dashboard.showEmployee') }}"
                                          :active="request()->routeIs('dashboard.showEmployee')" class="flex">
                                 <svg
                                     class="{{ request()->routeIs('dashboard.showEmployee') ? 'h-6 w-6 text-customColor' : 'h-6 w-6 text-gray-400' }} mr-3"
@@ -67,7 +67,7 @@
         <!-- Main Content -->
         <main class="flex-1 p-6 pt-4">
             <div class="flex gap-2 flex-col mb-2">
-                <!-- Formulaire de Filtrage -->
+                <!-- Formulaire de Filtrage par Type de Projet -->
                 <form class="flex items-center gap-5" action="{{ route('dashboard.showEmployee') }}" method="GET">
                     @csrf
                     <div class="flex">
@@ -126,14 +126,14 @@
                 </nav>
             </div>
 
-            <!-- Conteneur du premier tableau -->
+            <!-- Conteneur du tableau -->
             <div id="employee-table-container" class="bg-white p-6 rounded-lg shadow-md col-span-2 mb-10" hidden>
                 <h3 class="text-xl font-semibold mb-4 flex justify-between">
                     <span>Heures et coûts par salarié :</span>
                     <span id="selected-employee-name"></span>
                     <span id="selected-employee-status" class=""></span>
                 </h3>
-                <!-- Table HTML du salarié -->
+                <!-- Table HTML du salarié avec ligne total -->
                 <table id="employee-table" class="min-w-full bg-white text-sm">
                     <thead>
                     <tr class="w-full">
@@ -141,14 +141,22 @@
                         <th class="py-1 px-2 text-left">Chantier</th>
                         <th class="py-1 px-2 text-left">Heures Jour</th>
                         <th class="py-1 px-2 text-left">Heures Nuit</th>
-                        <th class="py-1 px-2 text-left">Coût pour le mois</th>
+                        <th class="py-1 px-2 text-left">Coût pour le mois (€)</th>
                     </tr>
                     </thead>
                     <tbody>
                     </tbody>
+                    <tfoot>
+                    <tr class="font-bold border-t border-stroke">
+                        <td class="py-1 px-2 text-left">Total</td>
+                        <td></td>
+                        <td class="py-1 px-2 text-left" id="total-day-hours">-</td>
+                        <td class="py-1 px-2 text-left" id="total-night-hours">-</td>
+                        <td class="py-1 px-2 text-left" id="total-monthly-cost">-</td>
+                    </tr>
+                    </tfoot>
                 </table>
             </div>
-
         </main>
     </div>
 
@@ -165,13 +173,13 @@
             let currentMonth = new Date().getMonth() + 1;
             let currentYear = new Date().getFullYear();
 
-            // Initialisation de DataTables et stockage de l'instance
+            // Initialisation de DataTables sans footerCallback
             var employeeTable = $('#employee-table').DataTable({
                 language: {
                     "sEmptyTable": "Aucune donnée disponible dans le tableau",
-                    "sInfo": "Affichage de _START_ à _END_ sur _TOTAL_ chantiers",
+                    "sInfo": "Affichage de _START_ à _END_ sur _TOTAL_ chantier(s)",
                     "sInfoEmpty": "Affichage de 0 à 0 sur 0 entrées",
-                    "sInfoFiltered": "(filtré de _MAX_ chantiers au total)",
+                    "sInfoFiltered": "(filtré de _MAX_ chantier(s) au total)",
                     "sLengthMenu": "Afficher _MENU_ entrées",
                     "sLoadingRecords": "Chargement...",
                     "sProcessing": "Traitement...",
@@ -190,12 +198,14 @@
                 },
                 lengthChange: false,
                 paging: false,
-                info: false
+                info: false,
+                ordering: false, // Désactiver le tri si non nécessaire
             });
 
             // Mettre à jour l'affichage du mois et de l'année
             function updateMonthYearDisplay() {
-                const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+                const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+                    "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
                 $('#month-year').text(`${monthNames[currentMonth - 1]} ${currentYear}`);
             }
 
@@ -231,7 +241,7 @@
                 let employeeName = $('#employee_id option:selected').text();
                 let projectType = $('input[name="project-type"]:checked').val();
                 let url = "{{ route('dashboard.getEmployeeData') }}";
-                let token = $('input[name="_token"]').val();
+                let token = '{{ csrf_token() }}';
 
                 if (!employeeId) return;
 
@@ -279,6 +289,11 @@
                                 break;
                         }
 
+                        // Mettre à jour les totaux dans le footer
+                        $('#total-day-hours').html(response.totalDayHours > 0 ? response.totalDayHours + ' H' : '-');
+                        $('#total-night-hours').html(response.totalNightHours > 0 ? response.totalNightHours + ' H' : '-');
+                        $('#total-monthly-cost').html(response.totalCost > 0 ? response.totalCost.toFixed(2) + ' €' : '-');
+
                         // Utiliser l'API DataTables pour manipuler les données
                         employeeTable.clear();
 
@@ -287,9 +302,9 @@
                                 employeeTable.row.add([
                                     project.project_code,
                                     `${project.project_name} - ${project.project_city}`,
-                                    project.day_hours > 0 ? project.day_hours + ' H' : '-',
-                                    project.night_hours > 0 ? project.night_hours + ' H' : '-',
-                                    project.cost > 0 ? project.cost.toFixed(2) + ' €' : '-'
+                                    project.day_hours > 0 ? project.day_hours + ' H' : '-', // Heures Jour
+                                    project.night_hours > 0 ? project.night_hours + ' H' : '-', // Heures Nuit
+                                    project.cost > 0 ? project.cost.toFixed(2) + ' €' : '-' // Coût pour le mois
                                 ]);
                             });
                         }
@@ -303,11 +318,12 @@
                 });
             }
 
-            // Événements pour recharger les données
+            // Lorsque l'utilisateur sélectionne un salarié, charger les données pour le mois en cours
             $('#employee_id').change(function() {
                 loadEmployeeData();
             });
 
+            // Lorsque l'utilisateur change de type de projet via les boutons radio, recharger les données
             $('input[name="project-type"]').change(function() {
                 loadEmployeeData(); // Appliquer le filtre sur le premier tableau
             });

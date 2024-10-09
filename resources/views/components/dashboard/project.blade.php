@@ -1,3 +1,4 @@
+{{--project.blade.php--}}
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -46,7 +47,7 @@
                     @endif
                     @if(auth()->user()->hasRole('Administrateur') || auth()->user()->hasRole('Super Admin'))
                         <li class="mb-2">
-                            <x-side-link href="{{  route('dashboard.showEmployee') }}"
+                            <x-side-link href="{{ route('dashboard.showEmployee') }}"
                                          :active="request()->routeIs('dashboard.showEmployee')" class="flex">
                                 <svg
                                     class="{{ request()->routeIs('dashboard.showEmployee') ? 'h-6 w-6 text-customColor' : 'h-6 w-6 text-gray-400' }} mr-3"
@@ -67,8 +68,7 @@
         <!-- Main Content -->
         <main class="flex-1 p-6 pt-4">
             <div class="flex gap-2 flex-col mb-2">
-                <!-- Formulaire Chantier -->
-                <!-- Formulaire Chantier -->
+                <!-- Formulaire de Filtrage par Statut des Employés -->
                 <form class="flex items-center gap-5" action="{{ route('dashboard.showProject') }}" method="GET">
                     @csrf
                     <div class="flex">
@@ -138,19 +138,29 @@
                     <span id="selected-project-name"></span>
                     <span id="selected-project-type" class="px-1 font-medium rounded"></span>
                 </h3>
-                <!-- Table HTML du projet -->
+                <!-- Table HTML du projet avec ligne total -->
                 <table id="project" class="min-w-full bg-white text-sm">
                     <thead>
                     <tr class="w-full">
                         <th class="py-1 px-2 text-left">Salariés</th>
                         <th class="py-1 px-2 text-left">Heures pour le mois</th>
-                        <th class="py-1 px-2 text-left">Coûts pour le mois</th>
+                        <th class="py-1 px-2 text-left">Coûts pour le mois (€)</th>
                         <th class="py-1 px-2 text-left">Heures depuis le début</th>
-                        <th class="py-1 px-2 text-left">Coût depuis le début</th>
+                        <th class="py-1 px-2 text-left">Coût depuis le début (€)</th>
                     </tr>
                     </thead>
                     <tbody>
                     </tbody>
+                    <tfoot>
+                    <tr class="font-bold border-t border-stroke">
+                        <td class="py-1 px-2 text-left">Total</td>
+                        <td class="py-1 px-2 text-left" id="total-monthly-hours">-</td>
+                        <td class="py-1 px-2 text-left" id="total-monthly-cost">-</td>
+                        <td class="py-1 px-2 text-left" id="total-hours">-</td>
+                        <td class="py-1 px-2 text-left" id="total-cost">-</td>
+                    </tr>
+                    </tfoot>
+
                 </table>
             </div>
         </main>
@@ -169,14 +179,33 @@
             let currentMonth = new Date().getMonth() + 1;
             let currentYear = new Date().getFullYear();
 
-            // Initialisation de DataTables et stockage de l'instance
+            // Initialisation de DataTables sans footerCallback
             var projectTable = $('#project').DataTable({
                 language: {
-                    // ... vos paramètres DataTables ...
+                    "sEmptyTable": "Aucune donnée disponible dans le tableau",
+                    "sInfo": "Affichage de _START_ à _END_ sur _TOTAL_ chantier(s)",
+                    "sInfoEmpty": "Affichage de 0 à 0 sur 0 entrées",
+                    "sInfoFiltered": "(filtré de _MAX_ chantier(s) au total)",
+                    "sLengthMenu": "Afficher _MENU_ entrées",
+                    "sLoadingRecords": "Chargement...",
+                    "sProcessing": "Traitement...",
+                    "sSearch": "Rechercher :",
+                    "sZeroRecords": "Aucun enregistrement correspondant trouvé",
+                    "oPaginate": {
+                        "sFirst": "Premier",
+                        "sLast": "Dernier",
+                        "sNext": "Suivant",
+                        "sPrevious": "Précédent"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": activer pour trier la colonne par ordre croissant",
+                        "sSortDescending": ": activer pour trier la colonne par ordre décroissant"
+                    }
                 },
                 lengthChange: false,
                 paging: false,
-                info: false
+                info: false,
+                ordering: false,
             });
 
             // Mettre à jour l'affichage du mois et de l'année
@@ -218,7 +247,7 @@
                 let projectName = $('#project_id option:selected').text();
                 let employeeStatus = $('input[name="employee_status"]:checked').val(); // Statut de l'employé sélectionné
                 let url = "{{ route('dashboard.getProjectData') }}";
-                let token = $('input[name="_token"]').val();
+                let token = '{{ csrf_token() }}';
 
                 if (!projectId) return;
 
@@ -296,6 +325,12 @@
                             projectTypeElement.text('Tous');
                         }
 
+                        // Mettre à jour les totaux dans le footer
+                        $('#total-monthly-hours').html(response.totalMonthlyHours > 0 ? response.totalMonthlyHours + ' H' : '-');
+                        $('#total-monthly-cost').html(response.totalMonthlyCost > 0 ? response.totalMonthlyCost.toFixed(2) + ' €' : '-');
+                        $('#total-hours').html(response.totalHours > 0 ? response.totalHours + ' H' : '-');
+                        $('#total-cost').html(response.totalCost > 0 ? response.totalCost.toFixed(2) + ' €' : '-');
+
                         // Utiliser l'API DataTables pour manipuler les données
                         projectTable.clear();
 
@@ -303,10 +338,10 @@
                             $.each(response.employeeCosts, function(index, employee) {
                                 projectTable.row.add([
                                     employee.employee_name,
-                                    employee.monthly_hours > 0 ? employee.monthly_hours + ' H' : '-', // Formatage des heures mensuelles
-                                    employee.monthly_cost > 0 ? employee.monthly_cost.toFixed(2) + ' €' : '-', // Formatage des coûts mensuels
-                                    employee.total_hours > 0 ? employee.total_hours + ' H' : '-', // Formatage des heures totales
-                                    employee.total_cost > 0 ? employee.total_cost.toFixed(2) + ' €' : '-' // Formatage des coûts totaux
+                                    employee.monthly_hours > 0 ? employee.monthly_hours + ' H' : '-', // Heures pour le mois
+                                    employee.monthly_cost > 0 ? employee.monthly_cost.toFixed(2) + ' €' : '-', // Coûts pour le mois
+                                    employee.total_hours > 0 ? employee.total_hours + ' H' : '-', // Heures depuis le début
+                                    employee.total_cost > 0 ? employee.total_cost.toFixed(2) + ' €' : '-' // Coût depuis le début
                                 ]);
                             });
                         }
@@ -330,31 +365,10 @@
                 loadProjectData();
             });
 
-            // Gestion du filtrage par type de projet
-            function filterProjectsByType(selectedType) {
-                $('#project_id option').each(function() {
-                    let optionType = $(this).data('type');
-                    if (selectedType === "" || optionType === selectedType) { // Ajouter la possibilité de voir tous les types
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
-
-                // Réinitialiser la sélection du projet
-                $('#project_id').val('');
-            }
-
-            // Filtrer initialement les projets en fonction du radio bouton sélectionné
-            let initialType = $('input[name="project-type"]:checked').val();
-            filterProjectsByType(initialType);
-
-            // Écouter les changements sur les radios boutons
-            $('input[name="project-type"]').change(function() {
-                let selectedType = $(this).val();
-                filterProjectsByType(selectedType);
-            });
+            // Charger les données initiales si un projet est déjà sélectionné (utile lors de rechargement)
+            @if(request()->routeIs('dashboard.showProject') && request()->has('project_id'))
+            loadProjectData();
+            @endif
         });
-
     </script>
 </x-app-layout>

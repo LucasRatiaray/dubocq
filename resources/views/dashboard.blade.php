@@ -1,3 +1,4 @@
+{{-- dashboard.blade.php --}}
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -64,9 +65,9 @@
                                          class="flex">
                                 <svg
                                     class="{{ request()->routeIs('dashboard.showSummary') ? 'h-6 w-6 text-customColor' : 'h-6 w-6 text-gray-400' }} mr-3"
-                                     xmlns="http://www.w3.org/2000/svg"
-                                     viewBox="0 0 24 24" fill="currentColor"
-                                     aria-hidden="true" data-slot="icon">
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24" fill="currentColor"
+                                    aria-hidden="true" data-slot="icon">
                                     <path fill-rule="evenodd" d="M2.25 2.25a.75.75 0 0 0 0 1.5H3v10.5a3 3 0 0 0 3 3h1.21l-1.172 3.513a.75.75 0 0 0 1.424.474l.329-.987h8.418l.33.987a.75.75 0 0 0 1.422-.474l-1.17-3.513H18a3 3 0 0 0 3-3V3.75h.75a.75.75 0 0 0 0-1.5H2.25Zm6.54 15h6.42l.5 1.5H8.29l.5-1.5Zm8.085-8.995a.75.75 0 1 0-.75-1.299 12.81 12.81 0 0 0-3.558 3.05L11.03 8.47a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06l2.47-2.47 1.617 1.618a.75.75 0 0 0 1.146-.102 11.312 11.312 0 0 1 3.612-3.321Z" clip-rule="evenodd"></path>
                                 </svg>
                                 Récapitulatif
@@ -78,6 +79,55 @@
         </aside>
         <!-- Main Content -->
         <main class="flex-1 p-6">
+            <div class="flex items-center gap-4 mb-4">
+                <!-- Navigation du mois -->
+                <nav class="">
+                    <ul class="inline-flex -space-x-px text">
+                        <!-- Bouton mois précédent -->
+                        <li>
+                            <button type="button" id="prev-month-btn" class="group flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-customColor hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                <svg class="w-4 h-4 text-gray-900 dark:text-white group-hover:text-white transition-transform duration-100 ease-in-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+                                </svg>
+                            </button>
+                        </li>
+
+                        <!-- Mois et année -->
+                        <li>
+                            <span id="month-year" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-900 font-bold text-sm bg-white border border-gray-300 hover:cursor-default dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                                  style="width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center;">
+                            </span>
+                        </li>
+
+                        <!-- Bouton mois suivant -->
+                        <li>
+                            <button type="button" id="next-month-btn" class="group flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-customColor hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                <svg class="w-4 h-4 text-gray-900 dark:text-white group-hover:text-white transition-transform duration-100 ease-in-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                                </svg>
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- Formulaire de Filtrage par Type de Projet -->
+                <form class="flex items-center gap-5" action="{{ route('dashboard.showEmployee') }}" method="GET">
+                    @csrf
+
+                    <!-- Radio pour filtrer le type de chantier -->
+                    <div class="flex items-center ps-4 pe-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
+                        <input id="radio-all" type="radio" value="" name="project-type" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor" checked>
+                        <label for="radio-all" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">Tous</label>
+                    </div>
+                    <div class="flex items-center ps-4 pe-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
+                        <input id="radio-monument" type="radio" value="Monument Historique" name="project-type" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor">
+                        <label for="radio-monument" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">Monument Historique</label>
+                    </div>
+                    <div class="flex items-center ps-4 pe-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
+                        <input id="radio-gros-oeuvre" type="radio" value="Gros Œuvre" name="project-type" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor">
+                        <label for="radio-gros-oeuvre" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">Gros Œuvre</label>
+                    </div>
+                </form>
+            </div>
             <!-- Contenu heure du tableau de bord -->
             <div class="grid grid-cols-3 gap-6 mb-20">
                 <!-- Content Box 1: prend 2 colonnes : Table -->
@@ -341,7 +391,7 @@
                                 const label = project.project_name || '';
                                 const hours = project.hours_this_month || 0;
                                 const cost = project.cost_this_month || 0;
-                                return `${hours} heures / ${cost.toFixed(2)} € (${project.actual_month})`;
+                                return ${hours} heures / ${cost.toFixed(2)} € (${project.actual_month});
                             },
                         },
                         bodyFont: {
@@ -389,7 +439,7 @@
                                 const hours = project.total_hours || 0;
                                 const cost = project.total_cost || 0;
                                 const earliestEntry = project.earliest_entry || 'N/A';
-                                return `${hours} heures / ${cost.toFixed(2)} € (depuis ${earliestEntry})`;
+                                return ${hours} heures / ${cost.toFixed(2)} € (depuis ${earliestEntry});
                             },
                         },
                         bodyFont: {

@@ -87,7 +87,7 @@
 
                 </form>
                 <!-- Navigation du mois -->
-                <nav aria-label="Page navigation example">
+                <nav>
                     <ul class="inline-flex -space-x-px text">
                         <!-- Bouton mois précédent -->
                         <li>

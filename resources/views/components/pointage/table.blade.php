@@ -1,3 +1,4 @@
+{{-- table.blade.php --}}
 <div class="mx-10 flex justify-center">
     <div class="bg-white shadow-md rounded-md p-6 dark:bg-customGray min-w-full mb-10">
         <!-- Titre avec navigation entre mois -->
@@ -311,8 +312,38 @@
                 }
                 return cellProperties;
             },
+            afterChange: function (changes, source) {
+                if (source === 'loadData') {
+                    return; // Ne pas valider lors du chargement des données
+                }
+
+                changes.forEach(([row, prop, oldValue, newValue]) => {
+                    if (prop.startsWith('days.')) {
+                        const dayIndex = parseInt(prop.split('.')[1]);
+                        const hourType = document.querySelector('form button[name="hour_type"].bg-green-500, form button[name="hour_type"].bg-purple-500').value;
+                        const otherHourType = hourType === 'day_hours' ? 'night_hours' : 'day_hours';
+                        const employee = employeeData[row];
+
+                        // Récupérer la nouvelle valeur d'heure
+                        const newHour = parseFloat(newValue) || 0;
+
+                        // Récupérer la valeur existante de l'autre type d'heure
+                        // Ici, vous devez adapter en fonction de la structure réelle de vos données
+                        // Par exemple, si vous stockez les heures de jour et de nuit séparément
+                        const existingOtherHour = employee.days[dayIndex][otherHourType] ? parseFloat(employee.days[dayIndex][otherHourType]) : 0;
+
+                        if ((newHour + existingOtherHour) > 12) {
+                            // Revenir à l'ancienne valeur
+                            hot.setDataAtCell(row, prop, oldValue, 'validation');
+
+                            // Afficher un message à l'utilisateur
+                            showMessage(`Le total des heures pour le jour ${dayIndex + 1} dépasse 12 heures.`, 'error');
+                        }
+                    }
+                });
+            },
             licenseKey: 'non-commercial-and-evaluation'
-    });
+        });
 
         // Fonction pour afficher un message d'erreur ou de succès
         function showMessage(message, type) {

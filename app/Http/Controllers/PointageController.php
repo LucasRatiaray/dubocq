@@ -100,6 +100,8 @@ class PointageController extends Controller
         $hourType = $request->input('hour_type');
         $deletedTimeTrackings = $request->input('deletedTimeTrackings', []);
 
+        $otherHourType = $hourType === 'day_hours' ? 'night_hours' : 'day_hours';
+
         // Gestion des suppressions de TimeTracking
         foreach ($deletedTimeTrackings as $deleted) {
             $timeTracking = TimeTracking::where('project_id', $deleted['project_id'])
@@ -120,6 +122,10 @@ class PointageController extends Controller
             }
         }
 
+        // Précharger les employés pour éviter les requêtes multiples
+        $employeeIds = collect($data)->pluck('employee_id')->unique();
+        $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
+
         // Gestion des ajouts/mises à jour des TimeTracking
         foreach ($data as $employee) {
             $employee_id = $employee['employee_id'];
@@ -127,8 +133,32 @@ class PointageController extends Controller
             $month = $employee['month'];
             $year = $employee['year'];
 
+            // Récupérer le modèle de l'employé
+            $employeeModel = $employees->get($employee_id);
+            $employeeName = $employeeModel ? "{$employeeModel->first_name} {$employeeModel->last_name}" : "ID {$employee_id}";
+
             foreach ($employee['days'] as $day => $hours) {
                 $date = Carbon::createFromDate($year, $month, $day + 1)->format('Y-m-d');
+                $formattedDate = Carbon::createFromDate($year, $month, $day + 1)->format('d/m/y');
+
+                // Récupérer l'enregistrement de TimeTracking existant pour le jour et l'autre hour_type
+                $existingTimeTracking = TimeTracking::where('project_id', $project_id)
+                    ->where('employee_id', $employee_id)
+                    ->where('date', $date)
+                    ->first();
+
+                $existingOtherHour = $existingTimeTracking ? $existingTimeTracking->{$otherHourType} : 0;
+
+                // Calculer la nouvelle valeur de l'hour_type actuel
+                $newHour = $hours !== null ? $hours : 0;
+
+                // Vérifier que la somme ne dépasse pas 12
+                if (($newHour + $existingOtherHour) > 12) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "L'employé {$employeeName} ne peut pas dépasser 12 heures le {$formattedDate}."
+                    ], 400);
+                }
 
                 // Récupérer ou créer l'enregistrement de suivi de temps
                 $timeTracking = TimeTracking::firstOrNew([

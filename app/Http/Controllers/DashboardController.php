@@ -274,4 +274,9 @@ class DashboardController extends Controller
             'projectData' => $projectData
         ]);
     }
+
+    public function showSummary(): View
+    {
+        return view('components.dashboard.summary');
+    }
 }

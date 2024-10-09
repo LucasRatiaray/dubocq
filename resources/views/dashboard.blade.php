@@ -26,39 +26,52 @@
                         </x-side-link>
                     </li>
                     @if(auth()->user()->hasRole('Administrateur') || auth()->user()->hasRole('Super Admin') || auth()->user()->hasRole('Conducteur'))
-                    <li class="mb-2">
-                        <x-side-link href="{{ route('dashboard.showProject') }}"
-                                     :active="request()->routeIs('dashboard.showProject')" class="flex">
-                            <svg
-                                class="{{ request()->routeIs('dashboard.showProject') ? 'h-6 w-6 text-customColor' : 'h-6 w-6 text-gray-400' }} mr-3"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                aria-hidden="true">
-                                <path fill-rule="evenodd"
-                                      d="M4.606 12.97a.75.75 0 0 1-.134 1.051 2.494 2.494 0 0 0-.93 2.437 2.494 2.494 0 0 0 2.437-.93.75.75 0 1 1 1.186.918 3.995 3.995 0 0 1-4.482 1.332.75.75 0 0 1-.461-.461 3.994 3.994 0 0 1 1.332-4.482.75.75 0 0 1 1.052.134Z"
-                                      clip-rule="evenodd"></path>
-                                <path fill-rule="evenodd"
-                                      d="M5.752 12A13.07 13.07 0 0 0 8 14.248v4.002c0 .414.336.75.75.75a5 5 0 0 0 4.797-6.414 12.984 12.984 0 0 0 5.45-10.848.75.75 0 0 0-.735-.735 12.984 12.984 0 0 0-10.849 5.45A5 5 0 0 0 1 11.25c.001.414.337.75.751.75h4.002ZM13 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
-                                      clip-rule="evenodd"></path>
-                            </svg>
-                            Par Chantier
-                        </x-side-link>
-                    </li>
+                        <li class="mb-2">
+                            <x-side-link href="{{ route('dashboard.showProject') }}"
+                                         :active="request()->routeIs('dashboard.showProject')" class="flex">
+                                <svg
+                                    class="{{ request()->routeIs('dashboard.showProject') ? 'h-6 w-6 text-customColor' : 'h-6 w-6 text-gray-400' }} mr-3"
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    aria-hidden="true">
+                                    <path fill-rule="evenodd"
+                                          d="M4.606 12.97a.75.75 0 0 1-.134 1.051 2.494 2.494 0 0 0-.93 2.437 2.494 2.494 0 0 0 2.437-.93.75.75 0 1 1 1.186.918 3.995 3.995 0 0 1-4.482 1.332.75.75 0 0 1-.461-.461 3.994 3.994 0 0 1 1.332-4.482.75.75 0 0 1 1.052.134Z"
+                                          clip-rule="evenodd"></path>
+                                    <path fill-rule="evenodd"
+                                          d="M5.752 12A13.07 13.07 0 0 0 8 14.248v4.002c0 .414.336.75.75.75a5 5 0 0 0 4.797-6.414 12.984 12.984 0 0 0 5.45-10.848.75.75 0 0 0-.735-.735 12.984 12.984 0 0 0-10.849 5.45A5 5 0 0 0 1 11.25c.001.414.337.75.751.75h4.002ZM13 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                Par Chantier
+                            </x-side-link>
+                        </li>
                     @endif
                     @if(auth()->user()->hasRole('Administrateur') || auth()->user()->hasRole('Super Admin'))
-                    <li class="mb-2">
-                        <x-side-link href="{{  route('dashboard.showEmployee') }}"
-                                     :active="request()->routeIs('dashboard.showEmployee')" class="flex">
-                            <svg
-                                class="{{ request()->routeIs('dashboard.showEmployee') ? 'h-6 w-6 text-customColor' : 'h-6 w-6 text-gray-400' }} mr-3"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                aria-hidden="true" data-slot="icon">
-                                <path fill-rule="evenodd"
-                                      d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
-                                      clip-rule="evenodd"></path>
-                            </svg>
-                            Par Salarié
-                        </x-side-link>
-                    </li>
+                        <li class="mb-2">
+                            <x-side-link href="{{ route('dashboard.showEmployee') }}"
+                                         :active="request()->routeIs('dashboard.showEmployee')" class="flex">
+                                <svg
+                                    class="{{ request()->routeIs('dashboard.showEmployee') ? 'h-6 w-6 text-customColor' : 'h-6 w-6 text-gray-400' }} mr-3"
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    aria-hidden="true" data-slot="icon">
+                                    <path fill-rule="evenodd"
+                                          d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                Par Salarié
+                            </x-side-link>
+                        </li>
+                        <li class="mb-2">
+                            <x-side-link href="{{ route('dashboard.showSummary') }}" :active="request()->routeIs('dashboard.showSummary')"
+                                         class="flex">
+                                <svg
+                                    class="{{ request()->routeIs('dashboard.showSummary') ? 'h-6 w-6 text-customColor' : 'h-6 w-6 text-gray-400' }} mr-3"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     viewBox="0 0 24 24" fill="currentColor"
+                                     aria-hidden="true" data-slot="icon">
+                                    <path fill-rule="evenodd" d="M2.25 2.25a.75.75 0 0 0 0 1.5H3v10.5a3 3 0 0 0 3 3h1.21l-1.172 3.513a.75.75 0 0 0 1.424.474l.329-.987h8.418l.33.987a.75.75 0 0 0 1.422-.474l-1.17-3.513H18a3 3 0 0 0 3-3V3.75h.75a.75.75 0 0 0 0-1.5H2.25Zm6.54 15h6.42l.5 1.5H8.29l.5-1.5Zm8.085-8.995a.75.75 0 1 0-.75-1.299 12.81 12.81 0 0 0-3.558 3.05L11.03 8.47a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06l2.47-2.47 1.617 1.618a.75.75 0 0 0 1.146-.102 11.312 11.312 0 0 1 3.612-3.321Z" clip-rule="evenodd"></path>
+                                </svg>
+                                Récapitulatif
+                            </x-side-link>
+                        </li>
                     @endif
                 </ul>
             </nav>
@@ -114,7 +127,7 @@
                 </div>
                 <!-- Content Box 2 : Chart -->
                 <div class="p-6">
-                    <h3 class="text-xl font-semibold mb-4 text-center">Répartition des heures et coûts du mois en
+                    <h3 class="text-lg font-semibold mb-4 text-center text-customColor">Répartition des heures et coûts du mois en
                         cours</h3>
                     <div>
                         <canvas id="hourChart"></canvas>
@@ -175,7 +188,7 @@
                 </div>
                 <!-- Content Box 2 : Chart -->
                 <div class="p-6">
-                    <h3 class="text-xl font-semibold mb-4 text-center">Répartition des heures et coûts depuis le début
+                    <h3 class="text-lg font-semibold mb-4 text-center text-customColor">Répartition des heures et coûts depuis le début
                         des chantiers</h3>
                     <div>
                         <canvas id="costChart"></canvas>

@@ -265,7 +265,11 @@
                     cellProperties.renderer = function (instance, td, row, col, prop, value) {
                         Handsontable.renderers.TextRenderer.apply(this, arguments);
 
-                        // Convertir la valeur en nombre
+                        // Assurez-vous que '0' est affiché comme 'abs'
+                        if (value === 'abs') {
+                            value = '0';
+                        }
+
                         const numericValue = parseFloat(value);
 
                         // Récupérer le type d'heure actuel
@@ -300,6 +304,9 @@
                         if (isArchived) {
                             td.classList.add('employeeArchived');  // Fond gris pour les employés archivés
                         }
+
+                        // Assurez-vous que le contenu affiché est 'abs' si la valeur est 0
+                        td.textContent = (numericValue === 0) ? 'abs' : value;
                     };
                 }
                 return cellProperties;

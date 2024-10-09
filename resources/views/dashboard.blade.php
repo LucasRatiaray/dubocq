@@ -1,4 +1,3 @@
-{{-- dashboard.blade.php --}}
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -177,7 +176,7 @@
                 </div>
                 <!-- Content Box 2 : Chart -->
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold mb-4 text-center text-customColor">Répartition des heures et coûts du mois en
+                    <h3 class="text-lg font-semibold mb-4 text-center text-black">Répartition des heures et coûts du mois en
                         cours</h3>
                     <div>
                         <canvas id="hourChart"></canvas>
@@ -238,7 +237,7 @@
                 </div>
                 <!-- Content Box 2 : Chart -->
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold mb-4 text-center text-customColor">Répartition des heures et coûts depuis le début
+                    <h3 class="text-lg font-semibold mb-4 text-center text-black">Répartition des heures et coûts depuis le début
                         des chantiers</h3>
                     <div>
                         <canvas id="costChart"></canvas>
@@ -391,7 +390,7 @@
                                 const label = project.project_name || '';
                                 const hours = project.hours_this_month || 0;
                                 const cost = project.cost_this_month || 0;
-                                return ${hours} heures / ${cost.toFixed(2)} € (${project.actual_month});
+                                return `${hours} heures / ${cost.toFixed(2)} € (${project.actual_month})`;
                             },
                         },
                         bodyFont: {
@@ -439,7 +438,7 @@
                                 const hours = project.total_hours || 0;
                                 const cost = project.total_cost || 0;
                                 const earliestEntry = project.earliest_entry || 'N/A';
-                                return ${hours} heures / ${cost.toFixed(2)} € (depuis ${earliestEntry});
+                                return `${hours} heures / ${cost.toFixed(2)} € (depuis ${earliestEntry})`;
                             },
                         },
                         bodyFont: {

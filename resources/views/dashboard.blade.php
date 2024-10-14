@@ -46,7 +46,7 @@
                     @endif
                     @if(auth()->user()->hasRole('Administrateur') || auth()->user()->hasRole('Super Admin'))
                         <li class="mb-2">
-                            <x-side-link href="{{ route('dashboard.showEmployee') }}"
+                            <x-side-link href="{{  route('dashboard.showEmployee') }}"
                                          :active="request()->routeIs('dashboard.showEmployee')" class="flex">
                                 <svg
                                     class="{{ request()->routeIs('dashboard.showEmployee') ? 'h-6 w-6 text-customColor' : 'h-6 w-6 text-gray-400' }} mr-3"
@@ -78,55 +78,6 @@
         </aside>
         <!-- Main Content -->
         <main class="flex-1 p-6">
-            <div class="flex items-center gap-4 mb-4">
-                <!-- Navigation du mois -->
-                <nav class="">
-                    <ul class="inline-flex -space-x-px text">
-                        <!-- Bouton mois précédent -->
-                        <li>
-                            <button type="button" id="prev-month-btn" class="group flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-customColor hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                                <svg class="w-4 h-4 text-gray-900 dark:text-white group-hover:text-white transition-transform duration-100 ease-in-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
-                                </svg>
-                            </button>
-                        </li>
-
-                        <!-- Mois et année -->
-                        <li>
-                            <span id="month-year" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-900 font-bold text-sm bg-white border border-gray-300 hover:cursor-default dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                                  style="width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center;">
-                            </span>
-                        </li>
-
-                        <!-- Bouton mois suivant -->
-                        <li>
-                            <button type="button" id="next-month-btn" class="group flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-customColor hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                                <svg class="w-4 h-4 text-gray-900 dark:text-white group-hover:text-white transition-transform duration-100 ease-in-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
-                                </svg>
-                            </button>
-                        </li>
-                    </ul>
-                </nav>
-                <!-- Formulaire de Filtrage par Type de Projet -->
-                <form class="flex items-center gap-5" action="{{ route('dashboard.showEmployee') }}" method="GET">
-                    @csrf
-
-                    <!-- Radio pour filtrer le type de chantier -->
-                    <div class="flex items-center ps-4 pe-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
-                        <input id="radio-all" type="radio" value="" name="project-type" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor" checked>
-                        <label for="radio-all" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">Tous</label>
-                    </div>
-                    <div class="flex items-center ps-4 pe-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
-                        <input id="radio-monument" type="radio" value="Monument Historique" name="project-type" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor">
-                        <label for="radio-monument" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">Monument Historique</label>
-                    </div>
-                    <div class="flex items-center ps-4 pe-4 bg-white border border-gray-300 rounded-lg dark:border-gray-700">
-                        <input id="radio-gros-oeuvre" type="radio" value="Gros Œuvre" name="project-type" class="w-4 h-4 text-customColor border-gray-300 focus:ring-customColor">
-                        <label for="radio-gros-oeuvre" class="w-full py-2 mx-2 text-gray-900 font-bold text-sm">Gros Œuvre</label>
-                    </div>
-                </form>
-            </div>
             <!-- Contenu heure du tableau de bord -->
             <div class="grid grid-cols-3 gap-6 mb-20">
                 <!-- Content Box 1: prend 2 colonnes : Table -->
@@ -176,7 +127,7 @@
                 </div>
                 <!-- Content Box 2 : Chart -->
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold mb-4 text-center text-black">Répartition des heures et coûts du mois en
+                    <h3 class="text-xl font-semibold mb-4 text-center">Répartition des heures et coûts du mois en
                         cours</h3>
                     <div>
                         <canvas id="hourChart"></canvas>
@@ -237,7 +188,7 @@
                 </div>
                 <!-- Content Box 2 : Chart -->
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold mb-4 text-center text-black">Répartition des heures et coûts depuis le début
+                    <h3 class="text-xl font-semibold mb-4 text-center">Répartition des heures et coûts depuis le début
                         des chantiers</h3>
                     <div>
                         <canvas id="costChart"></canvas>

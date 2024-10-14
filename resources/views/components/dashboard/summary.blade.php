@@ -80,75 +80,7 @@
 
         <!-- Main Content -->
         <main class="flex-1 p-6 pt-4">
-            <div class="flex gap-2 flex-col mb-2">
-                <!-- Formulaire de Filtrage par Statut des Employés -->
-                <form class="flex items-center gap-5" action="{{ route('dashboard.showProject') }}" method="GET">
-                    @csrf
 
-                </form>
-                <!-- Navigation du mois -->
-                <nav>
-                    <ul class="inline-flex -space-x-px text">
-                        <!-- Bouton mois précédent -->
-                        <li>
-                            <button type="button" id="prev-month-btn" class="group flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-customColor hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                                <svg class="w-4 h-4 text-gray-900 dark:text-white group-hover:text-white transition-transform duration-100 ease-in-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
-                                </svg>
-                            </button>
-                        </li>
-
-                        <!-- Mois et année -->
-                        <li>
-                            <span id="month-year" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-900 font-bold text-sm bg-white border border-gray-300 hover:cursor-default dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                                  style="width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center;">
-                            </span>
-                        </li>
-
-                        <!-- Bouton mois suivant -->
-                        <li>
-                            <button type="button" id="next-month-btn" class="group flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-customColor hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                                <svg class="w-4 h-4 text-gray-900 dark:text-white group-hover:text-white transition-transform duration-100 ease-in-out" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
-                                </svg>
-                            </button>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-
-            <!-- Conteneur du tableau -->
-            <div id="project-table-container" class="bg-white p-6 rounded-lg shadow-md col-span-2" hidden>
-                <h3 class="text-xl font-semibold mb-4 flex justify-between">
-                    <span>Tableau coût et heure :</span>
-                    <span id="selected-project-name"></span>
-                    <span id="selected-project-type" class="px-1 font-medium rounded"></span>
-                </h3>
-                <!-- Table HTML du projet avec ligne total -->
-                <table id="project" class="min-w-full bg-white text-sm">
-                    <thead>
-                    <tr class="w-full">
-                        <th class="py-1 px-2 text-left">Salariés</th>
-                        <th class="py-1 px-2 text-left">Heures pour le mois</th>
-                        <th class="py-1 px-2 text-left">Coûts pour le mois (€)</th>
-                        <th class="py-1 px-2 text-left">Heures depuis le début</th>
-                        <th class="py-1 px-2 text-left">Coût depuis le début (€)</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                    <tfoot>
-                    <tr class="font-bold border-t border-stroke">
-                        <td class="py-1 px-2 text-left">Total</td>
-                        <td class="py-1 px-2 text-left" id="total-monthly-hours">-</td>
-                        <td class="py-1 px-2 text-left" id="total-monthly-cost">-</td>
-                        <td class="py-1 px-2 text-left" id="total-hours">-</td>
-                        <td class="py-1 px-2 text-left" id="total-cost">-</td>
-                    </tr>
-                    </tfoot>
-
-                </table>
-            </div>
         </main>
     </div>
 

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Listeners\UpdateLastLoginAt;
 use App\Models\Basket;
 use App\Models\BasketZone;
 use App\Models\Employee;
@@ -18,6 +19,7 @@ use App\Observers\EmployeeObserver;
 use App\Observers\ProjectObserver;
 use App\Observers\RateChargedObserver;
 use App\Policies\UserPolicy;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -46,5 +48,16 @@ class AppServiceProvider extends ServiceProvider
 
     protected $policies = [
         User::class => UserPolicy::class,
+    ];
+
+    /**
+     * Les événements mappés avec leurs écouteurs.
+     *
+     * @var array
+     */
+    protected $listen = [
+        Login::class => [
+            UpdateLastLoginAt::class,
+        ],
     ];
 }

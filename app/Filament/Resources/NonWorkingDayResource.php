@@ -22,9 +22,9 @@ class NonWorkingDayResource extends Resource
 {
     protected static ?string $model = NonWorkingDay::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-x-circle';
+    protected static ?string $navigationIcon = 'heroicon-m-calendar-date-range';
 
-    protected static ?string $navigationLabel = 'Jour non travaillé';
+    protected static ?string $navigationLabel = 'Fermetures';
 
     protected static ?string $modelLabel = 'Jour non travaillé';
 

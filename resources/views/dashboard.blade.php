@@ -15,7 +15,7 @@
                         <x-side-link href="{{ route('dashboard.show') }}" :active="request()->routeIs('dashboard.show')"
                                      class="flex">
                             <svg
-                                class="{{ request()->routeIs('dashboard.show') ? 'h-6 w-6 text-customColor' : 'h-6 w-6 text-gray-400' }} mr-3"
+                                class="{{ request()->routeIs('dashboard.show') ? 'h-5 w-5 text-customColor' : 'h-5 w-5 text-gray-400' }} mr-3"
                                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
                                 <path
                                     d="M261.56,101.28a8,8,0,0,0-11.06,0L66.4,277.15a8,8,0,0,0-2.47,5.79L63.9,448a32,32,0,0,0,32,32H192a16,16,0,0,0,16-16V328a8,8,0,0,1,8-8h80a8,8,0,0,1,8,8l0,136a16,16,0,0,0,16,16h96.06a32,32,0,0,0,32-32l0-165.06a8,8,0,0,0-2.47-5.79Z"></path>
@@ -30,7 +30,7 @@
                             <x-side-link href="{{ route('dashboard.showProject') }}"
                                          :active="request()->routeIs('dashboard.showProject')" class="flex">
                                 <svg
-                                    class="{{ request()->routeIs('dashboard.showProject') ? 'h-6 w-6 text-customColor' : 'h-6 w-6 text-gray-400' }} mr-3"
+                                    class="{{ request()->routeIs('dashboard.showProject') ? 'h-5 w-5 text-customColor' : 'h-5 w-5 text-gray-400' }} mr-3"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                                     aria-hidden="true">
                                     <path fill-rule="evenodd"
@@ -49,7 +49,7 @@
                             <x-side-link href="{{  route('dashboard.showEmployee') }}"
                                          :active="request()->routeIs('dashboard.showEmployee')" class="flex">
                                 <svg
-                                    class="{{ request()->routeIs('dashboard.showEmployee') ? 'h-6 w-6 text-customColor' : 'h-6 w-6 text-gray-400' }} mr-3"
+                                    class="{{ request()->routeIs('dashboard.showEmployee') ? 'h-5 w-5 text-customColor' : 'h-5 w-5 text-gray-400' }} mr-3"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     aria-hidden="true" data-slot="icon">
                                     <path fill-rule="evenodd"
@@ -63,7 +63,7 @@
                             <x-side-link href="{{ route('dashboard.showSummary') }}" :active="request()->routeIs('dashboard.showSummary')"
                                          class="flex">
                                 <svg
-                                    class="{{ request()->routeIs('dashboard.showSummary') ? 'h-6 w-6 text-customColor' : 'h-6 w-6 text-gray-400' }} mr-3"
+                                    class="{{ request()->routeIs('dashboard.showSummary') ? 'h-5 w-5 text-customColor' : 'h-5 w-5 text-gray-400' }} mr-3"
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 24 24" fill="currentColor"
                                     aria-hidden="true" data-slot="icon">

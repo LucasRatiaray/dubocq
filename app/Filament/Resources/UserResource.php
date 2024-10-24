@@ -6,12 +6,14 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\Role;
 use App\Models\User;
+use BladeUI\Icons\Components\Icon;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -100,6 +102,16 @@ class UserResource extends Resource
                         return $record->roles->pluck('name')->join(', ');
                     })
                     ->sortable(),
+                TextColumn::make('last_login_at')
+                    ->label('Dernière connexion')
+                    ->date('d/m/Y H:i')
+                    ->sortable(),
+                IconColumn::make('is_online')
+                    ->label('Connecté')
+                    ->boolean()
+                    ->getStateUsing(fn (User $record) => $record->isOnline())
+                    ->color(fn ($state): string => $state ? 'success' : 'secondary')
+                    ->tooltip(fn ($state): string => $state ? 'En ligne' : 'Hors ligne'),
             ])
             ->filters([
                 //
